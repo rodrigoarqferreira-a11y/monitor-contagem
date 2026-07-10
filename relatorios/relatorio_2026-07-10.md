@@ -1,6 +1,6 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 15:13
+Gerado em: 10/07/2026 16:25
 
 ## https://portal.contagem.mg.gov.br/
 Palavras encontradas: 8
@@ -13,14 +13,14 @@ Palavras encontradas: 0
 
 
 ## https://portal.contagem.mg.gov.br/category/noticias/
-Palavras encontradas: 2
+Palavras encontradas: 0
 
-empresa, lei
+
 
 ## https://www.agenciaminas.mg.gov.br/
-Palavras encontradas: 1
+Palavras encontradas: 0
 
-lei
+
 
 ## https://www.investminas.mg.gov.br/
 Palavras encontradas: 0
@@ -35,15 +35,10 @@ Palavras encontradas: 0
 
 
 
-## https://www.google.com/search?q=investimento+contagem
-Palavras encontradas: 0
-
-
-
 ## https://diariodocomercio.com.br/
-Palavras encontradas: 6
+Palavras encontradas: 7
 
-eia, empregos, empresa, empresas, indústria, lei
+eia, empregos, empresa, empresas, indústria, investimento, lei
 
 ## https://valor.globo.com/
 Palavras encontradas: 7
@@ -51,7 +46,7 @@ Palavras encontradas: 7
 eia, empresa, empresas, industria, investimento, investimentos, lei
 
 ## https://www.otempo.com.br/
-Palavras encontradas: 2
+Palavras encontradas: 5
 
-eia, lei
+eia, empresa, empresas, lei, projeto de lei
 
