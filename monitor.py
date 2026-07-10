@@ -105,7 +105,15 @@ for site in sites:
                 "quantidade": len(encontradas),
                 "palavras": sorted(set(encontradas))
             })
-            
+
+    except Exception as erro:
+
+        resultado.append({
+            "site": site,
+            "erro": str(erro)
+        })
+
+
 # criar pasta de relatórios
 Path("relatorios").mkdir(exist_ok=True)
 
