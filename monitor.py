@@ -54,6 +54,8 @@ import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
 
+historico = carregar_historico()
+
 
 # carregar sites
 with open("sites.txt", encoding="utf-8") as f:
