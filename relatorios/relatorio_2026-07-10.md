@@ -1,11 +1,11 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 16:55
+Gerado em: 10/07/2026 17:03
 
 ## https://portal.contagem.mg.gov.br/
-Palavras encontradas: 8
+Palavras encontradas: 7
 
-ampliação, eia, empresa, empresas, industria, investimento, investimentos, lei
+eia, empresa, empresas, industria, investimento, investimentos, lei
 
 ## https://portal.contagem.mg.gov.br/diariooficial
 Palavras encontradas: 0
