@@ -1,0 +1,54 @@
+# menus e navegação
+home
+principal
+início
+inicio
+ir para o conteúdo
+buscar
+pesquisar
+assine
+cadastre-se
+cadastre
+entrar
+login
+minha conta
+clique para se cadastrar
+clique aqui
+ver todos
+ver mais
+leia mais
+continuar lendo
+
+# institucional
+newsletter
+fale conosco
+quem somos
+sobre nós
+termos de uso
+política de privacidade
+política de cookies
+copyright
+
+# menus comuns
+últimas notícias
+ultimas noticias
+edição
+leia essa edição
+veja agenda completa
+assista todos
+inscreva-se agora
+
+# contatos
+telefone
+email
+e-mail
+[email protected]
+
+# nomes de menu
+pessoa física
+pessoa jurídica
+dados abertos
+portal atualizado
+
+# lixo específico encontrado
+(31)
