@@ -8,6 +8,25 @@ def gerar_hash(texto):
         texto.encode("utf-8")
     ).hexdigest()
 
+def carregar_historico():
+
+    vistos = set()
+
+    if os.path.exists("historico.csv"):
+
+        with open(
+            "historico.csv",
+            "r",
+            encoding="utf-8"
+        ) as arquivo:
+
+            leitor = csv.DictReader(arquivo)
+
+            for linha in leitor:
+                vistos.add(linha["hash"])
+
+    return vistos
+
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
