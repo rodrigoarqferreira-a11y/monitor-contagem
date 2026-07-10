@@ -1,11 +1,9 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 18:51
+Gerado em: 10/07/2026 19:02
 
 ## https://portal.contagem.mg.gov.br/
-Palavras encontradas: 0
-
-
+Erro: unhashable type: 'dict'
 
 ## https://portal.contagem.mg.gov.br/diariooficial
 Palavras encontradas: 0
