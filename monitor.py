@@ -1,96 +1,96 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-import os
+from pathlib import Path
 
-# ----------------------------
-# Carregar sites
-# ----------------------------
-
+# carregar sites
 with open("sites.txt", encoding="utf-8") as f:
-    sites = [linha.strip() for linha in f if linha.strip()]
+    sites = [s.strip() for s in f if s.strip()]
 
-# ----------------------------
-# Carregar palavras-chave
-# ----------------------------
-
+# carregar palavras-chave
 with open("keywords.txt", encoding="utf-8") as f:
-    keywords = [k.strip().lower() for k in f if k.strip()]
+    keywords = [
+        linha.strip().lower()
+        for linha in f
+        if linha.strip() and not linha.startswith("#")
+    ]
 
-relatorio = []
-
-headers = {
-    "User-Agent":"Mozilla/5.0"
-}
-
-print("Iniciando monitoramento...")
+resultado = []
 
 for site in sites:
 
-    print(f"Lendo {site}")
-
     try:
 
-        resposta = requests.get(site,headers=headers,timeout=30)
+        resposta = requests.get(
+            site,
+            timeout=30,
+            headers={"User-Agent": "Mozilla/5.0"}
+        )
 
-        soup = BeautifulSoup(resposta.text,"lxml")
+        soup = BeautifulSoup(resposta.text, "lxml")
 
-        texto = soup.get_text(" ",strip=True)
+        texto = soup.get_text(" ", strip=True).lower()
 
-        texto_lower = texto.lower()
-
-        encontradas=[]
+        encontradas = []
 
         for palavra in keywords:
 
-            if palavra in texto_lower:
-
+            if palavra in texto:
                 encontradas.append(palavra)
 
         if encontradas:
 
-            relatorio.append({
-
-                "site":site,
-
-                "palavras":", ".join(sorted(set(encontradas)))
-
+            resultado.append({
+                "site": site,
+                "quantidade": len(encontradas),
+                "palavras": sorted(set(encontradas))
             })
 
     except Exception as erro:
 
-        relatorio.append({
-
-            "site":site,
-
-            "palavras":"ERRO: "+str(erro)
-
+        resultado.append({
+            "site": site,
+            "erro": str(erro)
         })
 
-# ----------------------------
-# Salvar relatório
-# ----------------------------
+# criar pasta de relatórios
+Path("relatorios").mkdir(exist_ok=True)
 
-os.makedirs("relatorios",exist_ok=True)
+arquivo = (
+    f"relatorios/relatorio_"
+    f"{datetime.now().strftime('%Y-%m-%d')}.md"
+)
 
-arquivo=f"relatorios/relatorio_{datetime.now().strftime('%Y-%m-%d')}.md"
+with open(arquivo, "w", encoding="utf-8") as f:
 
-with open(arquivo,"w",encoding="utf-8") as f:
+    f.write("# Relatório de Monitoramento\n\n")
 
-    f.write("# Relatório Diário\n\n")
+    f.write(
+        f"Gerado em: "
+        f"{datetime.now().strftime('%d/%m/%Y %H:%M')}\n\n"
+    )
 
-    f.write(f"Data: {datetime.now()}\n\n")
+    for item in resultado:
 
-    if len(relatorio)==0:
+        f.write(f"## {item['site']}\n")
 
-        f.write("Nenhuma ocorrência encontrada.")
+        if "erro" in item:
 
-    else:
+            f.write(
+                f"Erro: {item['erro']}\n\n"
+            )
 
-        for item in relatorio:
+        else:
 
-            f.write(f"## {item['site']}\n")
+            f.write(
+                f"Palavras encontradas: "
+                f"{item['quantidade']}\n\n"
+            )
 
-            f.write(f"Palavras encontradas: {item['palavras']}\n\n")
+            f.write(
+                ", ".join(item["palavras"])
+            )
 
-print("Concluído.")
+            f.write("\n\n")
+
+print("Relatório gerado com sucesso.")
