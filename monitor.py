@@ -15,7 +15,7 @@ def carregar_historico():
     if os.path.exists("historico.csv"):
 
         with open(
-            "historico.csv",for link
+            "historico.csv",
             "r",
             encoding="utf-8"
         ) as arquivo:
