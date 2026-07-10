@@ -1,6 +1,10 @@
+import csv
+import hashlib
+import os
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
 from pathlib import Path
 
 # carregar sites
