@@ -86,6 +86,14 @@ with open("keywords.txt", encoding="utf-8") as f:
         for linha in f
         if linha.strip() and not linha.startswith("#")
     ]
+    
+# carregar contexto contagem
+with open("contexto.txt", encoding="utf-8") as f:
+    contexto = [
+        linha.strip().lower()
+        for linha in f
+        if linha.strip()
+    ]
 
 # carregar palavras descartáveis
 with open("descartaveis.txt", encoding="utf-8") as f:
