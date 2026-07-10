@@ -1,11 +1,9 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 18:08
+Gerado em: 10/07/2026 18:15
 
 ## https://portal.contagem.mg.gov.br/
-Palavras encontradas: 1
-
-lei
+Erro: unhashable type: 'dict'
 
 ## https://portal.contagem.mg.gov.br/diariooficial
 Palavras encontradas: 0
@@ -36,17 +34,11 @@ Palavras encontradas: 0
 
 
 ## https://diariodocomercio.com.br/
-Palavras encontradas: 7
-
-eia, empregos, empresa, empresas, indústria, investimento, lei
+Erro: unhashable type: 'dict'
 
 ## https://valor.globo.com/
-Palavras encontradas: 7
-
-eia, empresa, empresas, industria, investimento, investimentos, lei
+Erro: unhashable type: 'dict'
 
 ## https://www.otempo.com.br/
-Palavras encontradas: 5
-
-eia, empresa, empresas, lei, projeto de lei
+Erro: unhashable type: 'dict'
 
