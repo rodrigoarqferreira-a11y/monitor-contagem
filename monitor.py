@@ -134,12 +134,19 @@ for site in sites:
 
         if encontradas:
 
-            salvar_historico(
-                str(encontradas),
-                site,
-                "monitor"
-            )
+            titulo = " ".join(encontradas)
 
+            identificador = gerar_hash(titulo + site)
+
+            if identificador not in historico:
+
+                salvar_historico(
+                    titulo,
+                    site,
+                    "monitor"
+                )
+
+                historico.add(identificador)
     except Exception as erro:
 
         resultado.append({
