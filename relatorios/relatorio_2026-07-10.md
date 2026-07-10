@@ -1,6 +1,6 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 17:34
+Gerado em: 10/07/2026 17:45
 
 ## https://portal.contagem.mg.gov.br/
 Palavras encontradas: 2
@@ -36,7 +36,9 @@ Palavras encontradas: 0
 
 
 ## https://diariodocomercio.com.br/
-Erro: Exceeded 30 redirects.
+Palavras encontradas: 7
+
+eia, empregos, empresa, empresas, indústria, investimento, lei
 
 ## https://valor.globo.com/
 Palavras encontradas: 7
