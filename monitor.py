@@ -161,12 +161,14 @@ for site in sites:
 
             titulo = item["titulo"]
 
-            # primeiro verifica se fala de Contagem
-            if not any(
-                termo in titulo
-                for termo in filtros_contagem
-            ):
-                continue
+            # só exige "Contagem" em sites externos
+            if "portal.contagem.mg.gov.br" not in site:
+
+                if not any(
+                    termo in titulo
+                    for termo in filtros_contagem
+                ):
+                    continue
 
             palavras_titulo = []
 
