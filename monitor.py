@@ -141,9 +141,24 @@ for site in sites:
 
         encontradas = []
 
+        filtros_contagem = [
+            "contagem",
+            "município de contagem",
+            "municipio de contagem",
+            "prefeitura de contagem",
+            "cidade de contagem"
+         ]
+
         for item in textos_encontrados:
 
             titulo = item["titulo"]
+
+            # primeiro verifica se fala de Contagem
+            if not any(
+                termo in titulo
+                for termo in filtros_contagem
+            ):
+                continue
 
             palavras_titulo = []
 
@@ -151,23 +166,22 @@ for site in sites:
 
                 padrao = r"\b" + re.escape(palavra) + r"\b"
 
-                if re.search(padrao, texto):
+                if re.search(padrao, titulo):
 
                     print("ACHOU:", palavra)
 
-                    encontradas.append(palavra)
+                    palavras_titulo.append(palavra)
 
             if palavras_titulo:
 
-                encontradas.append({
-                    "titulo": titulo,
-                    "palavras": palavras_titulo,
-                    "url": item["url"]
-                })
-                
-                
-        print("KEYWORDS:", keywords)
-        print("ENCONTRADAS:", encontradas)
+               encontradas.append({
+                   "titulo": titulo,
+                   "palavras": palavras_titulo,
+                "url": item["url"]
+            })
+
+        print("ENCONTRADAS:")
+        print(encontradas)
 
         resultado.append({
             "site": site,
