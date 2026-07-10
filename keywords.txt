@@ -1,0 +1,31 @@
+contagem
+investimento
+investimentos
+empresa
+empresas
+indústria
+industria
+fábrica
+fabrica
+expansão
+expansao
+centro de distribuição
+galpão
+galpao
+logística
+logistica
+condomínio logístico
+condominio logistico
+empregos
+licenciamento
+licença ambiental
+licenca ambiental
+distrito industrial
+terreno
+obras
+nova unidade
+nova planta
+inauguração
+inauguracao
+ampliação
+ampliacao
