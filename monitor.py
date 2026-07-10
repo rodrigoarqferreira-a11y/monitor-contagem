@@ -27,6 +27,29 @@ def carregar_historico():
 
     return vistos
 
+def salvar_historico(titulo, url, fonte):
+
+    identificador = gerar_hash(titulo + url)
+
+    with open(
+        "historico.csv",
+        "a",
+        newline="",
+        encoding="utf-8"
+    ) as arquivo:
+
+        escritor = csv.writer(arquivo)
+
+        escritor.writerow(
+            [
+                datetime.now().strftime("%Y-%m-%d"),
+                titulo,
+                url,
+                fonte,
+                identificador
+            ]
+        )
+
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
