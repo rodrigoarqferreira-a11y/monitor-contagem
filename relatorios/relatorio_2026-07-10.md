@@ -1,11 +1,11 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 17:25
+Gerado em: 10/07/2026 17:34
 
 ## https://portal.contagem.mg.gov.br/
-Palavras encontradas: 1
+Palavras encontradas: 2
 
-lei
+industria, lei
 
 ## https://portal.contagem.mg.gov.br/diariooficial
 Palavras encontradas: 0
