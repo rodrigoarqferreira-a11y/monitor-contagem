@@ -174,7 +174,7 @@ for site in sites:
 
                 padrao = r"\b" + re.escape(palavra) + r"\b"
 
-               if re.search(padrao, titulo):
+                if re.search(padrao, titulo):
 
                    print("ACHOU:", palavra)
 
@@ -185,7 +185,7 @@ for site in sites:
                encontradas.append({
                    "titulo": titulo,
                    "palavras": palavras_titulo,
-                "url": item["url"]
+                   "url": item["url"]
             })
 
         print("ENCONTRADAS:")
