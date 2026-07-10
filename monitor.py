@@ -92,6 +92,12 @@ for site in sites:
             if palavra in texto:
                 encontradas.append(palavra)
 
+        resultado.append({
+            "site": site,
+            "quantidade": len(encontradas),
+            "palavras": sorted(set(encontradas))
+        })
+
         if encontradas:
 
             salvar_historico(
@@ -99,12 +105,6 @@ for site in sites:
                 site,
                 "monitor"
             )
-
-            resultado.append({
-                "site": site,
-                "quantidade": len(encontradas),
-                "palavras": sorted(set(encontradas))
-            })
 
     except Exception as erro:
 
