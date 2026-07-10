@@ -130,10 +130,18 @@ for site in sites:
 
                 print("TÍTULO:", titulo[:100])
 
-                textos_encontrados.append(titulo)
+                textos_encontrados.append(
+                    {
+                        "titulo": titulo,
+                        "url": link["href"]
+                    }
+                )
 
 
-        texto = " ".join(textos_encontrados)
+        texto = " ".join(
+            item["titulo"]
+            for item in textos_encontrados
+         )
 
 
         encontradas = []
@@ -151,7 +159,22 @@ for site in sites:
 
         if encontradas:
 
-            titulo = " ".join(encontradas)
+            item = next(
+                (
+                    item
+                    for item in textos_encontrados
+                    if any(
+                        palavra in item["titulo"]
+                        for palavra in encontradas
+                    )
+                ),
+                None
+            )
+
+            if item:
+
+                titulo = item["titulo"]
+                url = item["url"]
 
             identificador = gerar_hash(titulo + site)
 
@@ -159,7 +182,7 @@ for site in sites:
 
                 salvar_historico(
                     titulo,
-                    site,
+                    url,
                     "monitor"
                 )
 
