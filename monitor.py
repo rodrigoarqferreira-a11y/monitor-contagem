@@ -91,21 +91,34 @@ for site in sites:
             "home",
             "principal",
             "buscar",
+            "pesquisar",
             "assine",
             "cadastre-se",
+            "cadastro",
             "entrar",
             "login",
+            "sair",
             "ver mais",
             "leia mais",
             "clique aqui",
+            "clique para",
             "newsletter",
             "fale conosco",
             "quem somos",
+            "ir para o conteúdo",
+            "pessoa jurídica",
+            "pessoa física",
+            "ver todos",
+            "todos",
+            "menu",
+            "acessibilidade",
+            "alto contraste",
             "termos de uso",
             "política de privacidade",
             "política de cookies",
             "dados abertos",
-            "copyright"
+            "copyright",
+            "visite"
         ]
 
         for link in soup.find_all("a", href=True):
@@ -116,6 +129,9 @@ for site in sites:
             ).lower()
 
             if titulo:
+
+                if len(titulo) < 15:
+                    continue
 
                 if any(palavra in titulo for palavra in ignorar):
                     continue
