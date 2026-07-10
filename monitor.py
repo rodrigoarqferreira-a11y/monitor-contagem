@@ -31,6 +31,22 @@ def salvar_historico(titulo, url, fonte):
 
     identificador = gerar_hash(titulo + url)
 
+    if os.path.exists("historico.csv"):
+
+        with open(
+            "historico.csv",
+            "r",
+            encoding="utf-8"
+        ) as arquivo:
+
+            quantidade = sum(1 for linha in arquivo)
+
+            novo_id = quantidade
+    else:
+
+        novo_id = 1
+
+
     with open(
         "historico.csv",
         "a",
@@ -42,6 +58,7 @@ def salvar_historico(titulo, url, fonte):
 
         escritor.writerow(
             [
+                novo_id,
                 datetime.now().strftime("%Y-%m-%d"),
                 titulo,
                 url,
