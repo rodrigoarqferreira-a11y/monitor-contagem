@@ -69,6 +69,15 @@ with open("keywords.txt", encoding="utf-8") as f:
         if linha.strip() and not linha.startswith("#")
     ]
 
+# carregar palavras descartáveis
+with open("descartaveis.txt", encoding="utf-8") as f:
+    ignorar = [
+        linha.strip().lower()
+        for linha in f
+        if linha.strip() and not linha.startswith("#")
+    ]
+
+
 resultado = []
 
 for site in sites:
@@ -86,74 +95,7 @@ for site in sites:
         print("Links encontrados:", len(soup.find_all("a", href=True)))
 
         textos_encontrados = []
-
-        ignorar = [
-            "home",
-            "principal",
-            "início",
-            "inicio",
-            "ir para o conteúdo",
-            "buscar",
-            "pesquisar",
-            "assine",
-            "cadastre-se",
-            "cadastre",
-            "entrar",
-            "login",
-            "minha conta",
-            "pessoa física",
-            "pessoa jurídica",
-            "clique para se cadastrar",
-            "ver todos",
-            "ver mais",
-            "leia mais",
-            "continuar lendo",
-            "clique aqui",
-            "newsletter",
-            "fale conosco",
-            "quem somos",
-            "sobre nós",
-            "termos de uso",
-            "política de privacidade",
-            "política de cookies",
-            "dados abertos",
-            "copyright",
-            "portal atualizado",
-            "telefone",
-            "(31)"
-            "privacidade",
-            "proteção de dados",
-            "termos e condições",
-            "trabalhe conosco",
-            "carreiras",
-            "vagas",
-            "empregos",
-            "assinatura",
-            "assine agora",
-            "edição impressa",
-            "versão impressa",
-            "publicidade legal",
-            "anuncie",
-            "anúncios",
-            "central do leitor",
-            "redes sociais",
-            "siga",
-            "compartilhe",
-            "instagram",
-            "facebook",
-            "youtube",
-            "twitter",
-            "linkedin",
-            "cookies",
-            "mapa do site",
-            "acessibilidade",
-            "expediente",
-            "colunistas",
-            "blogs",
-            "todos os conteúdos",
-            "todos os posts",
-        ]
-
+        
         for link in soup.find_all("a", href=True):
 
             titulo = link.get_text(
