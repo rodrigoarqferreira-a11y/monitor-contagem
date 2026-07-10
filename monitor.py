@@ -95,10 +95,37 @@ for site in sites:
             ).lower()
 
             if titulo:
-                print("TÍTULO:", titulo[:100])
 
-            if titulo:
-                textos_encontrados.append(titulo)
+    ignorar = [
+        "home",
+        "principal",
+        "buscar",
+        "assine",
+        "cadastre-se",
+        "entrar",
+        "login",
+        "ver mais",
+        "leia mais",
+        "clique aqui",
+        "newsletter",
+        "fale conosco",
+        "quem somos",
+        "termos de uso",
+        "política de privacidade",
+        "política de cookies",
+        "dados abertos",
+        "copyright"
+    ]
+
+    if len(titulo) < 10:
+        continue
+
+    if any(palavra in titulo for palavra in ignorar):
+        continue
+
+    print("TÍTULO:", titulo[:100])
+
+    textos_encontrados.append(titulo)
 
 
         texto = " ".join(textos_encontrados)
