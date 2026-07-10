@@ -154,10 +154,5 @@ with open(arquivo, "w", encoding="utf-8") as f:
 
             f.write("\n\n")
 
-salvar_historico(
-    "Teste de funcionamento",
-    "https://teste.com",
-    "teste"
-)
 
 print("Relatório gerado com sucesso.")
