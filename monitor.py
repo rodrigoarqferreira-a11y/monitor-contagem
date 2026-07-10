@@ -166,11 +166,11 @@ for site in sites:
 
                 padrao = r"\b" + re.escape(palavra) + r"\b"
 
-                if re.search(padrao, titulo):
+               if re.search(padrao, titulo):
 
-                    print("ACHOU:", palavra)
+                   print("ACHOU:", palavra)
 
-                    palavras_titulo.append(palavra)
+                   palavras_titulo.append(palavra)
 
             if palavras_titulo:
 
