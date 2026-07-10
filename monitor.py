@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import os
+import re
 from datetime import datetime
 
 def gerar_hash(texto):
@@ -148,8 +149,13 @@ for site in sites:
 
             for palavra in keywords:
 
-                if palavra in titulo:
-                    palavras_titulo.append(palavra)
+                padrao = r"\b" + re.escape(palavra) + r"\b"
+
+                if re.search(padrao, texto):
+
+                    print("ACHOU:", palavra)
+
+                    encontradas.append(palavra)
 
             if palavras_titulo:
 
