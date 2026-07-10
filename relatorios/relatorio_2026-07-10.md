@@ -1,9 +1,11 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 18:21
+Gerado em: 10/07/2026 18:51
 
 ## https://portal.contagem.mg.gov.br/
-Erro: name 'texto' is not defined
+Palavras encontradas: 0
+
+
 
 ## https://portal.contagem.mg.gov.br/diariooficial
 Palavras encontradas: 0
@@ -11,7 +13,9 @@ Palavras encontradas: 0
 
 
 ## https://portal.contagem.mg.gov.br/category/noticias/
-Erro: name 'texto' is not defined
+Palavras encontradas: 0
+
+
 
 ## https://www.agenciaminas.mg.gov.br/
 Palavras encontradas: 0
@@ -32,11 +36,17 @@ Palavras encontradas: 0
 
 
 ## https://diariodocomercio.com.br/
-Erro: name 'texto' is not defined
+Palavras encontradas: 0
+
+
 
 ## https://valor.globo.com/
-Erro: name 'texto' is not defined
+Palavras encontradas: 0
+
+
 
 ## https://www.otempo.com.br/
-Erro: name 'texto' is not defined
+Palavras encontradas: 0
+
+
 
