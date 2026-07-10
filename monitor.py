@@ -3,9 +3,15 @@ import hashlib
 import os
 from datetime import datetime
 
+def gerar_hash(texto):
+    return hashlib.md5(
+        texto.encode("utf-8")
+    ).hexdigest()
+
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
+
 
 # carregar sites
 with open("sites.txt", encoding="utf-8") as f:
