@@ -82,6 +82,8 @@ for site in sites:
         )
 
         soup = BeautifulSoup(resposta.text, "lxml")
+        print("Site analisado:", site)
+        print("Links encontrados:", len(soup.find_all("a", href=True)))
 
         textos_encontrados = []
 
