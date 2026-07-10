@@ -15,7 +15,7 @@ def carregar_historico():
     if os.path.exists("historico.csv"):
 
         with open(
-            "historico.csv",
+            "historico.csv",for link
             "r",
             encoding="utf-8"
         ) as arquivo:
@@ -93,6 +93,9 @@ for site in sites:
                 " ",
                 strip=True
             ).lower()
+
+            if titulo:
+                print("TÍTULO:", titulo[:100])
 
             if titulo:
                 textos_encontrados.append(titulo)
