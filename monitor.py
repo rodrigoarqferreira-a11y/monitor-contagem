@@ -87,6 +87,27 @@ for site in sites:
 
         textos_encontrados = []
 
+        ignorar = [
+            "home",
+            "principal",
+            "buscar",
+            "assine",
+            "cadastre-se",
+            "entrar",
+            "login",
+            "ver mais",
+            "leia mais",
+            "clique aqui",
+            "newsletter",
+            "fale conosco",
+            "quem somos",
+            "termos de uso",
+            "política de privacidade",
+            "política de cookies",
+            "dados abertos",
+            "copyright"
+        ]
+
         for link in soup.find_all("a", href=True):
 
             titulo = link.get_text(
@@ -96,36 +117,12 @@ for site in sites:
 
             if titulo:
 
-    ignorar = [
-        "home",
-        "principal",
-        "buscar",
-        "assine",
-        "cadastre-se",
-        "entrar",
-        "login",
-        "ver mais",
-        "leia mais",
-        "clique aqui",
-        "newsletter",
-        "fale conosco",
-        "quem somos",
-        "termos de uso",
-        "política de privacidade",
-        "política de cookies",
-        "dados abertos",
-        "copyright"
-    ]
+                if any(palavra in titulo for palavra in ignorar):
+                    continue
 
-    if len(titulo) < 10:
-        continue
+                print("TÍTULO:", titulo[:100])
 
-    if any(palavra in titulo for palavra in ignorar):
-        continue
-
-    print("TÍTULO:", titulo[:100])
-
-    textos_encontrados.append(titulo)
+                textos_encontrados.append(titulo)
 
 
         texto = " ".join(textos_encontrados)
