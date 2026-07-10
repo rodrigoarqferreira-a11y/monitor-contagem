@@ -1,31 +1,86 @@
-contagem
+# INVESTIMENTOS
+
 investimento
 investimentos
-empresa
-empresas
-indústria
-industria
-fábrica
-fabrica
+aporte
+aportes
 expansão
 expansao
-centro de distribuição
-galpão
-galpao
-logística
-logistica
-condomínio logístico
-condominio logistico
-empregos
-licenciamento
-licença ambiental
-licenca ambiental
-distrito industrial
-terreno
-obras
+ampliação
+ampliacao
+implantação
+implantacao
 nova unidade
 nova planta
 inauguração
 inauguracao
-ampliação
-ampliacao
+
+# EMPRESAS
+
+empresa
+empresas
+multinacional
+grupo empresarial
+empreendimento
+empreendimentos
+
+# LOGÍSTICA
+
+centro de distribuição
+centro de distribuicao
+condomínio logístico
+condominio logistico
+galpão
+galpao
+armazenagem
+hub logístico
+hub logistico
+
+# INDÚSTRIA
+
+indústria
+industria
+fábrica
+fabrica
+planta industrial
+linha de produção
+
+# EMPREGOS
+
+empregos
+postos de trabalho
+contratações
+contratacoes
+geração de empregos
+geracao de empregos
+
+# LICENCIAMENTO
+
+licença ambiental
+licenca ambiental
+copam
+semad
+eia
+rima
+audiência pública
+audiencia publica
+
+# LEGISLAÇÃO
+
+decreto
+lei
+projeto de lei
+incentivo fiscal
+benefício fiscal
+beneficio fiscal
+isenção
+isencao
+
+# TERRITÓRIO
+
+distrito industrial
+área industrial
+area industrial
+terreno industrial
+condomínio empresarial
+condominio empresarial
