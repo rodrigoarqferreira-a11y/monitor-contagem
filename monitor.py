@@ -83,7 +83,21 @@ for site in sites:
 
         soup = BeautifulSoup(resposta.text, "lxml")
 
-        texto = soup.get_text(" ", strip=True).lower()
+        textos_encontrados = []
+
+        for link in soup.find_all("a", href=True):
+
+            titulo = link.get_text(
+                " ",
+                strip=True
+            ).lower()
+
+            if titulo:
+                textos_encontrados.append(titulo)
+
+
+        texto = " ".join(textos_encontrados)
+
 
         encontradas = []
 
