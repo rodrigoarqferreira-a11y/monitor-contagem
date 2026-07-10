@@ -138,18 +138,26 @@ for site in sites:
                 )
 
 
-        texto = " ".join(
-            item["titulo"]
-            for item in textos_encontrados
-         )
-
-
         encontradas = []
 
-        for palavra in keywords:
+        for item in textos_encontrados:
 
-            if palavra in texto:
-                encontradas.append(palavra)
+            titulo = item["titulo"]
+
+            palavras_titulo = []
+
+            for palavra in keywords:
+
+                if palavra in titulo:
+                    palavras_titulo.append(palavra)
+
+            if palavras_titulo:
+
+                encontradas.append({
+                    "titulo": titulo,
+                    "palavras": palavras_titulo,
+                    "url": item["url"]
+                })
                 
                 
         print("KEYWORDS:", keywords)
