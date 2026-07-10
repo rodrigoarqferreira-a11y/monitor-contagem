@@ -1,9 +1,9 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 18:15
+Gerado em: 10/07/2026 18:21
 
 ## https://portal.contagem.mg.gov.br/
-Erro: unhashable type: 'dict'
+Erro: name 'texto' is not defined
 
 ## https://portal.contagem.mg.gov.br/diariooficial
 Palavras encontradas: 0
@@ -11,9 +11,7 @@ Palavras encontradas: 0
 
 
 ## https://portal.contagem.mg.gov.br/category/noticias/
-Palavras encontradas: 0
-
-
+Erro: name 'texto' is not defined
 
 ## https://www.agenciaminas.mg.gov.br/
 Palavras encontradas: 0
@@ -34,11 +32,11 @@ Palavras encontradas: 0
 
 
 ## https://diariodocomercio.com.br/
-Erro: unhashable type: 'dict'
+Erro: name 'texto' is not defined
 
 ## https://valor.globo.com/
-Erro: unhashable type: 'dict'
+Erro: name 'texto' is not defined
 
 ## https://www.otempo.com.br/
-Erro: unhashable type: 'dict'
+Erro: name 'texto' is not defined
 
