@@ -1,11 +1,11 @@
 # Relatório de Monitoramento
 
-Gerado em: 10/07/2026 17:10
+Gerado em: 10/07/2026 17:18
 
 ## https://portal.contagem.mg.gov.br/
-Palavras encontradas: 2
+Palavras encontradas: 3
 
-eia, lei
+eia, industria, lei
 
 ## https://portal.contagem.mg.gov.br/diariooficial
 Palavras encontradas: 0
@@ -36,9 +36,9 @@ Palavras encontradas: 0
 
 
 ## https://diariodocomercio.com.br/
-Palavras encontradas: 7
+Palavras encontradas: 6
 
-eia, empregos, empresa, empresas, indústria, investimento, lei
+eia, empresa, empresas, indústria, investimento, lei
 
 ## https://valor.globo.com/
 Palavras encontradas: 7
