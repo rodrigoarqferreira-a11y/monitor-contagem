@@ -94,6 +94,12 @@ for site in sites:
 
         if encontradas:
 
+                salvar_historico(
+        str(encontradas),
+        site,
+        "monitor"
+    )
+
             resultado.append({
                 "site": site,
                 "quantidade": len(encontradas),
