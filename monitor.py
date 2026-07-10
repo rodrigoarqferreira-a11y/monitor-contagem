@@ -150,6 +150,10 @@ for site in sites:
 
             if palavra in texto:
                 encontradas.append(palavra)
+                
+                
+        print("KEYWORDS:", keywords)
+        print("ENCONTRADAS:", encontradas)
 
         resultado.append({
             "site": site,
