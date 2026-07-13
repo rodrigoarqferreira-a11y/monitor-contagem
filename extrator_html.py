@@ -177,7 +177,7 @@ def remover_blocos(soup):
 
                 tag.get("id",""),
 
-                " ".join(tag.get("class",[]))
+                " ".join(tag.get("class") or [])
 
             ]
 
