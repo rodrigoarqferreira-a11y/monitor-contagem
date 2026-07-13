@@ -32,6 +32,10 @@ def main():
 
     except Exception as erro:
 
+        import traceback
+
+        traceback.print_exc()
+
         print()
         print("Erro no monitor:")
         print(erro)
