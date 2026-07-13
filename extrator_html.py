@@ -139,59 +139,76 @@ def remover_comentarios(soup):
 
 def remover_blocos(soup):
 
+    if soup is None:
+        return None
+
     palavras = [
 
         "menu",
-
         "sidebar",
-
         "newsletter",
-
         "banner",
-
         "cookie",
-
         "social",
-
         "compartilhe",
-
         "coment",
-
         "rodape",
-
         "footer",
-
         "relacionad",
-
         "publicidade",
-
         "ads"
 
     ]
 
-    for tag in soup.find_all(True):
 
-        texto = " ".join(
+    try:
 
-            [
+        for tag in soup.find_all(True):
 
-                tag.get("id",""),
+            if not hasattr(tag, "get"):
+                continue
 
-                " ".join(tag.get("class") or [])
 
-            ]
+            identificador = tag.get("id") or ""
 
-        ).lower()
 
-        if any(
+            classes = tag.get("class") or []
 
-            palavra in texto
 
-            for palavra in palavras
+            if isinstance(classes, list):
 
-        ):
+                classes = " ".join(classes)
 
-            tag.decompose()
+            else:
+
+                classes = str(classes)
+
+
+            texto = (
+
+                identificador +
+
+                " " +
+
+                classes
+
+            ).lower()
+
+
+
+            if any(
+                palavra in texto
+                for palavra in palavras
+            ):
+
+                tag.decompose()
+
+
+    except Exception as erro:
+
+        print("ERRO remover_blocos:")
+        print(erro)
+
 
     return soup
 
