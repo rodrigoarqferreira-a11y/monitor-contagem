@@ -160,40 +160,34 @@ def remover_blocos(soup):
 
     ]
 
-
     try:
 
-        for tag in soup.find_all(True):
+        tags = soup.find_all(True)
 
-            if not hasattr(tag, "get"):
+        for tag in tags:
+
+            if tag is None:
+                continue
+
+            identificadores = []
+
+            try:
+
+                if tag.get("id"):
+                    identificadores.append(tag.get("id"))
+
+                classes = tag.get("class")
+
+                if classes:
+                    identificadores.extend(classes)
+
+            except Exception:
                 continue
 
 
-            identificador = tag.get("id") or ""
-
-
-            classes = tag.get("class") or []
-
-
-            if isinstance(classes, list):
-
-                classes = " ".join(classes)
-
-            else:
-
-                classes = str(classes)
-
-
-            texto = (
-
-                identificador +
-
-                " " +
-
-                classes
-
+            texto = " ".join(
+                identificadores
             ).lower()
-
 
 
             if any(
@@ -201,13 +195,16 @@ def remover_blocos(soup):
                 for palavra in palavras
             ):
 
-                tag.decompose()
+                try:
+                    tag.decompose()
+
+                except Exception:
+                    pass
 
 
     except Exception as erro:
 
-        print("ERRO remover_blocos:")
-        print(erro)
+        print("ERRO remover_blocos:", erro)
 
 
     return soup
