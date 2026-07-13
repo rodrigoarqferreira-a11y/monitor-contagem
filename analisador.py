@@ -16,6 +16,59 @@ from utils import (
     encontrar_empresas
 )
 
+# =====================================================
+# FILTROS DE DESCARTE
+# =====================================================
+
+TERMOS_NEGATIVOS = [
+
+    "processo seletivo",
+    "pss",
+    "concurso publico",
+    "concurso público",
+    "edital",
+    "vacina",
+    "campanha",
+    "festival",
+    "evento cultural",
+    "esporte",
+    "partida",
+    "jogo",
+    "saude",
+    "saúde",
+    "curso gratuito",
+    "capacitação",
+    "formacao tecnica",
+    "formação técnica"
+
+]
+
+
+# =====================================================
+# TERMOS QUE INDICAM INVESTIMENTO
+# =====================================================
+
+TERMOS_INVESTIMENTO = [
+
+    "investimento",
+    "investimentos",
+    "nova unidade",
+    "nova fabrica",
+    "nova fábrica",
+    "expansao",
+    "expansão",
+    "ampliacao",
+    "ampliação",
+    "planta industrial",
+    "centro de distribuicao",
+    "centro de distribuição",
+    "galpao",
+    "galpão",
+    "implantacao",
+    "implantação",
+    "obra industrial"
+
+]
 
 # =====================================================
 # É SOBRE CONTAGEM?
@@ -211,6 +264,56 @@ def analisar_fase(noticia):
 
                 return
 
+# =====================================================
+# CLASSIFICAR TIPO DA NOTICIA
+# =====================================================
+
+def classificar_tipo(noticia):
+
+    texto = normalizar(
+        noticia.titulo + " " + noticia.texto
+    )
+
+
+    # Notícias que não são investimento
+
+    for termo in TERMOS_NEGATIVOS:
+
+        if termo in texto:
+
+            noticia.tipo = "Descartada"
+
+            return
+
+
+    tem_empresa = len(noticia.empresas) > 0
+
+    tem_valor = len(noticia.valores) > 0
+
+    tem_investimento = any(
+
+        termo in texto
+
+        for termo in TERMOS_INVESTIMENTO
+
+    )
+
+
+    if tem_empresa and (tem_valor or tem_investimento):
+
+        noticia.tipo = "Investimento privado"
+
+        return
+
+
+    if tem_empresa and noticia.empregos:
+
+        noticia.tipo = "Expansão empresarial"
+
+        return
+
+
+    noticia.tipo = "Não identificado"
 
 # =====================================================
 # CALCULAR PONTUAÇÃO
@@ -273,6 +376,8 @@ def analisar(noticia):
     analisar_empregos(noticia)
 
     analisar_fase(noticia)
+
+    classificar_tipo(noticia)
 
     calcular_pontuacao(noticia)
 
@@ -396,6 +501,12 @@ def imprimir_resumo(noticia):
     print("Fonte:")
 
     print(noticia.fonte)
+
+    print()
+
+    print("Tipo:")
+
+    print(noticia.tipo)
 
     print()
 
