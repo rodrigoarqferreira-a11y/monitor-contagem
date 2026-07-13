@@ -1,18 +1,82 @@
-Ambev
-Mercado Livre
-Shopee
-Komatsu
-Wabtec
-TSEA
-Fortlub
-Bresco
-Emccamp
-Grupo EPO
-Amazon
-Magazine Luiza
-DHL
-FedEx
-Correios
-Via Varejo
-Tora
-Tambasa
+# FORMATO:
+# Nome Oficial|Sinonimo1|Sinonimo2|Sinonimo3
+
+Ambev|AmBev|Companhia de Bebidas das Américas
+
+Mercado Livre|MercadoLivre|Mercado Livre Brasil|MELI
+
+Shopee|Shopee Brasil
+
+Komatsu|Komatsu Brasil
+
+Wabtec|Wabtec Brasil
+
+TSEA|TSEA Energia|TSEA Energia S.A.
+
+Fortlub|Fort Lub|FortLub
+
+Bresco|Bresco Investimentos|Bresco Logística
+
+Emccamp|EMCCAMP Residencial
+
+Grupo EPO|EPO|EPO Engenharia
+
+Amazon|Amazon Brasil
+
+Magazine Luiza|Magalu|MagazineLuiza
+
+DHL|DHL Supply Chain|DHL Brasil
+
+FedEx|Federal Express|FedEx Express
+
+Correios|ECT|Empresa Brasileira de Correios e Telégrafos
+
+Via Varejo|Casas Bahia|Grupo Casas Bahia
+
+Tora|Tora Transportes|Grupo Tora
+
+Tambasa|Tambasa Atacadistas
+
+Log CP|LOG CP|LOG Commercial Properties
+
+GLP|GLP Brasil|Global Logistic Properties
+
+Prologis|Prologis Brasil
+
+CSN|Companhia Siderúrgica Nacional
+
+ArcelorMittal|Arcelor Mittal
+
+VLI|VLI Logística
+
+Vale|Vale S.A.
+
+Stellantis|Fiat|Jeep|Peugeot|Citroën
+
+Localiza|Localiza&Co
+
+MRV|MRV Engenharia
+
+Direcional|Direcional Engenharia
+
+Patrus Transportes|Patrus
+
+JSL|Julio Simões Logística
+
+ID Logistics|ID Logistics Brasil
+
+Ceva Logistics|CEVA
+
+Nippon Express|Nippon
+
+Yusen Logistics|Yusen
+
+MRS Logística|MRS
+
+Rumo Logística|Rumo
+
+Total Express|TotalExpress
+
+Jamef|Jamef Transportes
+
+Braspress|Braspress Transportes
