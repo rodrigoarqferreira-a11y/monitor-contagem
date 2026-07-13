@@ -54,6 +54,12 @@ class Noticia:
 
     relevante: bool = False
 
+    fase: str = ""
+
+    status: str = ""
+
+    confianca: int = 0
+
 
 # ==========================================================
 # INVESTIMENTO
@@ -61,6 +67,8 @@ class Noticia:
 
 @dataclass
 class Investimento:
+
+    id: int = 0
 
     empresa: str = ""
 
@@ -74,11 +82,15 @@ class Investimento:
 
     bairro: str = ""
 
-    cidade: str = ""
+    cidade: str = "Contagem"
 
     estado: str = "MG"
 
     data: str = ""
+
+    fase: str = ""
+
+    status: str = ""
 
     fonte: str = ""
 
@@ -87,6 +99,8 @@ class Investimento:
     observacao: str = ""
 
     pontuacao: int = 0
+
+    confianca: int = 0
 
 
 # ==========================================================
