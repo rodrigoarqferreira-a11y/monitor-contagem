@@ -84,7 +84,34 @@ def parece_noticia(url):
 
     url = url.lower()
 
-    palavras = [
+
+    excluir = [
+
+        "newsletter",
+
+        "opiniao",
+
+        "blog",
+
+        "podcast",
+
+        "eleicoes",
+
+        "esportes",
+
+        "entretenimento"
+
+    ]
+
+
+    for palavra in excluir:
+
+        if palavra in url:
+
+            return False
+
+
+    incluir = [
 
         "/noticia",
 
@@ -100,11 +127,12 @@ def parece_noticia(url):
 
     ]
 
+
     return any(
 
         palavra in url
 
-        for palavra in palavras
+        for palavra in incluir
 
     )
 
