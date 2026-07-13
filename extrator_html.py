@@ -337,3 +337,176 @@ def extrair_data(soup):
         )
 
     return datetime.now().strftime("%Y-%m-%d")
+
+# =====================================================
+# EXTRAIR IMAGEM PRINCIPAL
+# =====================================================
+
+def extrair_imagem(soup):
+
+    if soup is None:
+        return ""
+
+    # Open Graph
+    meta = soup.find("meta", property="og:image")
+
+    if meta and meta.get("content"):
+        return meta["content"]
+
+    # Twitter
+    meta = soup.find("meta", attrs={"name": "twitter:image"})
+
+    if meta and meta.get("content"):
+        return meta["content"]
+
+    img = soup.find("img")
+
+    if img and img.get("src"):
+        return img["src"]
+
+    return ""
+
+
+# =====================================================
+# EXTRAIR AUTOR
+# =====================================================
+
+def extrair_autor(soup):
+
+    if soup is None:
+        return ""
+
+    meta = soup.find("meta", attrs={"name": "author"})
+
+    if meta and meta.get("content"):
+        return meta["content"]
+
+    autor = soup.find(class_=lambda x: x and "author" in str(x).lower())
+
+    if autor:
+        return autor.get_text(" ", strip=True)
+
+    return ""
+
+
+# =====================================================
+# IDENTIFICAR FONTE
+# =====================================================
+
+def identificar_fonte(url):
+
+    url = url.lower()
+
+    if "portal.contagem" in url:
+        return "Portal Contagem"
+
+    if "agenciaminas" in url:
+        return "Agência Minas"
+
+    if "investminas" in url:
+        return "Invest Minas"
+
+    if "fiemg" in url:
+        return "FIEMG"
+
+    if "diariodocomercio" in url:
+        return "Diário do Comércio"
+
+    if "otempo" in url:
+        return "O Tempo"
+
+    return "Desconhecido"
+
+
+# =====================================================
+# EXTRAIR NOTÍCIA COMPLETA
+# =====================================================
+
+def extrair_noticia(url):
+
+    soup = baixar_html(url)
+
+    if soup is None:
+        return None
+
+    soup = limpar_html(soup)
+
+    soup = remover_comentarios(soup)
+
+    soup = remover_blocos(soup)
+
+    area = localizar_conteudo(soup)
+
+    noticia = Noticia()
+
+    noticia.url = url
+
+    noticia.fonte = identificar_fonte(url)
+
+    noticia.titulo = extrair_titulo(soup)
+
+    noticia.texto = extrair_texto(area)
+
+    noticia.data = extrair_data(soup)
+
+    noticia.autor = extrair_autor(soup)
+
+    noticia.imagem = extrair_imagem(soup)
+
+    return noticia
+
+
+# =====================================================
+# TESTE
+# =====================================================
+
+if __name__ == "__main__":
+
+    url = input("Cole uma URL de notícia:\n\n")
+
+    noticia = extrair_noticia(url)
+
+    if noticia is None:
+
+        print("\nErro ao abrir a página.")
+
+    else:
+
+        print("\n==============================")
+
+        print("FONTE")
+
+        print(noticia.fonte)
+
+        print("\n==============================")
+
+        print("TÍTULO")
+
+        print(noticia.titulo)
+
+        print("\n==============================")
+
+        print("DATA")
+
+        print(noticia.data)
+
+        print("\n==============================")
+
+        print("AUTOR")
+
+        print(noticia.autor)
+
+        print("\n==============================")
+
+        print("TEXTO")
+
+        print(noticia.texto[:2000])
+
+        print("\n==============================")
+
+        print("IMAGEM")
+
+        print(noticia.imagem)
+
+        print("\n==============================")
+
