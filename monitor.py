@@ -50,7 +50,6 @@ def main():
 
         noticia = processar(noticia)
 
-
         if noticia.relevante:
 
             inteligencia = analisar_inteligencia(noticia)
