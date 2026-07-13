@@ -182,11 +182,14 @@ def executar():
 
                 continue
 
-             if noticia is None:
-                 continue
+
+            if noticia is None:
+                continue
+
 
             if len(noticia.texto) < 200:
                 continue
+
 
             noticias.append(noticia)
 
