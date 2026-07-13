@@ -442,6 +442,10 @@ def extrair_noticia(url):
 
     area = localizar_conteudo(soup)
 
+       if area is None:
+           print("AVISO: Não encontrou área de conteúdo:", url)
+           return None
+
     noticia = Noticia()
 
     noticia.url = url
