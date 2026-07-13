@@ -242,7 +242,22 @@ def calcular_pontuacao(noticia):
 
     noticia.pontuacao = pontos
 
-    noticia.relevante = pontos >= 40
+    noticia.relevante = (
+    pontos >= 40
+    and
+    (
+        len(noticia.valores) > 0
+        or
+        len(noticia.empregos) > 0
+        or
+        noticia.fase in [
+            "Anunciado",
+            "Construção",
+            "Operação",
+            "Expansão"
+        ]
+    )
+)
 
 
 # =====================================================
