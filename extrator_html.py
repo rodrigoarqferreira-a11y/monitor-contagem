@@ -35,28 +35,13 @@ def baixar_html(url):
 
     try:
 
-        resposta = requests.get(
+        resposta = requests.get(...)
 
-            url,
-
-            headers={
-
-                "User-Agent": USER_AGENT
-
-            },
-
-            timeout=TIMEOUT
-
-        )
-
-        resposta.raise_for_status()
+        resposta.encoding = resposta.apparent_encoding
 
         return BeautifulSoup(
-
             resposta.text,
-
             "lxml"
-
         )
 
     except Exception as erro:
@@ -270,7 +255,11 @@ def extrair_texto(area):
 
             "h3",
 
-            "li"
+            "li",
+
+            "blockquote",
+
+            "figcaption"
 
         ]
 
@@ -284,7 +273,7 @@ def extrair_texto(area):
 
         )
 
-        if len(txt) > 20:
+        if len(txt) > 15:
 
             textos.append(txt)
 
@@ -452,6 +441,8 @@ def extrair_noticia(url):
     noticia.autor = extrair_autor(soup)
 
     noticia.imagem = extrair_imagem(soup)
+
+    noticia.resumo = noticia.texto[:600]
 
     return noticia
 
