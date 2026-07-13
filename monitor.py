@@ -11,30 +11,49 @@ Arquivo principal do sistema.
 
 from crawler import executar
 from analisador import processar
+from datetime import datetime
 
 
 def main():
 
-    print("\n")
+    print()
     print("=" * 70)
     print("MONITOR DE INVESTIMENTOS PRIVADOS")
+    print(
+        f"Execução: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+    )
     print("=" * 70)
 
-    noticias = executar()
+
+    try:
+
+        noticias = executar()
+
+    except Exception as erro:
+
+        print()
+        print("Erro no monitor:")
+        print(erro)
+        return
+
 
     print()
     print(f"{len(noticias)} notícias encontradas.")
     print()
 
+
     relevantes = 0
+
 
     for noticia in noticias:
 
         noticia = processar(noticia)
 
+
         if noticia.relevante:
 
             relevantes += 1
+
 
             print("-" * 70)
 
@@ -44,11 +63,16 @@ def main():
 
             print("Empresa(s):")
 
+
             if noticia.empresas:
+
                 for empresa in noticia.empresas:
                     print(" •", empresa)
+
             else:
+
                 print(" • Não identificada")
+
 
             print()
 
@@ -56,31 +80,60 @@ def main():
 
             print("Pontuação:", noticia.pontuacao)
 
+
             if noticia.valores:
-                print("Valor:", ", ".join(noticia.valores))
+
+                print(
+                    "Valor:",
+                    ", ".join(noticia.valores)
+                )
+
 
             if noticia.empregos:
-                print("Empregos:", ", ".join(noticia.empregos))
+
+                print(
+                    "Empregos:",
+                    ", ".join(noticia.empregos)
+                )
+
 
             print("Fonte:", noticia.fonte)
 
             print("URL:", noticia.url)
 
             print("-" * 70)
+
             print()
 
+
     print()
+
     print("=" * 70)
+
     print("RESUMO FINAL")
+
     print("=" * 70)
 
-    print(f"Total de notícias........: {len(noticias)}")
-    print(f"Notícias relevantes......: {relevantes}")
-    print(f"Notícias descartadas.....: {len(noticias)-relevantes}")
+
+    print(
+        f"Total de notícias........: {len(noticias)}"
+    )
+
+    print(
+        f"Notícias relevantes......: {relevantes}"
+    )
+
+    print(
+        f"Notícias descartadas.....: {len(noticias)-relevantes}"
+    )
+
 
     print()
+
     print("Monitoramento concluído.")
 
 
+
 if __name__ == "__main__":
+
     main()
