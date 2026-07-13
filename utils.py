@@ -122,11 +122,21 @@ def encontrar_empresas(texto):
 
     encontradas = []
 
-    for empresa in EMPRESAS:
+    for linha in EMPRESAS:
 
-        if normalizar(empresa) in texto:
+        nomes = [n.strip() for n in linha.split("|")]
 
-            encontradas.append(empresa)
+        nome_oficial = nomes[0]
+
+        sinonimos = nomes
+
+        for nome in sinonimos:
+
+            if normalizar(nome) in texto:
+
+                encontradas.append(nome_oficial)
+
+                break
 
     return sorted(set(encontradas))
 
