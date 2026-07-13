@@ -381,6 +381,8 @@ def analisar(noticia):
 
     calcular_pontuacao(noticia)
 
+    classificar_tipo(noticia)
+
     return noticia
 
 # =====================================================
