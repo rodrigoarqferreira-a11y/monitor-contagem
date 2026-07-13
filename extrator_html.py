@@ -35,13 +35,30 @@ def baixar_html(url):
 
     try:
 
-        resposta = requests.get(...)
+        resposta = requests.get(
+
+            url,
+
+            headers={
+
+                "User-Agent": USER_AGENT
+
+            },
+
+            timeout=TIMEOUT
+
+        )
+
+        resposta.raise_for_status()
 
         resposta.encoding = resposta.apparent_encoding
 
         return BeautifulSoup(
+
             resposta.text,
+
             "lxml"
+
         )
 
     except Exception as erro:
@@ -51,7 +68,6 @@ def baixar_html(url):
         print(erro)
 
         return None
-
 
 # =====================================================
 # REMOVER TAGS INÚTEIS
