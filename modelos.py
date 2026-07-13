@@ -58,8 +58,14 @@ class Noticia:
 
     status: str = ""
 
-    confianca: int = 0
+    # Classificação inteligente
+    tipo: str = ""
 
+    classificacao: str = ""
+
+    motivos: List[str] = field(default_factory=list)
+
+    confianca: int = 0
 
 # ==========================================================
 # INVESTIMENTO
