@@ -11,6 +11,7 @@ Arquivo principal do sistema.
 
 from crawler import executar
 from analisador import processar
+from intel import analisar_inteligencia
 from datetime import datetime
 
 
@@ -52,6 +53,8 @@ def main():
 
         if noticia.relevante:
 
+            inteligencia = analisar_inteligencia(noticia)
+
             relevantes += 1
 
 
@@ -78,7 +81,28 @@ def main():
 
             print("Fase:", noticia.fase)
 
-            print("Pontuação:", noticia.pontuacao)
+            print("Status:", inteligencia["status"])
+
+            print(
+                "Classificação:",
+                inteligencia["classificacao"]
+            )
+
+            print(
+                "Confiança:",
+                inteligencia["confianca"],
+                "%"
+            )
+
+            print(
+                "Estrelas:",
+                inteligencia["estrelas"]
+            )
+
+            print(
+                "Pontuação:",
+                noticia.pontuacao
+            )
 
 
             if noticia.valores:
