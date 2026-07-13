@@ -1,281 +1,86 @@
-import csv
-import hashlib
-import os
-import re
-from datetime import datetime
-
-def gerar_hash(texto):
-    return hashlib.md5(
-        texto.encode("utf-8")
-    ).hexdigest()
+"""
+=====================================================
 
-def carregar_historico():
+MONITOR DE INVESTIMENTOS PRIVADOS
+CONTAGEM - MG
 
-    vistos = set()
+Arquivo principal do sistema.
 
-    if os.path.exists("historico.csv"):
+=====================================================
+"""
 
-        with open(
-            "historico.csv",
-            "r",
-            encoding="utf-8"
-        ) as arquivo:
+from crawler import executar
+from analisador import processar
 
-            leitor = csv.DictReader(arquivo)
 
-            for linha in leitor:
-                vistos.add(linha["hash"])
+def main():
 
-    return vistos
+    print("\n")
+    print("=" * 70)
+    print("MONITOR DE INVESTIMENTOS PRIVADOS")
+    print("=" * 70)
 
-def salvar_historico(titulo, url, fonte):
+    noticias = executar()
 
-    identificador = gerar_hash(titulo + url)
+    print()
+    print(f"{len(noticias)} notícias encontradas.")
+    print()
 
-    if os.path.exists("historico.csv"):
+    relevantes = 0
 
-        with open(
-            "historico.csv",
-            "r",
-            encoding="utf-8"
-        ) as arquivo:
+    for noticia in noticias:
 
-            quantidade = sum(1 for linha in arquivo)
+        noticia = processar(noticia)
 
-            novo_id = quantidade
-    else:
+        if noticia.relevante:
 
-        novo_id = 1
+            relevantes += 1
 
+            print("-" * 70)
 
-    with open(
-        "historico.csv",
-        "a",
-        newline="",
-        encoding="utf-8"
-    ) as arquivo:
+            print(noticia.titulo)
 
-        escritor = csv.writer(arquivo)
+            print()
 
-        escritor.writerow(
-            [
-                novo_id,
-                datetime.now().strftime("%Y-%m-%d"),
-                titulo,
-                url,
-                fonte,
-                identificador
-            ]
-        )
+            print("Empresa(s):")
 
-import requests
-from bs4 import BeautifulSoup
-from pathlib import Path
+            if noticia.empresas:
+                for empresa in noticia.empresas:
+                    print(" •", empresa)
+            else:
+                print(" • Não identificada")
 
-historico = carregar_historico()
+            print()
 
+            print("Fase:", noticia.fase)
 
-# carregar sites
-with open("sites.txt", encoding="utf-8") as f:
-    sites = [s.strip() for s in f if s.strip()]
+            print("Pontuação:", noticia.pontuacao)
 
-# carregar palavras-chave
-with open("keywords.txt", encoding="utf-8") as f:
-    keywords = [
-        linha.strip().lower()
-        for linha in f
-        if linha.strip() and not linha.startswith("#")
-    ]
-    
-# carregar contexto contagem
-with open("contexto.txt", encoding="utf-8") as f:
-    contexto = [
-        linha.strip().lower()
-        for linha in f
-        if linha.strip()
-    ]
+            if noticia.valores:
+                print("Valor:", ", ".join(noticia.valores))
 
-# carregar palavras descartáveis
-with open("descartaveis.txt", encoding="utf-8") as f:
-    ignorar = [
-        linha.strip().lower()
-        for linha in f
-        if linha.strip() and not linha.startswith("#")
-    ]
+            if noticia.empregos:
+                print("Empregos:", ", ".join(noticia.empregos))
 
+            print("Fonte:", noticia.fonte)
 
-resultado = []
+            print("URL:", noticia.url)
 
-for site in sites:
+            print("-" * 70)
+            print()
 
-    try:
+    print()
+    print("=" * 70)
+    print("RESUMO FINAL")
+    print("=" * 70)
 
-        resposta = requests.get(
-            site,
-            timeout=30,
-            headers={"User-Agent": "Mozilla/5.0"}
-        )
+    print(f"Total de notícias........: {len(noticias)}")
+    print(f"Notícias relevantes......: {relevantes}")
+    print(f"Notícias descartadas.....: {len(noticias)-relevantes}")
 
-        soup = BeautifulSoup(resposta.text, "lxml")
-        print("Site analisado:", site)
-        print("Links encontrados:", len(soup.find_all("a", href=True)))
+    print()
+    print("Monitoramento concluído.")
 
-        textos_encontrados = []
-        
-        for link in soup.find_all("a", href=True):
 
-            titulo = link.get_text(
-                " ",
-                strip=True
-            ).lower()
-
-            if titulo:
-
-                if len(titulo) < 15:
-                    continue
-
-                if any(palavra in titulo for palavra in ignorar):
-                    continue
-
-                print("TÍTULO:", titulo[:100])
-
-                textos_encontrados.append(
-                    {
-                        "titulo": titulo,
-                        "url": link["href"]
-                    }
-                )
-
-
-        encontradas = []
-
-        filtros_contagem = [
-            "contagem",
-            "município de contagem",
-            "municipio de contagem",
-            "prefeitura de contagem",
-            "cidade de contagem"
-         ]
-
-        for item in textos_encontrados:
-
-            titulo = item["titulo"]
-
-            # só exige "Contagem" em sites externos
-            if "portal.contagem.mg.gov.br" not in site:
-
-                if not any(
-                    termo in titulo
-                    for termo in filtros_contagem
-                ):
-                    continue
-
-            palavras_titulo = []
-
-            for palavra in keywords:
-
-                padrao = r"\b" + re.escape(palavra) + r"\b"
-
-                if re.search(padrao, titulo):
-
-                   print("ACHOU:", palavra)
-
-                   palavras_titulo.append(palavra)
-
-            if palavras_titulo:
-
-               encontradas.append({
-                   "titulo": titulo,
-                   "palavras": palavras_titulo,
-                   "url": item["url"]
-            })
-
-        print("ENCONTRADAS:")
-        print(encontradas)
-
-        resultado.append({
-            "site": site,
-            "quantidade": len(encontradas),
-            "palavras": sorted(set(encontradas))
-        })
-
-        if encontradas:
-
-            item = next(
-                (
-                    item
-                    for item in textos_encontrados
-                    if any(
-                        palavra in item["titulo"]
-                        for palavra in encontradas
-                    )
-                ),
-                None
-            )
-
-            if item:
-
-                titulo = item["titulo"]
-                url = item["url"]
-
-            identificador = gerar_hash(titulo + site)
-
-            if identificador not in historico:
-
-                salvar_historico(
-                    titulo,
-                    url,
-                    "monitor"
-                )
-
-                historico.add(identificador)
-    except Exception as erro:
-
-        resultado.append({
-            "site": site,
-            "erro": str(erro)
-        })
-
-
-# criar pasta de relatórios
-Path("relatorios").mkdir(exist_ok=True)
-
-arquivo = (
-    f"relatorios/relatorio_"
-    f"{datetime.now().strftime('%Y-%m-%d')}.md"
-)
-
-with open(arquivo, "w", encoding="utf-8") as f:
-
-    f.write("# Relatório de Monitoramento\n\n")
-
-    f.write(
-        f"Gerado em: "
-        f"{datetime.now().strftime('%d/%m/%Y %H:%M')}\n\n"
-    )
-
-    for item in resultado:
-
-        f.write(f"## {item['site']}\n")
-
-        if "erro" in item:
-
-            f.write(
-                f"Erro: {item['erro']}\n\n"
-            )
-
-        else:
-
-            f.write(
-                f"Palavras encontradas: "
-                f"{item['quantidade']}\n\n"
-            )
-
-            f.write(
-                ", ".join(item["palavras"])
-            )
-
-            f.write("\n\n")
-
-
-print("Relatório gerado com sucesso.")
+if __name__ == "__main__":
+    main()
