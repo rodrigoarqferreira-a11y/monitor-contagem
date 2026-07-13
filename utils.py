@@ -311,7 +311,7 @@ def calcular_pontuacao(
 
     pontos += quantidade_keywords * 10
 
-    pontos += quantidade_empresas * 20
+    pontos += min(quantidade_empresas,3) * 5
 
     pontos += quantidade_valores * 15
 
