@@ -78,8 +78,7 @@ SITES = carregar_lista("sites.txt", minusculo=False)
 # PALAVRAS DE INTERESSE
 # ==========================================================
 
-KEYWORDS = carregar_lista("keywords.txt")
-
+PALAVRAS_CHAVE = carregar_lista("keywords.txt")
 
 # ==========================================================
 # CONTEXTO GEOGRÁFICO
@@ -116,7 +115,7 @@ USER_AGENT = (
 
 TIMEOUT = 30
 
-MAX_LINKS_POR_SITE = 300
+MAX_LINKS_POR_SITE = 120
 
 MINIMO_TITULO = 15
 
@@ -232,9 +231,78 @@ if __name__ == "__main__":
     print("=" * 60)
 
     print(f"Sites...............: {len(SITES)}")
-    print(f"Keywords...........: {len(KEYWORDS)}")
+    print(f"Palavras-chave.....: {len(PALAVRAS_CHAVE)}")
     print(f"Contexto...........: {len(CONTEXTO)}")
     print(f"Empresas...........: {len(EMPRESAS)}")
     print(f"Descartáveis.......: {len(DESCARTAVEIS)}")
 
     print("=" * 60)
+
+# ==========================================================
+# FASES DOS INVESTIMENTOS
+# ==========================================================
+
+FASES = {
+
+    "Negociação": [
+
+        "protocolo",
+        "assinatura"
+
+    ],
+
+    "Anunciado": [
+
+        "anuncia",
+        "anunciou",
+        "investimento"
+
+    ],
+
+    "Licenciamento": [
+
+        "copam",
+        "licença",
+        "licenca",
+        "licenciamento",
+        "semad"
+
+    ],
+
+    "Construção": [
+
+        "obra",
+        "obras",
+        "construção",
+        "construcao"
+
+    ],
+
+    "Contratação": [
+
+        "empregos",
+        "vagas",
+        "contratação",
+        "contratacao"
+
+    ],
+
+    "Operação": [
+
+        "inauguração",
+        "inauguracao",
+        "operação",
+        "operacao"
+
+    ],
+
+    "Expansão": [
+
+        "expansão",
+        "expansao",
+        "ampliação",
+        "ampliacao"
+
+    ]
+
+}
