@@ -168,14 +168,24 @@ def executar():
 
             print(f"[{i}/{len(links)}]")
 
-            noticia = extrair_noticia(link)
+            try:
 
-            if noticia is None:
+                noticia = extrair_noticia(link)
+
+            except Exception as erro:
+
+                print()
+                print("Erro ao extrair notícia:")
+                print(link)
+                print(erro)
+                print()
 
                 continue
 
-            if len(noticia.texto) < 200:
+             if noticia is None:
+                 continue
 
+            if len(noticia.texto) < 200:
                 continue
 
             noticias.append(noticia)
