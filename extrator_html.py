@@ -429,42 +429,62 @@ def identificar_fonte(url):
 
 def extrair_noticia(url):
 
-    soup = baixar_html(url)
+    try:
 
-    if soup is None:
+        soup = baixar_html(url)
+
+        if soup is None:
+            return None
+
+        print("OK baixar:", url)
+
+        soup = limpar_html(soup)
+
+        print("OK limpar")
+
+        soup = remover_comentarios(soup)
+
+        print("OK comentarios")
+
+        soup = remover_blocos(soup)
+
+        print("OK blocos")
+
+        area = localizar_conteudo(soup)
+
+        print("OK conteudo")
+
+
+        noticia = Noticia()
+
+        noticia.url = url
+
+        noticia.fonte = identificar_fonte(url)
+
+        noticia.titulo = extrair_titulo(soup)
+
+        noticia.texto = extrair_texto(area)
+
+        noticia.data = extrair_data(soup)
+
+        noticia.autor = extrair_autor(soup)
+
+        noticia.imagem = extrair_imagem(soup)
+
+        noticia.resumo = noticia.texto[:600]
+
+        print("OK noticia criada")
+
+        return noticia
+
+
+    except Exception as erro:
+
+        print("ERRO INTERNO EXTRATOR:")
+        print(url)
+        print(erro)
+
         return None
-
-    soup = limpar_html(soup)
-
-    soup = remover_comentarios(soup)
-
-    soup = remover_blocos(soup)
-
-    area = localizar_conteudo(soup)
-
-    if area is None:
-        print("AVISO: Não encontrou área de conteúdo:", url)
-        return None
-
-    noticia = Noticia()
-
-    noticia.url = url
-
-    noticia.fonte = identificar_fonte(url)
-
-    noticia.titulo = extrair_titulo(soup)
-
-    noticia.texto = extrair_texto(area)
-
-    noticia.data = extrair_data(soup)
-
-    noticia.autor = extrair_autor(soup)
-
-    noticia.imagem = extrair_imagem(soup)
-
-    noticia.resumo = noticia.texto[:600]
-
-    return noticia
 
 
 # =====================================================
