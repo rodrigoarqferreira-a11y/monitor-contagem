@@ -187,6 +187,12 @@ def executar():
                 continue
 
 
+            if not noticia:
+                continue
+
+            if not noticia.texto:
+                continue
+
             if len(noticia.texto) < 200:
                 continue
 
