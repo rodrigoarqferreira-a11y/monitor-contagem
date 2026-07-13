@@ -139,6 +139,8 @@ class Banco:
 
         if empresa:
 
+            empresa["ultima_atualizacao"] = datetime.now().strftime("%Y-%m-%d")
+
             return empresa
 
         nova = {
@@ -197,17 +199,23 @@ class Banco:
 
     def adicionar_investimento(
 
-        self,
+    self,
 
-        empresa,
+    empresa,
 
-        ano,
+    ano,
 
-        valor="",
+    valor="",
 
-        empregos="",
+    empregos="",
 
-        bairro=""
+    bairro="",
+
+    fase="",
+
+    fonte="",
+
+    url=""
 
     ):
 
@@ -241,7 +249,13 @@ class Banco:
 
             "ultima_atualizacao":datetime.now().strftime("%Y-%m-%d"),
 
-            "eventos":[]
+            "eventos":[],
+
+            "fase": "Anunciado",
+
+            "fonte": "",
+
+            "url": ""
 
         }
 
@@ -351,7 +365,13 @@ class Banco:
 
                 "pontuacao":noticia.pontuacao,
 
-                "relevante":noticia.relevante
+                "relevante":noticia.relevante,
+
+                "fase": noticia.fase,
+
+                "status": noticia.status,
+
+                "confianca": noticia.confianca
 
             }
 
