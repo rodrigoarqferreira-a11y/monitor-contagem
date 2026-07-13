@@ -121,25 +121,36 @@ def url_valida(url):
 
 def encontrar_empresas(texto):
 
-    texto = normalizar(texto)
+    texto_normalizado = normalizar(texto)
 
     encontradas = []
 
     for linha in EMPRESAS:
 
-        nomes = [n.strip() for n in linha.split("|")]
+        nomes = [
+            n.strip()
+            for n in linha.split("|")
+            if n.strip()
+        ]
 
         nome_oficial = nomes[0]
 
-        sinonimos = nomes
+        for nome in nomes:
 
-        for nome in sinonimos:
+            nome_normalizado = normalizar(nome)
 
-            if normalizar(nome) in texto:
+            # transforma em busca por palavra inteira
+            padrao = r"\b" + re.escape(nome_normalizado) + r"\b"
+
+            if re.search(
+                padrao,
+                texto_normalizado
+            ):
 
                 encontradas.append(nome_oficial)
 
                 break
+
 
     return sorted(set(encontradas))
 
