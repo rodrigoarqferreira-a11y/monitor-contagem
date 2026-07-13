@@ -15,7 +15,10 @@ from urllib.parse import urljoin, urlparse
 
 from config import (
     EMPRESAS,
-    EXTENSOES_IGNORADAS
+    EXTENSOES_IGNORADAS,
+    CONTEXTO,
+    PALAVRAS_CHAVE,
+    FASES
 )
 
 # ==========================================================
@@ -256,7 +259,7 @@ def possui_contagem(texto, contexto):
 # KEYWORDS
 # ==========================================================
 
-def encontrar_keywords(texto, keywords):
+def encontrar_keywords(texto, PALAVRAS_CHAVE):
 
     texto = normalizar(texto)
 
@@ -295,7 +298,7 @@ def calcular_pontuacao(
 
         pontos += 20
 
-    pontos += quantidade_keywords * 5
+    pontos += quantidade_keywords * 10
 
     pontos += quantidade_empresas * 20
 
@@ -363,9 +366,9 @@ if __name__ == "__main__":
 
     print("KEYWORDS")
 
-    from config import KEYWORDS
+    from config import PALAVRAS_CHAVE
 
-    print(encontrar_keywords(texto, KEYWORDS))
+    print(encontrar_keywords(texto, PALAVRAS_CHAVE))
 
     print()
 
