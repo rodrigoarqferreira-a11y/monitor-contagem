@@ -340,6 +340,149 @@ def estrelas(pontos):
 
     return "★☆☆☆☆"
 
+# ==========================================================
+# PALAVRAS-CHAVE ENCONTRADAS
+# ==========================================================
+
+def encontrar_keywords(texto):
+
+    texto = normalizar(texto)
+
+    encontradas = []
+
+    for palavra in PALAVRAS_CHAVE:
+
+        if normalizar(palavra) in texto:
+
+            encontradas.append(palavra)
+
+    return sorted(set(encontradas))
+
+# ==========================================================
+# IDENTIFICAR FASE
+# ==========================================================
+
+def identificar_fase(texto):
+
+    texto = normalizar(texto)
+
+    for fase, palavras in FASES.items():
+
+        for palavra in palavras:
+
+            if normalizar(palavra) in texto:
+
+                return fase
+
+    return "Não identificada"
+
+
+# ==========================================================
+# IDENTIFICAR STATUS
+# ==========================================================
+
+def identificar_status(texto):
+
+    texto = normalizar(texto)
+
+    regras = {
+
+        "Em operação": [
+
+            "opera",
+            "operação",
+            "operacao",
+            "funcionando",
+            "inaugurada",
+            "inaugurado"
+
+        ],
+
+        "Em construção": [
+
+            "obra",
+            "obras",
+            "construção",
+            "construcao"
+
+        ],
+
+        "Anunciado": [
+
+            "anunciou",
+            "anuncia",
+            "investimento"
+
+        ]
+
+    }
+
+    for status, palavras in regras.items():
+
+        for palavra in palavras:
+
+            if normalizar(palavra) in texto:
+
+                return status
+
+    return "Não identificado"
+
+# ==========================================================
+# CLASSIFICAÇÃO
+# ==========================================================
+
+def classificar_relevancia(pontos):
+
+    if pontos >= 80:
+
+        return "Muito relevante"
+
+    if pontos >= 60:
+
+        return "Relevante"
+
+    if pontos >= 40:
+
+        return "Monitorar"
+
+    return "Baixa relevância"
+
+# ==========================================================
+# CONFIANÇA
+# ==========================================================
+
+def calcular_confianca(
+
+    empresas,
+
+    valores,
+
+    empregos,
+
+    contexto
+
+):
+
+    confianca = 40
+
+    if contexto:
+
+        confianca += 20
+
+    if empresas:
+
+        confianca += 20
+
+    if valores:
+
+        confianca += 10
+
+    if empregos:
+
+        confianca += 10
+
+    return min(confianca, 100)
+
 
 # ==========================================================
 # DEBUG
