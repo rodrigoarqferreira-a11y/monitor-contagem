@@ -1230,6 +1230,12 @@ class GeradorRelatorio:
         with open(nome_arquivo, "w", encoding="utf-8") as f:
             f.write(html)
 
+        # Salva também uma cópia fixa, sempre com o mesmo nome,
+        # para manter uma URL estável no GitHub Pages
+        caminho_fixo = self.pasta_relatorios / "ultimo_relatorio.html"
+        with open(caminho_fixo, "w", encoding="utf-8") as f:
+            f.write(html)
+
         return nome_arquivo
 
     # =====================================================
