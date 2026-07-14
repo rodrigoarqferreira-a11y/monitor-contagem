@@ -65,7 +65,8 @@ class Noticia:
 
     motivos: List[str] = field(default_factory=list)
 
-    confianca: int = 0
+    confianca: int = 0    
+    mencionou_contagem: bool = False 
 
 # ==========================================================
 # INVESTIMENTO
