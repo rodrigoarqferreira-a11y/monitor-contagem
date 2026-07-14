@@ -492,6 +492,26 @@ def calcular_pontuacao(noticia):
             pontos -= 30
 
     # -------------------------------------------------
+    # NÃO É INVESTIMENTO PRIVADO
+    # -------------------------------------------------
+
+    if noticia.tipo == "Poder Público":
+
+        pontos -= 60
+
+    # -------------------------------------------------
+    # FILTRO PELO TIPO DA NOTÍCIA
+    # -------------------------------------------------
+
+    if noticia.tipo == "RH":
+
+        pontos = min(pontos, 30)
+
+    elif noticia.tipo == "Outro":
+
+        pontos = min(pontos, 40)
+
+    # -------------------------------------------------
     # LIMITES
     # -------------------------------------------------
 
