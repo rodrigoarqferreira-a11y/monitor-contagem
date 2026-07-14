@@ -6,6 +6,13 @@ RELATORIO.PY
 Gerador de Relatórios de Investimentos Privados
 Monitor de Contagem
 
+Formatos suportados:
+- TXT (texto puro)
+- JSON (dados estruturados)
+- PDF (documento formatado)
+- HTML (painel web)
+- Gráficos (PNG/SVG)
+
 ====================================================
 """
 
@@ -14,8 +21,41 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict, Counter
 import statistics
+from io import BytesIO
 
 from banco import Banco
+
+# =====================================================
+# IMPORTAÇÕES CONDICIONAIS
+# =====================================================
+
+try:
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib import colors
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.platypus import (
+        SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer,
+        PageBreak, Image as RLImage
+    )
+    HAS_REPORTLAB = True
+except ImportError:
+    HAS_REPORTLAB = False
+
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib
+    matplotlib.use('Agg')  # Backend sem GUI
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
+
+try:
+    import plotly.graph_objects as go
+    import plotly.express as px
+    HAS_PLOTLY = True
+except ImportError:
+    HAS_PLOTLY = False
 
 
 class GeradorRelatorio:
@@ -531,6 +571,594 @@ class GeradorRelatorio:
         return "\n".join(texto)
 
     # =====================================================
+    # GERAR GRÁFICOS
+    # =====================================================
+
+    def gerar_graficos(self):
+        """Gera gráficos em matplotlib e plotly."""
+
+        if not HAS_MATPLOTLIB and not HAS_PLOTLY:
+            print("⚠️  Matplotlib ou Plotly não instalados. Pulando gráficos.")
+            return []
+
+        arquivos_gerados = []
+
+        try:
+            fases = self.investimentos_por_fase()
+            ranking = self.ranking_empresas(10)
+            evolucao = self.evolucao_mensal()
+            confianca = self.analise_confianca()
+
+            # =====================================================
+            # GRÁFICO 1: INVESTIMENTOS POR FASE
+            # =====================================================
+
+            if HAS_MATPLOTLIB:
+                fig, ax = plt.subplots(figsize=(12, 6))
+
+                fases_nomes = list(fases.keys())
+                fases_contagem = [len(fases[f]) for f in fases_nomes]
+
+                colors_fase = plt.cm.Set3(range(len(fases_nomes)))
+                ax.barh(fases_nomes, fases_contagem, color=colors_fase)
+                ax.set_xlabel("Número de Investimentos", fontsize=12)
+                ax.set_title("Investimentos por Fase", fontsize=14, fontweight='bold')
+                ax.grid(axis='x', alpha=0.3)
+
+                for i, v in enumerate(fases_contagem):
+                    ax.text(v + 0.1, i, str(v), va='center', fontweight='bold')
+
+                plt.tight_layout()
+                arquivo = self.pasta_relatorios / "grafico_fases.png"
+                plt.savefig(arquivo, dpi=300, bbox_inches='tight')
+                plt.close()
+                arquivos_gerados.append(arquivo)
+                print(f"✓ Gráfico: {arquivo}")
+
+            # =====================================================
+            # GRÁFICO 2: TOP 10 EMPRESAS
+            # =====================================================
+
+            if HAS_MATPLOTLIB:
+                fig, ax = plt.subplots(figsize=(12, 8))
+
+                empresas_nomes = [e["empresa"] for e in ranking]
+                empresas_count = [e["investimentos"] for e in ranking]
+
+                colors_emp = plt.cm.viridis(range(len(empresas_nomes)))
+                ax.barh(empresas_nomes, empresas_count, color=colors_emp)
+                ax.set_xlabel("Número de Investimentos", fontsize=12)
+                ax.set_title("Top 10 Empresas com Mais Investimentos", fontsize=14, fontweight='bold')
+                ax.grid(axis='x', alpha=0.3)
+
+                for i, v in enumerate(empresas_count):
+                    ax.text(v + 0.1, i, str(v), va='center', fontweight='bold')
+
+                plt.tight_layout()
+                arquivo = self.pasta_relatorios / "grafico_empresas.png"
+                plt.savefig(arquivo, dpi=300, bbox_inches='tight')
+                plt.close()
+                arquivos_gerados.append(arquivo)
+                print(f"✓ Gráfico: {arquivo}")
+
+            # =====================================================
+            # GRÁFICO 3: EVOLUÇÃO TEMPORAL
+            # =====================================================
+
+            if HAS_MATPLOTLIB:
+                fig, ax = plt.subplots(figsize=(14, 6))
+
+                periodos = list(evolucao.keys())
+                investimentos = [evolucao[p]["investimentos"] for p in periodos]
+
+                ax.plot(periodos, investimentos, marker='o', linewidth=2, markersize=8, color='#2E86AB')
+                ax.fill_between(range(len(periodos)), investimentos, alpha=0.3, color='#2E86AB')
+                ax.set_xlabel("Período", fontsize=12)
+                ax.set_ylabel("Número de Investimentos", fontsize=12)
+                ax.set_title("Evolução de Investimentos ao Longo do Tempo", fontsize=14, fontweight='bold')
+                ax.grid(True, alpha=0.3)
+                plt.xticks(rotation=45, ha='right')
+
+                plt.tight_layout()
+                arquivo = self.pasta_relatorios / "grafico_evolucao.png"
+                plt.savefig(arquivo, dpi=300, bbox_inches='tight')
+                plt.close()
+                arquivos_gerados.append(arquivo)
+                print(f"✓ Gráfico: {arquivo}")
+
+            # =====================================================
+            # GRÁFICO 4: CONFIANÇA (PIE CHART)
+            # =====================================================
+
+            if HAS_MATPLOTLIB:
+                fig, ax = plt.subplots(figsize=(10, 8))
+
+                tamanhos = [confianca['alta'], confianca['media'], confianca['baixa']]
+                rotulos = [
+                    f"Alta (80-100%)\n{confianca['alta']}%",
+                    f"Média (50-80%)\n{confianca['media']}%",
+                    f"Baixa (<50%)\n{confianca['baixa']}%"
+                ]
+                cores = ['#90EE90', '#FFD700', '#FF6B6B']
+
+                wedges, texts, autotexts = ax.pie(
+                    tamanhos,
+                    labels=rotulos,
+                    colors=cores,
+                    autopct='',
+                    startangle=90,
+                    textprops={'fontsize': 11, 'fontweight': 'bold'}
+                )
+
+                ax.set_title(f"Distribuição de Confiança\nMédia Geral: {confianca['media_geral']}%",
+                           fontsize=14, fontweight='bold')
+
+                plt.tight_layout()
+                arquivo = self.pasta_relatorios / "grafico_confianca.png"
+                plt.savefig(arquivo, dpi=300, bbox_inches='tight')
+                plt.close()
+                arquivos_gerados.append(arquivo)
+                print(f"✓ Gráfico: {arquivo}")
+
+        except Exception as e:
+            print(f"❌ Erro ao gerar gráficos: {e}")
+
+        return arquivos_gerados
+
+    # =====================================================
+    # GERAR HTML
+    # =====================================================
+
+    def gerar_html(self):
+        """Gera painel interativo em HTML."""
+
+        resumo = self.calcular_resumo_executivo()
+        fases = self.investimentos_por_fase()
+        ranking = self.ranking_empresas()
+        evolucao = self.evolucao_mensal()
+        fontes = self.analise_por_fonte()
+        confianca = self.analise_confianca()
+
+        # Dados para gráficos
+        fases_labels = list(fases.keys())
+        fases_data = [len(fases[f]) for f in fases_labels]
+
+        empresas_labels = [e["empresa"] for e in ranking]
+        empresas_data = [e["investimentos"] for e in ranking]
+
+        periodos = list(evolucao.keys())
+        investimentos_data = [evolucao[p]["investimentos"] for p in periodos]
+
+        html = f"""
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Investimentos - Contagem</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }}
+
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }}
+
+        .container {{
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }}
+
+        .header {{
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }}
+
+        .header h1 {{
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }}
+
+        .header p {{
+            font-size: 1.1em;
+            opacity: 0.9;
+        }}
+
+        .content {{
+            padding: 40px;
+        }}
+
+        .summary {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }}
+
+        .summary-card {{
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }}
+
+        .summary-card h3 {{
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }}
+
+        .summary-card .value {{
+            font-size: 2em;
+            font-weight: bold;
+        }}
+
+        .section {{
+            margin-bottom: 40px;
+        }}
+
+        .section h2 {{
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }}
+
+        .chart-container {{
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }}
+
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }}
+
+        table th {{
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }}
+
+        table td {{
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }}
+
+        table tr:hover {{
+            background: #f5f5f5;
+        }}
+
+        table tr:nth-child(even) {{
+            background: #f9f9f9;
+        }}
+
+        .footer {{
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }}
+
+        @media (max-width: 768px) {{
+            .header h1 {{
+                font-size: 1.8em;
+            }}
+
+            .summary {{
+                grid-template-columns: 1fr;
+            }}
+
+            .content {{
+                padding: 20px;
+            }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Monitor de Investimentos Privados</h1>
+            <p>Contagem - MG | Relatório gerado em {self.data_geracao.strftime('%d/%m/%Y %H:%M')}</p>
+        </div>
+
+        <div class="content">
+            <!-- SUMÁRIO EXECUTIVO -->
+            <div class="summary">
+                <div class="summary-card">
+                    <h3>Investimentos Detectados</h3>
+                    <div class="value">{resumo['investimentos_detectados']}</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Empresas Monitoradas</h3>
+                    <div class="value">{resumo['empresas_monitoradas']}</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Novos Empregos</h3>
+                    <div class="value">{resumo['novos_empregos']:,}</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Valor Total</h3>
+                    <div class="value">R$ {resumo['valor_total']/1e9:.2f}B</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Confiança Média</h3>
+                    <div class="value">{resumo['confianca_media']}%</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Notícias Relevantes</h3>
+                    <div class="value">{resumo['noticias_relevantes']}</div>
+                </div>
+            </div>
+
+            <!-- INVESTIMENTOS POR FASE -->
+            <div class="section">
+                <h2>📈 Investimentos por Fase</h2>
+                <div class="chart-container" id="chart-fases"></div>
+                <script>
+                    var data_fases = [{{
+                        x: {fases_data},
+                        y: {fases_labels},
+                        type: 'bar',
+                        orientation: 'h',
+                        marker: {{color: '#667eea'}}
+                    }}];
+                    var layout_fases = {{
+                        title: 'Distribuição por Fase do Investimento',
+                        xaxis: {{title: 'Quantidade'}},
+                        margin: {{l: 150}}
+                    }};
+                    Plotly.newPlot('chart-fases', data_fases, layout_fases, {{responsive: true}});
+                </script>
+            </div>
+
+            <!-- TOP 10 EMPRESAS -->
+            <div class="section">
+                <h2>🏢 Top 10 Empresas</h2>
+                <div class="chart-container" id="chart-empresas"></div>
+                <script>
+                    var data_empresas = [{{
+                        x: {empresas_data},
+                        y: {empresas_labels},
+                        type: 'bar',
+                        orientation: 'h',
+                        marker: {{color: '#764ba2'}}
+                    }}];
+                    var layout_empresas = {{
+                        title: 'Empresas com Mais Investimentos',
+                        xaxis: {{title: 'Quantidade'}},
+                        margin: {{l: 200}}
+                    }};
+                    Plotly.newPlot('chart-empresas', data_empresas, layout_empresas, {{responsive: true}});
+                </script>
+            </div>
+
+            <!-- EVOLUÇÃO TEMPORAL -->
+            <div class="section">
+                <h2>📅 Evolução Temporal</h2>
+                <div class="chart-container" id="chart-evolucao"></div>
+                <script>
+                    var data_evolucao = [{{
+                        x: {periodos},
+                        y: {investimentos_data},
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        line: {{color: '#667eea', width: 3}},
+                        marker: {{size: 8}}
+                    }}];
+                    var layout_evolucao = {{
+                        title: 'Evolução de Investimentos',
+                        xaxis: {{title: 'Período'}},
+                        yaxis: {{title: 'Quantidade'}},
+                        hovermode: 'closest'
+                    }};
+                    Plotly.newPlot('chart-evolucao', data_evolucao, layout_evolucao, {{responsive: true}});
+                </script>
+            </div>
+
+            <!-- ANÁLISE POR FONTE -->
+            <div class="section">
+                <h2>📰 Fontes Monitoradas</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fonte</th>
+                            <th>Total</th>
+                            <th>Relevantes</th>
+                            <th>Taxa de Precisão</th>
+                            <th>Confiança Média</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        """
+
+        for fonte in sorted(fontes.keys()):
+            dados = fontes[fonte]
+            html += f"""
+                        <tr>
+                            <td>{fonte}</td>
+                            <td>{dados['total']}</td>
+                            <td>{dados['relevantes']}</td>
+                            <td>{dados['taxa_precisao']}%</td>
+                            <td>{dados['confianca_media']}%</td>
+                        </tr>
+            """
+
+        html += """
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- CONFIANÇA -->
+            <div class="section">
+                <h2>✅ Análise de Confiança</h2>
+                <div class="chart-container" id="chart-confianca"></div>
+                <script>
+                    var data_confianca = [{{
+                        values: [""" + str(confianca['alta']) + """, """ + str(confianca['media']) + """, """ + str(confianca['baixa']) + """],
+                        labels: ['Alta (80-100%)', 'Média (50-80%)', 'Baixa (<50%)'],
+                        type: 'pie',
+                        marker: {{colors: ['#90EE90', '#FFD700', '#FF6B6B']}}
+                    }}];
+                    var layout_confianca = {{
+                        title: 'Distribuição de Confiança dos Dados'
+                    }};
+                    Plotly.newPlot('chart-confianca', data_confianca, layout_confianca, {{responsive: true}});
+                </script>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Relatório gerado pelo Monitor de Investimentos Privados de Contagem</p>
+            <p>Período: {resumo['periodo']}</p>
+        </div>
+    </div>
+</body>
+</html>
+        """
+
+        return html
+
+    # =====================================================
+    # GERAR PDF
+    # =====================================================
+
+    def gerar_pdf(self):
+        """Gera relatório em PDF usando ReportLab."""
+
+        if not HAS_REPORTLAB:
+            print("⚠️  ReportLab não instalado. Pulando PDF.")
+            return None
+
+        try:
+            resumo = self.calcular_resumo_executivo()
+            ranking = self.ranking_empresas()
+            fases = self.investimentos_por_fase()
+            fontes = self.analise_por_fonte()
+
+            nome_arquivo = (
+                self.pasta_relatorios /
+                f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.pdf"
+            )
+
+            doc = SimpleDocTemplate(
+                str(nome_arquivo),
+                pagesize=letter,
+                rightMargin=0.75*inch,
+                leftMargin=0.75*inch,
+                topMargin=0.75*inch,
+                bottomMargin=0.75*inch,
+            )
+
+            story = []
+            styles = getSampleStyleSheet()
+
+            # Título
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontSize=24,
+                textColor=colors.HexColor('#667eea'),
+                spaceAfter=10,
+                alignment=1
+            )
+            story.append(Paragraph("Monitor de Investimentos Privados", title_style))
+            story.append(Paragraph("Contagem - MG", styles['Normal']))
+            story.append(Spacer(1, 0.3*inch))
+
+            # Data
+            story.append(Paragraph(
+                f"Data de Geração: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",
+                styles['Normal']
+            ))
+            story.append(Spacer(1, 0.2*inch))
+
+            # Resumo
+            story.append(Paragraph("SUMÁRIO EXECUTIVO", styles['Heading2']))
+
+            resumo_data = [
+                ["Investimentos detectados", str(resumo['investimentos_detectados'])],
+                ["Empresas monitoradas", str(resumo['empresas_monitoradas'])],
+                ["Novos empregos", f"{resumo['novos_empregos']:,}"],
+                ["Valor total", f"R$ {resumo['valor_total']/1e9:.2f}B"],
+                ["Confiança média", f"{resumo['confianca_media']}%"],
+                ["Notícias relevantes", str(resumo['noticias_relevantes'])],
+            ]
+
+            resumo_table = Table(resumo_data)
+            resumo_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f0f0f0')),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+                ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+            ]))
+
+            story.append(resumo_table)
+            story.append(Spacer(1, 0.3*inch))
+
+            # Top 10 Empresas
+            story.append(Paragraph("TOP 10 EMPRESAS", styles['Heading2']))
+
+            ranking_data = [["Rank", "Empresa", "Investimentos", "Valor (R$M)", "Empregos"]]
+            for idx, emp in enumerate(ranking, 1):
+                valor_m = emp["valor_total"] / 1e6 if emp["valor_total"] > 0 else 0
+                ranking_data.append([
+                    str(idx),
+                    emp["empresa"][:25],
+                    str(emp["investimentos"]),
+                    f"{valor_m:.1f}",
+                    str(emp["empregos"])
+                ])
+
+            ranking_table = Table(ranking_data)
+            ranking_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#667eea')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 9),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+                ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+                ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f9f9f9')]),
+            ]))
+
+            story.append(ranking_table)
+
+            # Construir PDF
+            doc.build(story)
+            return nome_arquivo
+
+        except Exception as e:
+            print(f"❌ Erro ao gerar PDF: {e}")
+            return None
+
+    # =====================================================
     # SALVAR RELATÓRIO
     # =====================================================
 
@@ -573,6 +1201,21 @@ class GeradorRelatorio:
 
         return nome_arquivo
 
+    def salvar_relatorio_html(self):
+        """Salva relatório em HTML."""
+
+        html = self.gerar_html()
+
+        nome_arquivo = (
+            self.pasta_relatorios /
+            f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.html"
+        )
+
+        with open(nome_arquivo, "w", encoding="utf-8") as f:
+            f.write(html)
+
+        return nome_arquivo
+
     # =====================================================
     # IMPRIMIR RELATÓRIO
     # =====================================================
@@ -581,6 +1224,66 @@ class GeradorRelatorio:
         """Imprime relatório no console."""
         print(self.gerar_relatorio_texto())
 
+    # =====================================================
+    # GERAR TODOS OS RELATÓRIOS
+    # =====================================================
+
+    def gerar_todos(self):
+        """Gera todos os formatos de relatório."""
+
+        print("\n" + "=" * 70)
+        print("GERANDO RELATÓRIOS")
+        print("=" * 70 + "\n")
+
+        arquivos = []
+
+        # TXT
+        try:
+            txt_path = self.salvar_relatorio_texto()
+            print(f"✓ Relatório TXT: {txt_path}")
+            arquivos.append(txt_path)
+        except Exception as e:
+            print(f"❌ Erro ao gerar TXT: {e}")
+
+        # JSON
+        try:
+            json_path = self.salvar_relatorio_json()
+            print(f"✓ Relatório JSON: {json_path}")
+            arquivos.append(json_path)
+        except Exception as e:
+            print(f"❌ Erro ao gerar JSON: {e}")
+
+        # HTML
+        try:
+            html_path = self.salvar_relatorio_html()
+            print(f"✓ Painel HTML: {html_path}")
+            arquivos.append(html_path)
+        except Exception as e:
+            print(f"❌ Erro ao gerar HTML: {e}")
+
+        # PDF
+        try:
+            pdf_path = self.gerar_pdf()
+            if pdf_path:
+                print(f"✓ Relatório PDF: {pdf_path}")
+                arquivos.append(pdf_path)
+        except Exception as e:
+            print(f"❌ Erro ao gerar PDF: {e}")
+
+        # GRÁFICOS
+        try:
+            graficos = self.gerar_graficos()
+            for grafico in graficos:
+                arquivos.append(grafico)
+        except Exception as e:
+            print(f"❌ Erro ao gerar gráficos: {e}")
+
+        print("\n" + "=" * 70)
+        print(f"✓ {len(arquivos)} arquivo(s) gerado(s) com sucesso!")
+        print("=" * 70 + "\n")
+
+        return arquivos
+
 
 # =====================================================
 # MAIN
@@ -588,26 +1291,14 @@ class GeradorRelatorio:
 
 if __name__ == "__main__":
 
-    print("\n" + "=" * 70)
-    print("GERADOR DE RELATÓRIOS")
-    print("=" * 70 + "\n")
-
     banco = Banco()
-
     gerador = GeradorRelatorio(banco)
 
-    # Imprimir no console
-    gerador.imprimir_relatorio()
+    # Gerar todos os formatos
+    gerador.gerar_todos()
 
-    # Salvar arquivos
+    # Exibir relatório no console
     print("\n" + "=" * 70)
-    print("SALVANDO RELATÓRIOS...")
-    print("=" * 70)
-
-    txt_path = gerador.salvar_relatorio_texto()
-    print(f"✓ Relatório TXT: {txt_path}")
-
-    json_path = gerador.salvar_relatorio_json()
-    print(f"✓ Relatório JSON: {json_path}")
-
-    print("\n✓ Relatórios gerados com sucesso!")
+    print("PRÉVIA DO RELATÓRIO TEXTO")
+    print("=" * 70 + "\n")
+    gerador.imprimir_relatorio()
