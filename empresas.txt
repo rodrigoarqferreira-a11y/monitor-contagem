@@ -49,7 +49,7 @@ ArcelorMittal|Arcelor Mittal
 
 VLI|VLI Logística
 
-Vale|Vale S.A.
+Vale|Vale S.A.|Vale Mineração|Mineradora Vale
 
 Stellantis|Fiat|Jeep|Peugeot|Citroën
 
