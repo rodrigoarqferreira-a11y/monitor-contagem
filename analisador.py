@@ -10,7 +10,7 @@ Cérebro do sistema.
 
 import re
 
-from config import PALAVRAS_CHAVE
+from config import PALAVRAS_CHAVE, PONTUACAO_MINIMA
 from utils import (
     normalizar,
     encontrar_empresas,
@@ -592,6 +592,12 @@ def analisar(noticia):
     noticia.classificacao = classificar_relevancia(
     noticia.pontuacao
     )
+
+    # ---------------------------------------------
+    # Relevância (define se será salva no banco)
+    # ---------------------------------------------
+
+    noticia.relevante = noticia.pontuacao >= PONTUACAO_MINIMA
 
     # ---------------------------------------------
     # Confiança
