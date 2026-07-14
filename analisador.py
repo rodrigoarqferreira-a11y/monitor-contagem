@@ -18,7 +18,8 @@ from utils import (
     identificar_fase,
     identificar_status,
     estrelas,
-    calcular_confianca
+    calcular_confianca,
+    classificar_relevancia
 )
 
 # =====================================================
@@ -518,6 +519,12 @@ def analisar(noticia):
     noticia.status = identificar_status(texto)
 
     # ---------------------------------------------
+    # Tipo
+    # ---------------------------------------------
+
+    classificar_tipo(noticia)
+
+    # ---------------------------------------------
     # Pontuação
     # ---------------------------------------------
 
@@ -528,6 +535,14 @@ def analisar(noticia):
     # ---------------------------------------------
 
     noticia.estrelas = estrelas(noticia.pontuacao)
+
+    # ---------------------------------------------
+    # Classificação
+    # ---------------------------------------------
+
+    noticia.classificacao = classificar_relevancia(
+    noticia.pontuacao
+    )
 
     # ---------------------------------------------
     # Confiança
