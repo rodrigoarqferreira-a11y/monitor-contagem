@@ -284,62 +284,78 @@ def classificar_tipo(noticia):
 
     noticia.motivos = []
 
-    # -----------------------------------------
+    # ------------------------------------------
     # Investimento privado
-    # -----------------------------------------
+    # ------------------------------------------
 
     if noticia.empresas:
 
         noticia.tipo = "Investimento Privado"
         noticia.motivos.append("Empresa identificada")
 
-    # -----------------------------------------
-    # Valor financeiro
-    # -----------------------------------------
-
     if noticia.valores:
 
-        noticia.motivos.append("Valor identificado")
-
-    # -----------------------------------------
-    # Geração de empregos
-    # -----------------------------------------
+        noticia.motivos.append("Valor encontrado")
 
     if noticia.empregos:
 
-        noticia.motivos.append("Empregos identificados")
+        noticia.motivos.append("Empregos encontrados")
 
-    # -----------------------------------------
+    # ------------------------------------------
     # Expansão
-    # -----------------------------------------
+    # ------------------------------------------
 
     if noticia.fase == "Expansão":
 
-        noticia.motivos.append("Expansão")
+        noticia.tipo = "Expansão"
 
-    # -----------------------------------------
-    # Construção
-    # -----------------------------------------
+        noticia.motivos.append("Fase expansão")
 
-    if noticia.fase == "Construção":
-
-        noticia.motivos.append("Construção")
-
-    # -----------------------------------------
-    # Operação
-    # -----------------------------------------
-
-    if noticia.fase == "Operação":
-
-        noticia.motivos.append("Operação")
-
-    # -----------------------------------------
+    # ------------------------------------------
     # Licenciamento
-    # -----------------------------------------
+    # ------------------------------------------
 
     if noticia.fase == "Licenciamento":
 
+        noticia.tipo = "Licenciamento"
+
         noticia.motivos.append("Licenciamento")
+
+    # ------------------------------------------
+    # Construção
+    # ------------------------------------------
+
+    if noticia.fase == "Construção":
+
+        noticia.tipo = "Construção"
+
+        noticia.motivos.append("Obra")
+
+    # ------------------------------------------
+    # Operação
+    # ------------------------------------------
+
+    if noticia.fase == "Operação":
+
+        noticia.tipo = "Operação"
+
+        noticia.motivos.append("Operação")
+
+    # ------------------------------------------
+    # Contratação isolada
+    # ------------------------------------------
+
+    if (
+        noticia.fase == "Contratação"
+        and
+        not noticia.empresas
+    ):
+
+        noticia.tipo = "RH"
+
+        noticia.motivos.append("Somente vagas")
+
+    return noticia
 
 # =====================================================
 # CALCULAR PONTUAÇÃO
