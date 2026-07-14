@@ -267,25 +267,6 @@ def possui_contagem(texto, contexto):
 
 
 # ==========================================================
-# KEYWORDS
-# ==========================================================
-
-def encontrar_keywords(texto, PALAVRAS_CHAVE):
-
-    texto = normalizar(texto)
-
-    resultado = []
-
-    for palavra in keywords:
-
-        if normalizar(palavra) in texto:
-
-            resultado.append(palavra)
-
-    return sorted(set(resultado))
-
-
-# ==========================================================
 # PONTUAÇÃO
 # ==========================================================
 
@@ -522,7 +503,7 @@ if __name__ == "__main__":
 
     from config import PALAVRAS_CHAVE
 
-    print(encontrar_keywords(texto, PALAVRAS_CHAVE))
+    print(encontrar_keywords(texto))
 
     print()
 
