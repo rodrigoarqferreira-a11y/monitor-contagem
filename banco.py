@@ -371,7 +371,9 @@ class Banco:
 
                 "status": noticia.status,
 
-                "confianca": noticia.confianca
+                "confianca": noticia.confianca,
+
+                "mencionou_contagem": getattr(noticia, "mencionou_contagem", False),
 
             }
 
