@@ -271,7 +271,7 @@ def analisar_fase(noticia):
                 return
 
 # =====================================================
-# CLASSIFICAR TIPO DA NOTICIA
+# CLASSIFICAR TIPO
 # =====================================================
 
 def classificar_tipo(noticia):
@@ -280,46 +280,66 @@ def classificar_tipo(noticia):
         noticia.titulo + " " + noticia.texto
     )
 
+    noticia.tipo = "Outro"
 
-    # Notícias que não são investimento
+    noticia.motivos = []
 
-    for termo in TERMOS_NEGATIVOS:
+    # -----------------------------------------
+    # Investimento privado
+    # -----------------------------------------
 
-        if termo in texto:
+    if noticia.empresas:
 
-            noticia.tipo = "Descartada"
+        noticia.tipo = "Investimento Privado"
+        noticia.motivos.append("Empresa identificada")
 
-            return
+    # -----------------------------------------
+    # Valor financeiro
+    # -----------------------------------------
 
+    if noticia.valores:
 
-    tem_empresa = len(noticia.empresas) > 0
+        noticia.motivos.append("Valor identificado")
 
-    tem_valor = len(noticia.valores) > 0
+    # -----------------------------------------
+    # Geração de empregos
+    # -----------------------------------------
 
-    tem_investimento = any(
+    if noticia.empregos:
 
-        termo in texto
+        noticia.motivos.append("Empregos identificados")
 
-        for termo in TERMOS_INVESTIMENTO
+    # -----------------------------------------
+    # Expansão
+    # -----------------------------------------
 
-    )
+    if noticia.fase == "Expansão":
 
+        noticia.motivos.append("Expansão")
 
-    if tem_empresa and (tem_valor or tem_investimento):
+    # -----------------------------------------
+    # Construção
+    # -----------------------------------------
 
-        noticia.tipo = "Investimento privado"
+    if noticia.fase == "Construção":
 
-        return
+        noticia.motivos.append("Construção")
 
+    # -----------------------------------------
+    # Operação
+    # -----------------------------------------
 
-    if tem_empresa and noticia.empregos:
+    if noticia.fase == "Operação":
 
-        noticia.tipo = "Expansão empresarial"
+        noticia.motivos.append("Operação")
 
-        return
+    # -----------------------------------------
+    # Licenciamento
+    # -----------------------------------------
 
+    if noticia.fase == "Licenciamento":
 
-    noticia.tipo = "Não identificado"
+        noticia.motivos.append("Licenciamento")
 
 # =====================================================
 # CALCULAR PONTUAÇÃO
