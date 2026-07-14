@@ -594,7 +594,8 @@ def analisar(noticia):
     )
 
     # ---------------------------------------------
-    # Relevância (define se será salva no banco)
+    # Relevância
+    # (define se a notícia será salva no banco)
     # ---------------------------------------------
 
     noticia.relevante = noticia.pontuacao >= PONTUACAO_MINIMA
