@@ -1024,11 +1024,13 @@ class GeradorRelatorio:
 
             <!-- CONFIANÇA -->
             <div class="section">
+            <!-- CONFIANÇA -->
+            <div class="section">
                 <h2>✅ Análise de Confiança</h2>
                 <div class="chart-container" id="chart-confianca"></div>
                 <script>
                     var data_confianca = [{{
-                        values: [""" + str(confianca['alta']) + """, """ + str(confianca['media']) + """, """ + str(confianca['baixa']) + """],
+                        values: [{confianca['alta']}, {confianca['media']}, {confianca['baixa']}],
                         labels: ['Alta (80-100%)', 'Média (50-80%)', 'Baixa (<50%)'],
                         type: 'pie',
                         marker: {{colors: ['#90EE90', '#FFD700', '#FF6B6B']}}
