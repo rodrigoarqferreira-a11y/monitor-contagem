@@ -596,9 +596,19 @@ def analisar(noticia):
     # ---------------------------------------------
     # Relevância
     # (define se a notícia será salva no banco)
+    #
+    # Exige DOIS critérios ao mesmo tempo:
+    #   1) pontuação mínima
+    #   2) a notícia precisa mencionar Contagem
+    #      (cidades vizinhas como Betim não contam,
+    #      mesmo que a empresa esteja na lista)
     # ---------------------------------------------
 
-    noticia.relevante = noticia.pontuacao >= PONTUACAO_MINIMA
+    noticia.relevante = (
+        noticia.pontuacao >= PONTUACAO_MINIMA
+        and
+        contexto
+    )
 
     # ---------------------------------------------
     # Confiança
