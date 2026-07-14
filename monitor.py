@@ -2,6 +2,7 @@
 =====================================================
 
 MONITOR DE INVESTIMENTOS PRIVADOS
+
 CONTAGEM - MG
 
 Arquivo principal do sistema.
@@ -25,7 +26,6 @@ def main():
     )
     print("=" * 70)
 
-
     try:
 
         noticias = executar()
@@ -33,22 +33,28 @@ def main():
     except Exception as erro:
 
         import traceback
-
         traceback.print_exc()
 
         print()
         print("Erro no monitor:")
         print(erro)
-        return
 
+        return
 
     print()
     print(f"{len(noticias)} notícias encontradas.")
     print()
 
-
     relevantes = 0
 
+    # ---------------------------------------------
+    # Lista de notícias "quase relevantes":
+    # pontuação boa, mas descartadas só por não
+    # mencionarem Contagem (ex: notícias sobre
+    # Betim, BH, etc. que citam empresas monitoradas)
+    # ---------------------------------------------
+
+    quase_relevantes = []
 
     for noticia in noticias:
 
@@ -60,30 +66,25 @@ def main():
 
             relevantes += 1
 
-
             print("-" * 70)
-
             print(noticia.titulo)
-
             print()
 
             print("Empresa(s):")
 
-
             if noticia.empresas:
 
                 for empresa in noticia.empresas:
+
                     print(" •", empresa)
 
             else:
 
                 print(" • Não identificada")
 
-
             print()
 
             print("Fase:", noticia.fase)
-
             print("Status:", inteligencia["status"])
 
             print(
@@ -107,14 +108,12 @@ def main():
                 noticia.pontuacao
             )
 
-
             if noticia.valores:
 
                 print(
                     "Valor:",
                     ", ".join(noticia.valores)
                 )
-
 
             if noticia.empregos:
 
@@ -123,24 +122,34 @@ def main():
                     ", ".join(noticia.empregos)
                 )
 
-
             print("Fonte:", noticia.fonte)
-
             print("URL:", noticia.url)
-
             print("-" * 70)
-
             print()
 
+        else:
+
+            # Notícia descartada. Verifica se seria
+            # relevante apenas pela pontuação, mas
+            # não mencionou Contagem — vale a pena
+            # ficar de olho nessas, sem salvar no banco.
+
+            pontuacao_ok = (
+                noticia.pontuacao >= 30
+            )
+
+            sem_contagem = (
+                not getattr(noticia, "mencionou_contagem", True)
+            )
+
+            if pontuacao_ok and sem_contagem:
+
+                quase_relevantes.append(noticia)
 
     print()
-
     print("=" * 70)
-
     print("RESUMO FINAL")
-
     print("=" * 70)
-
 
     print(
         f"Total de notícias........: {len(noticias)}"
@@ -154,13 +163,53 @@ def main():
         f"Notícias descartadas.....: {len(noticias)-relevantes}"
     )
 
-
     print()
+
+    # ---------------------------------------------
+    # Seção extra: quase relevantes
+    # ---------------------------------------------
+
+    if quase_relevantes:
+
+        print("-" * 70)
+        print(
+            f"Descartadas por falta de menção a Contagem: "
+            f"{len(quase_relevantes)}"
+        )
+        print(
+            "(pontuação boa, mas fala de outra cidade "
+            "ou não menciona Contagem)"
+        )
+        print("-" * 70)
+
+        for noticia in quase_relevantes:
+
+            print()
+            print(" •", noticia.titulo)
+
+            if noticia.empresas:
+
+                print(
+                    "   Empresa(s):",
+                    ", ".join(noticia.empresas)
+                )
+
+            print("   Pontuação:", noticia.pontuacao)
+            print("   Fase:", noticia.fase)
+            print("   URL:", noticia.url)
+
+        print()
+
+    else:
+
+        print(
+            "Nenhuma notícia 'quase relevante' "
+            "encontrada hoje."
+        )
+        print()
 
     print("Monitoramento concluído.")
 
 
-
 if __name__ == "__main__":
-
     main()
