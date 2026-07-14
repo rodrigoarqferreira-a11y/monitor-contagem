@@ -364,88 +364,100 @@ def classificar_tipo(noticia):
 def calcular_pontuacao(noticia):
 
     texto = normalizar(
-
         noticia.titulo + " " + noticia.texto
-
     )
 
     pontos = 0
 
-    # -------------------------------------------------
-    # CONTEXTO
-    # -------------------------------------------------
-
-    if eh_contagem(noticia):
-
-        pontos += 20
 
     # -------------------------------------------------
-    # EMPRESA
+    # ELEMENTOS
     # -------------------------------------------------
 
-    if noticia.empresas:
+    tem_empresa = bool(noticia.empresas)
 
+    tem_valor = bool(noticia.valores)
+
+    tem_emprego = bool(noticia.empregos)
+
+    tem_contagem = eh_contagem(noticia)
+
+
+    # -------------------------------------------------
+    # MUITO FORTE
+    # -------------------------------------------------
+
+    if tem_empresa and tem_contagem:
+        pontos += 40
+
+
+    if tem_empresa and tem_valor:
         pontos += 30
 
-    # -------------------------------------------------
-    # VALORES
-    # -------------------------------------------------
 
-    if noticia.valores:
-
+    if tem_empresa and tem_emprego:
         pontos += 20
 
-    # -------------------------------------------------
-    # EMPREGOS
-    # -------------------------------------------------
 
-    if noticia.empregos:
+    if tem_empresa and noticia.fase == "Expansão":
+        pontos += 20
 
-        pontos += 15
+
+    if tem_empresa and noticia.fase == "Construção":
+        pontos += 20
+
+
+    if tem_empresa and noticia.fase == "Operação":
+        pontos += 20
+
+
+    if tem_empresa and noticia.fase == "Licenciamento":
+        pontos += 20
+
+
 
     # -------------------------------------------------
     # PALAVRAS-CHAVE
+    # Só contam se existir empresa
     # -------------------------------------------------
 
     palavras = encontrar_keywords(texto)
 
-    pontos += len(palavras) * 8
+    if tem_empresa:
+
+        pontos += len(palavras) * 5
+
+
 
     # -------------------------------------------------
-    # FASES IMPORTANTES
+    # FASE ANUNCIADO
     # -------------------------------------------------
 
-    if noticia.fase in (
-
-        "Anunciado",
-
-        "Expansão",
-
-        "Construção",
-
-        "Licenciamento",
-
-        "Operação"
-
-    ):
+    if tem_empresa and noticia.fase == "Anunciado":
 
         pontos += 20
 
+
+
     # -------------------------------------------------
-    # BÔNUS
+    # CASOS FRACOS
     # -------------------------------------------------
 
-    if noticia.empresas and noticia.valores:
+    # Somente vagas
+
+    if noticia.empregos and not tem_empresa:
 
         pontos += 20
 
-    if noticia.empresas and noticia.empregos:
 
-        pontos += 15
 
-    if noticia.empresas and eh_contagem(noticia):
+    # Somente prefeitura
+
+    if noticia.tipo == "Poder Público":
 
         pontos += 20
+
+
 
     # -------------------------------------------------
     # PENALIZAÇÕES
@@ -454,74 +466,55 @@ def calcular_pontuacao(noticia):
     texto_ruim = [
 
         "festival",
-
-        "esporte",
-
-        "vacinação",
-
-        "vacinacao",
-
         "show",
-
         "teatro",
-
         "cultura",
 
-        "hepatite",
+        "vacinação",
+        "vacinacao",
+        "hospital",
+        "saúde",
+        "saude",
 
         "educação",
-
         "educacao",
-
-        "escola",
-
-        "pss",
-
-        "concurso",
-
-        "processo seletivo",
-
-        "ouvidoria"
+        "escola"
 
     ]
+
 
     for palavra in texto_ruim:
 
         if palavra in texto:
 
-            pontos -= 30
+            pontos -= 40
+
+
 
     # -------------------------------------------------
-    # NÃO É INVESTIMENTO PRIVADO
-    # -------------------------------------------------
-
-    if noticia.tipo == "Poder Público":
-
-        pontos -= 60
-
-    # -------------------------------------------------
-    # FILTRO PELO TIPO DA NOTÍCIA
+    # LIMITADORES
     # -------------------------------------------------
 
     if noticia.tipo == "RH":
 
         pontos = min(pontos, 30)
 
-    elif noticia.tipo == "Outro":
+
+    if noticia.tipo == "Outro":
 
         pontos = min(pontos, 40)
 
-    # -------------------------------------------------
-    # LIMITES
-    # -------------------------------------------------
+
 
     if pontos < 0:
 
         pontos = 0
 
+
+
     noticia.pontuacao = pontos
 
-    noticia.relevante = pontos >= 50
+    return pontos
 
 
 # =====================================================
