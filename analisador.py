@@ -551,9 +551,10 @@ def analisar(noticia):
 
     # ---------------------------------------------
     # Contexto Contagem
+    # Registra se a notícia mencionou Contagem
     # ---------------------------------------------
 
-    contexto = eh_contagem(noticia)
+    noticia.mencionou_contagem = eh_contagem(noticia)
 
     # ---------------------------------------------
     # Fase
@@ -607,7 +608,7 @@ def analisar(noticia):
     noticia.relevante = (
         noticia.pontuacao >= PONTUACAO_MINIMA
         and
-        contexto
+        noticia.mencionou_contagem
     )
 
     # ---------------------------------------------
@@ -622,7 +623,7 @@ def analisar(noticia):
 
         noticia.empregos,
 
-        contexto
+        noticia.mencionou_contagem
 
     )
 
