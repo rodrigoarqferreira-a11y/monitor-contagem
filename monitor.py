@@ -206,10 +206,24 @@ def main():
             "Nenhuma notícia 'quase relevante' "
             "encontrada hoje."
         )
-        print()
+# DEPOIS — salva o banco e dispara o gerador de relatório:
+    from banco import Banco
+    from relatorio import GeradorRelatorio   # ajuste o nome da classe se diferente
 
+    banco = Banco()
+    # (opcional) salvar notícias novas no banco antes do relatório:
+    for noticia in noticias:
+        if noticia.relevante:
+            banco.adicionar_noticia(noticia)
+    banco.salvar()
+
+    print()
+    print("Gerando relatórios...")
+    gerador = GeradorRelatorio(banco)
+    gerador.gerar_todos()
+
+    print()
     print("Monitoramento concluído.")
-
 
 if __name__ == "__main__":
     main()
