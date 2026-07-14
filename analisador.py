@@ -13,7 +13,12 @@ import re
 from config import PALAVRAS_CHAVE
 from utils import (
     normalizar,
-    encontrar_empresas
+    encontrar_empresas,
+    encontrar_keywords,
+    identificar_fase,
+    identificar_status,
+    estrelas,
+    calcular_confianca
 )
 
 # =====================================================
@@ -369,19 +374,77 @@ def calcular_pontuacao(noticia):
 
 def analisar(noticia):
 
-    analisar_empresas(noticia)
+    texto = noticia.titulo + " " + noticia.texto
+
+    # ---------------------------------------------
+    # Empresas
+    # ---------------------------------------------
+
+    noticia.empresas = encontrar_empresas(texto)
+
+    # ---------------------------------------------
+    # Valores
+    # ---------------------------------------------
 
     analisar_valores(noticia)
 
+    # ---------------------------------------------
+    # Empregos
+    # ---------------------------------------------
+
     analisar_empregos(noticia)
 
-    analisar_fase(noticia)
+    # ---------------------------------------------
+    # Palavras-chave
+    # ---------------------------------------------
 
-    classificar_tipo(noticia)
+    noticia.palavras = encontrar_keywords(texto)
+
+    # ---------------------------------------------
+    # Contexto Contagem
+    # ---------------------------------------------
+
+    contexto = eh_contagem(noticia)
+
+    # ---------------------------------------------
+    # Fase
+    # ---------------------------------------------
+
+    noticia.fase = identificar_fase(texto)
+
+    # ---------------------------------------------
+    # Status
+    # ---------------------------------------------
+
+    noticia.status = identificar_status(texto)
+
+    # ---------------------------------------------
+    # Pontuação
+    # ---------------------------------------------
 
     calcular_pontuacao(noticia)
 
-    classificar_tipo(noticia)
+    # ---------------------------------------------
+    # Estrelas
+    # ---------------------------------------------
+
+    noticia.estrelas = estrelas(noticia.pontuacao)
+
+    # ---------------------------------------------
+    # Confiança
+    # ---------------------------------------------
+
+    noticia.confianca = calcular_confianca(
+
+        noticia.empresas,
+
+        noticia.valores,
+
+        noticia.empregos,
+
+        contexto
+
+    )
 
     return noticia
 
