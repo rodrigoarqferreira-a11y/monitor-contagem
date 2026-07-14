@@ -674,21 +674,31 @@ class GeradorRelatorio:
                 fig, ax = plt.subplots(figsize=(10, 8))
 
                 tamanhos = [confianca['alta'], confianca['media'], confianca['baixa']]
-                rotulos = [
-                    f"Alta (80-100%)\n{confianca['alta']}%",
-                    f"Média (50-80%)\n{confianca['media']}%",
-                    f"Baixa (<50%)\n{confianca['baixa']}%"
-                ]
-                cores = ['#90EE90', '#FFD700', '#FF6B6B']
 
-                wedges, texts, autotexts = ax.pie(
-                    tamanhos,
-                    labels=rotulos,
-                    colors=cores,
-                    autopct='',
-                    startangle=90,
-                    textprops={'fontsize': 11, 'fontweight': 'bold'}
-                )
+                if sum(tamanhos) == 0:
+                    ax.text(
+                        0.5, 0.5, "Sem dados ainda",
+                        ha='center', va='center',
+                        fontsize=14, color='gray',
+                        transform=ax.transAxes
+                    )
+                    ax.axis('off')
+                else:
+                    rotulos = [
+                         f"Alta (80-100%)\n{confianca['alta']}%",
+                         f"Média (50-80%)\n{confianca['media']}%",
+                         f"Baixa (<50%)\n{confianca['baixa']}%"
+                    ]
+                    cores = ['#90EE90', '#FFD700', '#FF6B6B']
+
+                    wedges, texts, autotexts = ax.pie(
+                         tamanhos,
+                         labels=rotulos,
+                         colors=cores,
+                         autopct='',
+                         startangle=90,
+                         textprops={'fontsize': 11, 'fontweight': 'bold'}
+                    )
 
                 ax.set_title(f"Distribuição de Confiança\nMédia Geral: {confianca['media_geral']}%",
                            fontsize=14, fontweight='bold')
@@ -1137,7 +1147,7 @@ class GeradorRelatorio:
                 ])
 
             ranking_table = Table(ranking_data)
-            ranking_table.setStyle(TableStyle([
+            estilos_ranking = [
                 ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#667eea')),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -1145,8 +1155,14 @@ class GeradorRelatorio:
                 ('FONTSIZE', (0, 0), (-1, -1), 9),
                 ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
                 ('GRID', (0, 0), (-1, -1), 1, colors.grey),
-                ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f9f9f9')]),
-            ]))
+            ]
+
+            # Zebra striping manual (substitui o ROWBACKGROUNDS inválido)
+            for i in range(1, len(ranking_data)):
+                cor = colors.white if i % 2 == 1 else colors.HexColor('#f9f9f9')
+                estilos_ranking.append(('BACKGROUND', (0, i), (-1, i), cor))
+
+            ranking_table.setStyle(TableStyle(estilos_ranking))
 
             story.append(ranking_table)
 
