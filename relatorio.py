@@ -1754,6 +1754,59 @@ class GeradorRelatorio:
             ranking_table.setStyle(TableStyle(estilos_ranking))
 
             story.append(ranking_table)
+            story.append(Spacer(1, 0.4*inch))
+
+            # =====================================================
+            # RANKING HISTÓRICO (2021-2026)
+            # =====================================================
+
+            totais_hist = self.totais_gerais_historico()
+            ranking_hist = self.ranking_empresas_historico()[:10]
+
+            if ranking_hist:
+                ano_min = totais_hist['ano_min']
+                ano_max = totais_hist['ano_max']
+
+                story.append(Paragraph(
+                    f"TOP 10 EMPRESAS — HISTÓRICO {ano_min}-{ano_max}",
+                    styles['Heading2']
+                ))
+                story.append(Paragraph(
+                    f"Total investido no período: R$ {totais_hist['total_investido']/1e9:.2f}B "
+                    f"em {totais_hist['num_investimentos']} investimentos",
+                    styles['Normal']
+                ))
+                story.append(Spacer(1, 0.15*inch))
+
+                ranking_hist_data = [["Rank", "Empresa", "Valor Total (R$M)", "Investimentos"]]
+                for idx, emp in enumerate(ranking_hist, 1):
+                    valor_m = emp["valor_total"] / 1e6 if emp["valor_total"] > 0 else 0
+                    ranking_hist_data.append([
+                        str(idx),
+                        emp["empresa"][:35],
+                        f"{valor_m:,.1f}",
+                        str(emp["num_investimentos"])
+                    ])
+
+                ranking_hist_table = Table(ranking_hist_data)
+
+                estilos_hist = [
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#764ba2')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, -1), 9),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+                ]
+
+                for i in range(1, len(ranking_hist_data)):
+                    cor = colors.white if i % 2 == 1 else colors.HexColor('#f5f0fa')
+                    estilos_hist.append(('BACKGROUND', (0, i), (-1, i), cor))
+
+                ranking_hist_table.setStyle(TableStyle(estilos_hist))
+
+                story.append(ranking_hist_table)
 
             # Construir PDF
             doc.build(story)
