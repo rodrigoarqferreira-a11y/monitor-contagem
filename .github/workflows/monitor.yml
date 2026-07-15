@@ -30,9 +30,42 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Executar monitor
+      - name: Testar métodos de histórico
         run: |
-          python monitor.py
+          python -c "
+          import json
+          from banco import Banco
+          from relatorio import GeradorRelatorio
+
+          banco = Banco()
+          gerador = GeradorRelatorio(banco)
+
+          print('=== TOTAIS GERAIS ===')
+          totais = gerador.totais_gerais_historico()
+          print(json.dumps(totais, indent=2, ensure_ascii=False))
+
+          print()
+          print('=== RESUMO POR ANO ===')
+          resumo_ano = gerador.resumo_historico_por_ano()
+          print(json.dumps(resumo_ano, indent=2, ensure_ascii=False))
+
+          print()
+          print('=== RANKING GERAL (top 5) ===')
+          ranking = gerador.ranking_empresas_historico()
+          print(json.dumps(ranking[:5], indent=2, ensure_ascii=False))
+
+          print()
+          print('=== RANKING SÓ 2024 ===')
+          ranking_2024 = gerador.ranking_empresas_historico(ano=2024)
+          print(json.dumps(ranking_2024, indent=2, ensure_ascii=False))
+
+          print()
+          print('=== DADOS COMPLETOS (3 primeiros) ===')
+          dados = gerador.dados_historico_completo()
+          print(json.dumps(dados[:3], indent=2, ensure_ascii=False))
+          print()
+          print(f'Total de registros: {len(dados)}')
+          "
 
       - name: Salvar relatório no repositório
         run: |
