@@ -1184,6 +1184,7 @@ class GeradorRelatorio:
             <div class="tabs">
                 <button class="tab-button active" onclick="mostrarAba('recente')">🔴 Monitoramento Recente</button>
                 <button class="tab-button" onclick="mostrarAba('historico')">📊 Histórico {ano_min}-{ano_max}</button>
+                <button class="tab-button" onclick="mostrarAba('analise')">🔍 Análise</button>
             </div>
 
             <!-- ABA: MONITORAMENTO RECENTE -->
@@ -1208,14 +1209,16 @@ class GeradorRelatorio:
                     <div class="value">R$ {resumo['valor_total']/1e9:.2f}B</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Confiança Média</h3>
-                    <div class="value">{resumo['confianca_media']}%</div>
-                </div>
-                <div class="summary-card">
                     <h3>Notícias Relevantes</h3>
                     <div class="value">{resumo['noticias_relevantes']}</div>
                 </div>
             </div>
+
+            </div>
+            <!-- FIM ABA: MONITORAMENTO RECENTE -->
+
+            <!-- ABA: ANÁLISE -->
+            <div id="aba-analise" class="tab-content">
 
             <!-- INVESTIMENTOS POR FASE -->
             <div class="section">
@@ -1334,7 +1337,7 @@ class GeradorRelatorio:
             </div>
 
             </div>
-            <!-- FIM ABA: MONITORAMENTO RECENTE -->
+            <!-- FIM ABA: ANÁLISE -->
 
             <!-- ABA: HISTÓRICO -->
             <div id="aba-historico" class="tab-content">
