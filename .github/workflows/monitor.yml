@@ -30,20 +30,9 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Testar métodos de histórico
+      - name: Executar monitor
         run: |
-          python -c "
-          import json
-          from banco import Banco
-          from relatorio import GeradorRelatorio
-
-          banco = Banco()
-          gerador = GeradorRelatorio(banco)
-
-          print('=== DADOS COMPLETOS (3 primeiros) ===')
-          dados = gerador.dados_historico_completo()
-          print(json.dumps(dados[:3], indent=2, ensure_ascii=False))
-          "
+          python monitor.py
 
       - name: Salvar relatório no repositório
         run: |
