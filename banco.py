@@ -251,11 +251,11 @@ class Banco:
 
             "eventos":[],
 
-            "fase": "Anunciado",
+            "fase": fase if fase else "Anunciado",
 
-            "fonte": "",
+            "fonte": fonte,
 
-            "url": ""
+            "url": url
 
         }
 
