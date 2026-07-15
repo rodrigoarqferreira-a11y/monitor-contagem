@@ -1,0 +1,23 @@
+{
+    "data_geracao": "2026-07-15T12:10:45.444492",
+    "resumo_executivo": {
+        "investimentos_detectados": 59,
+        "empresas_monitoradas": 59,
+        "novos_empregos": 0,
+        "valor_total": 0,
+        "confianca_media": 0,
+        "noticias_relevantes": 0,
+        "periodo": "Período desconhecido"
+    },
+    "investimentos_por_fase": {},
+    "ranking_empresas": [],
+    "evolucao_mensal": {},
+    "analise_por_fonte": {},
+    "noticias_quase_relevantes": [],
+    "analise_confianca": {
+        "alta": 0,
+        "media": 0,
+        "baixa": 0,
+        "media_geral": 0
+    }
+}
