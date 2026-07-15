@@ -359,7 +359,131 @@ class GeradorRelatorio:
             "baixa": round((baixa / total * 100) if total > 0 else 0, 1),
             "media_geral": round(statistics.mean(confiancas), 1) if confiancas else 0
         }
+    # =====================================================
+    # DADOS HISTÓRICOS (para a aba Histórico)
+    # =====================================================
 
+    def dados_historico_completo(self):
+        """
+        Monta a estrutura completa de dados históricos,
+        pronta para ser embutida como JSON no HTML e
+        manipulada em JavaScript pelos filtros.
+        """
+
+        investimentos = self.banco.investimentos
+
+        registros = []
+        for inv in investimentos:
+            registros.append({
+                "empresa": inv.get("empresa", ""),
+                "ano": inv.get("ano"),
+                "valor": inv.get("valor", 0),
+                "fonte": inv.get("fonte", ""),
+                "url": inv.get("url", ""),
+                "fase": inv.get("fase", "Anunciado"),
+                "origem": inv.get("origem", "monitoramento"),
+            })
+
+        return registros
+
+    def resumo_historico_por_ano(self):
+        """
+        Totais agregados por ano: total investido,
+        número de investimentos, número de empresas únicas.
+        """
+
+        investimentos = self.banco.investimentos
+        por_ano = {}
+
+        for inv in investimentos:
+            ano = inv.get("ano")
+            if ano is None:
+                continue
+
+            if ano not in por_ano:
+                por_ano[ano] = {
+                    "ano": ano,
+                    "total_investido": 0,
+                    "num_investimentos": 0,
+                    "empresas": set(),
+                }
+
+            por_ano[ano]["total_investido"] += inv.get("valor", 0)
+            por_ano[ano]["num_investimentos"] += 1
+            por_ano[ano]["empresas"].add(inv.get("empresa", ""))
+
+        resultado = []
+        for ano in sorted(por_ano.keys()):
+            dados = por_ano[ano]
+            resultado.append({
+                "ano": dados["ano"],
+                "total_investido": dados["total_investido"],
+                "num_investimentos": dados["num_investimentos"],
+                "num_empresas": len(dados["empresas"]),
+            })
+
+        return resultado
+
+    def ranking_empresas_historico(self, ano=None):
+        """
+        Ranking de empresas por valor total investido,
+        somando todos os anos (base histórica).
+        Se 'ano' for informado, filtra apenas aquele ano.
+        """
+
+        investimentos = self.banco.investimentos
+        valores_por_empresa = {}
+
+        for inv in investimentos:
+            if ano is not None and inv.get("ano") != ano:
+                continue
+
+            empresa = inv.get("empresa", "")
+            if not empresa:
+                continue
+
+            if empresa not in valores_por_empresa:
+                valores_por_empresa[empresa] = {
+                    "empresa": empresa,
+                    "valor_total": 0,
+                    "num_investimentos": 0,
+                }
+
+            valores_por_empresa[empresa]["valor_total"] += inv.get("valor", 0)
+            valores_por_empresa[empresa]["num_investimentos"] += 1
+
+        ranking = sorted(
+            valores_por_empresa.values(),
+            key=lambda x: x["valor_total"],
+            reverse=True
+        )
+
+        return ranking
+
+    def totais_gerais_historico(self):
+        """Números consolidados de toda a base histórica."""
+
+        investimentos = self.banco.investimentos
+
+        if not investimentos:
+            return {
+                "total_investido": 0,
+                "num_investimentos": 0,
+                "num_empresas": 0,
+                "ano_min": None,
+                "ano_max": None,
+            }
+
+        empresas = set(inv.get("empresa", "") for inv in investimentos)
+        anos = [inv.get("ano") for inv in investimentos if inv.get("ano") is not None]
+
+        return {
+            "total_investido": sum(inv.get("valor", 0) for inv in investimentos),
+            "num_investimentos": len(investimentos),
+            "num_empresas": len(empresas),
+            "ano_min": min(anos) if anos else None,
+            "ano_max": max(anos) if anos else None,
+        }
     # =====================================================
     # HELPER: PERÍODO DE NOTICIAS
     # =====================================================
