@@ -114,7 +114,12 @@ def importar_planilha(arquivo=ARQUIVO_PLANILHA):
         print(f"❌ Erro ao abrir a planilha: {erro}")
         return
 
-    print(f"✓ Planilha carregada: {len(df)} registros encontrados\n")
+    # Remove espaços extras dos nomes das colunas
+    # (a planilha tem colunas como "Ano " ou "Empresa " com espaço no final)
+    df.columns = [str(c).strip() for c in df.columns]
+
+    print(f"✓ Planilha carregada: {len(df)} registros encontrados")
+    print(f"  Colunas: {list(df.columns)}\n")
 
     banco = Banco()
 
