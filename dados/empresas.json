@@ -1,1 +1,415 @@
-[]
+[
+    {
+        "id": 1,
+        "nome": "Inova Parque",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 2,
+        "nome": "Complexo logístico Empresarial Contendas",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 3,
+        "nome": "Bresco",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 4,
+        "nome": "GNDI",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 5,
+        "nome": "Emccamp",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 6,
+        "nome": "ELL Morais empreendimentos",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 7,
+        "nome": "Eco Global c",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 8,
+        "nome": "BII Par",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 9,
+        "nome": "Obra MAX",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 10,
+        "nome": "Grupo EPO/Contemporâneo Mall",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 11,
+        "nome": "Komatsu",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 12,
+        "nome": "Escola Bilíngue de Base Tecnológica do Sesi",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 13,
+        "nome": "Centro de Treinamento e Desenvolvimento para a Indústria 4.0",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 14,
+        "nome": "RHI Magnesita",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 15,
+        "nome": "Maxion Structural Components",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 16,
+        "nome": "Patrus",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 17,
+        "nome": "Belgo Bekaert",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 18,
+        "nome": "Petronas Lubrificantes Internacionais",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 19,
+        "nome": "Oriente Farma",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 20,
+        "nome": "Gatti Flex 2",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 21,
+        "nome": "Grupo Pachá",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 22,
+        "nome": "Business Park",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 23,
+        "nome": "Gasmig",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 24,
+        "nome": "UNIMED",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 25,
+        "nome": "Tambasa",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 26,
+        "nome": "Sensia Solarium",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 27,
+        "nome": "Foper Máquinas",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 28,
+        "nome": "Multotec",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 29,
+        "nome": "Farmax",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 30,
+        "nome": "Laboratório Osório de Moraes",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 31,
+        "nome": "Grupo Zelo",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 32,
+        "nome": "Via VAI",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 33,
+        "nome": "Grupo Lamane",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 34,
+        "nome": "Castelo Alimentos",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 35,
+        "nome": "Belgo Arames",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 36,
+        "nome": "Grupo Supernosso-Decminas Distribuição e Logística",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 37,
+        "nome": "Friboi",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 38,
+        "nome": "Case Construction Equipment",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 39,
+        "nome": "Log 4",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 40,
+        "nome": "Log 5",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 41,
+        "nome": "3TC Isolamento",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 42,
+        "nome": "Direcional e My Mall",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 43,
+        "nome": "Metta Soluções",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 44,
+        "nome": "Boston Scientific",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 45,
+        "nome": "Plena Alimentos",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 46,
+        "nome": "Estacio",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 47,
+        "nome": "Tecnogera",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 48,
+        "nome": "Magotteux",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 49,
+        "nome": "Wabtec Brasil",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 50,
+        "nome": "Tópico",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 51,
+        "nome": "Tropeira Alimentos",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 52,
+        "nome": "Só Marcas Outlet Contagem",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 53,
+        "nome": "Direcional Engenharia /Viva Residence",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 54,
+        "nome": "ABB",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 55,
+        "nome": "Big Shopping",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 56,
+        "nome": "Shopee – Centro de Distribuição em Contagem",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 57,
+        "nome": "TSEA Energia – Projeto de expansão",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 58,
+        "nome": "Wabtec – Centro Global de Engenharia",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    },
+    {
+        "id": 59,
+        "nome": "Fortlub",
+        "primeira_aparicao": "2026-07-15",
+        "ultima_atualizacao": "2026-07-15",
+        "investimentos": []
+    }
+]
