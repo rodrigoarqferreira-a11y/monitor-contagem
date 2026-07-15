@@ -30,9 +30,30 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Executar monitor
+      - name: Verificar dados importados
         run: |
-          python monitor.py
+          python -c "
+          from banco import Banco
+          banco = Banco()
+          print('Total de investimentos no banco:', len(banco.investimentos))
+          print()
+          historico = [i for i in banco.investimentos if i.get('origem') == 'historico']
+          print('Investimentos com origem historico:', len(historico))
+          print()
+          print('Amostra (10 primeiros):')
+          for inv in banco.investimentos[:10]:
+              print(f\"  {inv['ano']} | {inv['empresa']} | R\$ {inv['valor']:,.2f} | origem={inv.get('origem', 'N/A')}\")
+          print()
+          print('Soma total investida (todos os anos):', f\"R\$ {sum(i['valor'] for i in banco.investimentos):,.2f}\")
+          print()
+          print('Por ano:')
+          from collections import defaultdict
+          por_ano = defaultdict(float)
+          for inv in banco.investimentos:
+              por_ano[inv['ano']] += inv['valor']
+          for ano in sorted(por_ano.keys()):
+              print(f'  {ano}: R\$ {por_ano[ano]:,.2f}')
+          "
 
       - name: Salvar relatório no repositório
         run: |
