@@ -519,6 +519,10 @@ class GeradorRelatorio:
         fontes = self.analise_por_fonte()
         quase_relevantes = self.noticias_quase_relevantes()
         confianca = self.analise_confianca()
+        dados_historico = self.dados_historico_completo()
+        resumo_ano = self.resumo_historico_por_ano()
+        totais_historico = self.totais_gerais_historico()
+        ranking_historico = self.ranking_empresas_historico()
 
         # =====================================================
         # CAPA
@@ -1020,6 +1024,16 @@ class GeradorRelatorio:
         </div>
 
         <div class="content">
+
+            <!-- SISTEMA DE ABAS -->
+            <div class="tabs">
+                <button class="tab-button active" onclick="mostrarAba('recente')">🔴 Monitoramento Recente</button>
+                <button class="tab-button" onclick="mostrarAba('historico')">📊 Histórico {totais_historico['ano_min']}-{totais_historico['ano_max']}</button>
+            </div>
+
+            <!-- ABA: MONITORAMENTO RECENTE -->
+            <div id="aba-recente" class="tab-content active">
+            
             <!-- SUMÁRIO EXECUTIVO -->
             <div class="summary">
                 <div class="summary-card">
@@ -1172,6 +1186,7 @@ class GeradorRelatorio:
             <p>Período: {resumo['periodo']}</p>
         </div>
     </div>
+
 </body>
 </html>
         """
