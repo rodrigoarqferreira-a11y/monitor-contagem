@@ -888,9 +888,11 @@ class GeradorRelatorio:
             box-sizing: border-box;
         }}
 
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600;700&display=swap');
+
         body {{
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Fira Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e8eef0;
             min-height: 100vh;
             padding: 20px;
         }}
@@ -905,10 +907,40 @@ class GeradorRelatorio:
         }}
 
         .header {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #037482;
             color: white;
-            padding: 40px;
-            text-align: center;
+            padding: 30px 40px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }}
+
+        .header img {{
+            height: 60px;
+            background: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+        }}
+
+        .header .header-text h1 {{
+            font-size: 1.8em;
+            margin-bottom: 4px;
+        }}
+
+        .header .header-text p {{
+            font-size: 1em;
+            opacity: 0.9;
+        }}
+
+        .header .selo-trabalho {{
+            margin-left: auto;
+            background: #FF7A01;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            white-space: nowrap;
         }}
 
         .header h1 {{
@@ -925,32 +957,22 @@ class GeradorRelatorio:
             padding: 40px;
         }}
 
-        .summary {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }}
-
         .summary-card {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: white;
+            color: #333;
             padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid #037482;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             text-align: center;
         }}
 
         .summary-card h3 {{
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-bottom: 10px;
-            text-transform: uppercase;
+            color: #037482;
         }}
 
         .summary-card .value {{
-            font-size: 2em;
-            font-weight: bold;
+            color: #FF7A01;
         }}
 
         .section {{
@@ -1041,8 +1063,9 @@ class GeradorRelatorio:
             display: none;
         }}
 
-        .tab-content.active {{
-            display: block;
+        .tab-button.active {{
+            color: #037482;
+            border-bottom-color: #FF7A01;
         }}
 
         /* ===== FILTROS ===== */
