@@ -359,6 +359,7 @@ class GeradorRelatorio:
             "baixa": round((baixa / total * 100) if total > 0 else 0, 1),
             "media_geral": round(statistics.mean(confiancas), 1) if confiancas else 0
         }
+
     # =====================================================
     # DADOS HISTÓRICOS (para a aba Histórico)
     # =====================================================
@@ -484,6 +485,7 @@ class GeradorRelatorio:
             "ano_min": min(anos) if anos else None,
             "ano_max": max(anos) if anos else None,
         }
+
     # =====================================================
     # HELPER: PERÍODO DE NOTICIAS
     # =====================================================
@@ -519,10 +521,6 @@ class GeradorRelatorio:
         fontes = self.analise_por_fonte()
         quase_relevantes = self.noticias_quase_relevantes()
         confianca = self.analise_confianca()
-        dados_historico = self.dados_historico_completo()
-        resumo_ano = self.resumo_historico_por_ano()
-        totais_historico = self.totais_gerais_historico()
-        ranking_historico = self.ranking_empresas_historico()
 
         # =====================================================
         # CAPA
@@ -813,19 +811,19 @@ class GeradorRelatorio:
                     ax.axis('off')
                 else:
                     rotulos = [
-                         f"Alta (80-100%)\n{confianca['alta']}%",
-                         f"Média (50-80%)\n{confianca['media']}%",
-                         f"Baixa (<50%)\n{confianca['baixa']}%"
+                        f"Alta (80-100%)\n{confianca['alta']}%",
+                        f"Média (50-80%)\n{confianca['media']}%",
+                        f"Baixa (<50%)\n{confianca['baixa']}%"
                     ]
                     cores = ['#90EE90', '#FFD700', '#FF6B6B']
 
                     wedges, texts, autotexts = ax.pie(
-                         tamanhos,
-                         labels=rotulos,
-                         colors=cores,
-                         autopct='',
-                         startangle=90,
-                         textprops={'fontsize': 11, 'fontweight': 'bold'}
+                        tamanhos,
+                        labels=rotulos,
+                        colors=cores,
+                        autopct='',
+                        startangle=90,
+                        textprops={'fontsize': 11, 'fontweight': 'bold'}
                     )
 
                 ax.set_title(f"Distribuição de Confiança\nMédia Geral: {confianca['media_geral']}%",
@@ -857,6 +855,11 @@ class GeradorRelatorio:
         fontes = self.analise_por_fonte()
         confianca = self.analise_confianca()
 
+        # Dados históricos (aba Histórico)
+        dados_historico = self.dados_historico_completo()
+        resumo_ano = self.resumo_historico_por_ano()
+        totais_historico = self.totais_gerais_historico()
+
         # Dados para gráficos
         fases_labels = list(fases.keys())
         fases_data = [len(fases[f]) for f in fases_labels]
@@ -866,6 +869,9 @@ class GeradorRelatorio:
 
         periodos = list(evolucao.keys())
         investimentos_data = [evolucao[p]["investimentos"] for p in periodos]
+
+        ano_min = totais_historico['ano_min'] if totais_historico['ano_min'] is not None else "-"
+        ano_max = totais_historico['ano_max'] if totais_historico['ano_max'] is not None else "-"
 
         html = f"""
 <!DOCTYPE html>
@@ -1001,6 +1007,155 @@ class GeradorRelatorio:
             border-top: 1px solid #e0e0e0;
         }}
 
+        /* ===== ABAS ===== */
+        .tabs {{
+            display: flex;
+            gap: 10px;
+            border-bottom: 3px solid #e0e0e0;
+            margin-bottom: 30px;
+        }}
+
+        .tab-button {{
+            padding: 14px 28px;
+            background: none;
+            border: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -3px;
+            transition: all 0.2s;
+        }}
+
+        .tab-button:hover {{
+            color: #667eea;
+        }}
+
+        .tab-button.active {{
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }}
+
+        .tab-content {{
+            display: none;
+        }}
+
+        .tab-content.active {{
+            display: block;
+        }}
+
+        /* ===== FILTROS ===== */
+        .filtros {{
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            align-items: flex-end;
+        }}
+
+        .filtro-grupo {{
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }}
+
+        .filtro-grupo label {{
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #555;
+        }}
+
+        .filtro-grupo select {{
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            min-width: 180px;
+            background: white;
+            cursor: pointer;
+        }}
+
+        .filtro-grupo select:focus {{
+            outline: none;
+            border-color: #667eea;
+        }}
+
+        .btn-limpar-filtros {{
+            padding: 10px 20px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #555;
+            transition: background 0.2s;
+        }}
+
+        .btn-limpar-filtros:hover {{
+            background: #d0d0d0;
+        }}
+
+        /* ===== CARDS HISTÓRICO ===== */
+        .hist-summary {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }}
+
+        .hist-card {{
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }}
+
+        .hist-card h4 {{
+            font-size: 0.85em;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }}
+
+        .hist-card .valor {{
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }}
+
+        /* ===== TABELA HISTÓRICO ===== */
+        .tabela-scroll {{
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }}
+
+        .tabela-scroll table {{
+            margin-top: 0;
+        }}
+
+        .tabela-scroll thead th {{
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }}
+
+        .link-fonte {{
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.85em;
+        }}
+
+        .link-fonte:hover {{
+            text-decoration: underline;
+        }}
+
         @media (max-width: 768px) {{
             .header h1 {{
                 font-size: 1.8em;
@@ -1028,12 +1183,12 @@ class GeradorRelatorio:
             <!-- SISTEMA DE ABAS -->
             <div class="tabs">
                 <button class="tab-button active" onclick="mostrarAba('recente')">🔴 Monitoramento Recente</button>
-                <button class="tab-button" onclick="mostrarAba('historico')">📊 Histórico {totais_historico['ano_min']}-{totais_historico['ano_max']}</button>
+                <button class="tab-button" onclick="mostrarAba('historico')">📊 Histórico {ano_min}-{ano_max}</button>
             </div>
 
             <!-- ABA: MONITORAMENTO RECENTE -->
             <div id="aba-recente" class="tab-content active">
-            
+
             <!-- SUMÁRIO EXECUTIVO -->
             <div class="summary">
                 <div class="summary-card">
@@ -1155,13 +1310,11 @@ class GeradorRelatorio:
                         </tr>
             """
 
-        html += """
+        html += f"""
                     </tbody>
                 </table>
             </div>
 
-            <!-- CONFIANÇA -->
-            <div class="section">
             <!-- CONFIANÇA -->
             <div class="section">
                 <h2>✅ Análise de Confiança</h2>
@@ -1179,6 +1332,97 @@ class GeradorRelatorio:
                     Plotly.newPlot('chart-confianca', data_confianca, layout_confianca, {{responsive: true}});
                 </script>
             </div>
+
+            </div>
+            <!-- FIM ABA: MONITORAMENTO RECENTE -->
+
+            <!-- ABA: HISTÓRICO -->
+            <div id="aba-historico" class="tab-content">
+
+                <div class="hist-summary">
+                    <div class="hist-card">
+                        <h4>Total Investido</h4>
+                        <div class="valor" id="hist-total-investido">R$ {totais_historico['total_investido']/1e9:.2f}B</div>
+                    </div>
+                    <div class="hist-card">
+                        <h4>Investimentos</h4>
+                        <div class="valor" id="hist-num-investimentos">{totais_historico['num_investimentos']}</div>
+                    </div>
+                    <div class="hist-card">
+                        <h4>Empresas Únicas</h4>
+                        <div class="valor" id="hist-num-empresas">{totais_historico['num_empresas']}</div>
+                    </div>
+                    <div class="hist-card">
+                        <h4>Período</h4>
+                        <div class="valor" style="font-size: 1.3em;">{ano_min} – {ano_max}</div>
+                    </div>
+                </div>
+
+                <div class="filtros">
+                    <div class="filtro-grupo">
+                        <label for="filtro-ano">Ano</label>
+                        <select id="filtro-ano" onchange="aplicarFiltros()">
+                            <option value="">Todos os anos</option>
+                        </select>
+                    </div>
+                    <div class="filtro-grupo">
+                        <label for="filtro-empresa">Empresa</label>
+                        <select id="filtro-empresa" onchange="aplicarFiltros()">
+                            <option value="">Todas as empresas</option>
+                        </select>
+                    </div>
+                    <div class="filtro-grupo">
+                        <label for="filtro-fase">Fase</label>
+                        <select id="filtro-fase" onchange="aplicarFiltros()">
+                            <option value="">Todas as fases</option>
+                        </select>
+                    </div>
+                    <button class="btn-limpar-filtros" onclick="limparFiltros()">Limpar filtros</button>
+                </div>
+
+                <div class="section">
+                    <h2 id="hist-titulo-grafico">📈 Evolução do Investimento por Ano</h2>
+                    <div class="chart-container" id="chart-historico"></div>
+                </div>
+
+                <div class="section">
+                    <h2>🏆 Ranking de Empresas</h2>
+                    <div class="tabela-scroll">
+                        <table id="tabela-ranking-historico">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Empresa</th>
+                                    <th>Valor Total</th>
+                                    <th>Investimentos</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>📋 Lista de Investimentos</h2>
+                    <div class="tabela-scroll">
+                        <table id="tabela-lista-historico">
+                            <thead>
+                                <tr>
+                                    <th>Ano</th>
+                                    <th>Empresa</th>
+                                    <th>Valor</th>
+                                    <th>Fase</th>
+                                    <th>Fonte</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <!-- FIM ABA: HISTÓRICO -->
+
         </div>
 
         <div class="footer">
@@ -1187,6 +1431,209 @@ class GeradorRelatorio:
         </div>
     </div>
 
+    <script>
+        // ===== DADOS DO HISTÓRICO (embutidos pelo Python) =====
+        var dadosHistorico = {json.dumps(dados_historico, ensure_ascii=False)};
+        var resumoAno = {json.dumps(resumo_ano, ensure_ascii=False)};
+
+        // ===== SISTEMA DE ABAS =====
+        function mostrarAba(nome) {{
+            document.querySelectorAll('.tab-content').forEach(function(el) {{
+                el.classList.remove('active');
+            }});
+            document.querySelectorAll('.tab-button').forEach(function(el) {{
+                el.classList.remove('active');
+            }});
+
+            document.getElementById('aba-' + nome).classList.add('active');
+            event.target.classList.add('active');
+
+            if (nome === 'historico') {{
+                renderizarHistorico();
+            }}
+        }}
+
+        // ===== POPULAR FILTROS (uma vez, ao carregar) =====
+        function popularFiltros() {{
+            var anos = [...new Set(dadosHistorico.map(d => d.ano))].sort();
+            var empresas = [...new Set(dadosHistorico.map(d => d.empresa))].sort();
+            var fases = [...new Set(dadosHistorico.map(d => d.fase))].sort();
+
+            var selAno = document.getElementById('filtro-ano');
+            anos.forEach(function(ano) {{
+                var opt = document.createElement('option');
+                opt.value = ano;
+                opt.textContent = ano;
+                selAno.appendChild(opt);
+            }});
+
+            var selEmpresa = document.getElementById('filtro-empresa');
+            empresas.forEach(function(emp) {{
+                var opt = document.createElement('option');
+                opt.value = emp;
+                opt.textContent = emp;
+                selEmpresa.appendChild(opt);
+            }});
+
+            var selFase = document.getElementById('filtro-fase');
+            fases.forEach(function(fase) {{
+                var opt = document.createElement('option');
+                opt.value = fase;
+                opt.textContent = fase;
+                selFase.appendChild(opt);
+            }});
+        }}
+
+        function limparFiltros() {{
+            document.getElementById('filtro-ano').value = '';
+            document.getElementById('filtro-empresa').value = '';
+            document.getElementById('filtro-fase').value = '';
+            aplicarFiltros();
+        }}
+
+        function formatarMoeda(valor) {{
+            if (valor >= 1e9) return 'R$ ' + (valor/1e9).toFixed(2) + 'B';
+            if (valor >= 1e6) return 'R$ ' + (valor/1e6).toFixed(1) + 'M';
+            return 'R$ ' + valor.toLocaleString('pt-BR');
+        }}
+
+        // ===== FILTRAR E RENDERIZAR TUDO =====
+        function aplicarFiltros() {{
+            var anoFiltro = document.getElementById('filtro-ano').value;
+            var empresaFiltro = document.getElementById('filtro-empresa').value;
+            var faseFiltro = document.getElementById('filtro-fase').value;
+
+            var dadosFiltrados = dadosHistorico.filter(function(d) {{
+                if (anoFiltro && String(d.ano) !== anoFiltro) return false;
+                if (empresaFiltro && d.empresa !== empresaFiltro) return false;
+                if (faseFiltro && d.fase !== faseFiltro) return false;
+                return true;
+            }});
+
+            // Cards de resumo
+            var totalInvestido = dadosFiltrados.reduce((s, d) => s + d.valor, 0);
+            var numInvestimentos = dadosFiltrados.length;
+            var numEmpresas = new Set(dadosFiltrados.map(d => d.empresa)).size;
+
+            document.getElementById('hist-total-investido').textContent = formatarMoeda(totalInvestido);
+            document.getElementById('hist-num-investimentos').textContent = numInvestimentos;
+            document.getElementById('hist-num-empresas').textContent = numEmpresas;
+
+            // Gráfico: se ano específico selecionado -> barras por empresa
+            // se não -> linha do tempo por ano
+            if (anoFiltro) {{
+                renderizarGraficoBarrasEmpresa(dadosFiltrados, anoFiltro);
+            }} else {{
+                renderizarGraficoLinhaDoTempo();
+            }}
+
+            // Ranking
+            renderizarRanking(dadosFiltrados);
+
+            // Lista
+            renderizarLista(dadosFiltrados);
+        }}
+
+        function renderizarGraficoLinhaDoTempo() {{
+            document.getElementById('hist-titulo-grafico').textContent = '📈 Evolução do Investimento por Ano';
+
+            var anos = resumoAno.map(d => d.ano);
+            var valores = resumoAno.map(d => d.total_investido);
+
+            var data = [{{
+                x: anos,
+                y: valores,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: {{color: '#667eea', width: 3}},
+                marker: {{size: 10}},
+                fill: 'tozeroy',
+                fillcolor: 'rgba(102, 126, 234, 0.15)'
+            }}];
+
+            var layout = {{
+                xaxis: {{title: 'Ano', dtick: 1}},
+                yaxis: {{title: 'Total Investido (R$)'}},
+                hovermode: 'closest'
+            }};
+
+            Plotly.newPlot('chart-historico', data, layout, {{responsive: true}});
+        }}
+
+        function renderizarGraficoBarrasEmpresa(dadosFiltrados, ano) {{
+            document.getElementById('hist-titulo-grafico').textContent = '🏢 Investimentos por Empresa em ' + ano;
+
+            var ordenado = [...dadosFiltrados].sort((a, b) => b.valor - a.valor);
+
+            var data = [{{
+                x: ordenado.map(d => d.valor),
+                y: ordenado.map(d => d.empresa),
+                type: 'bar',
+                orientation: 'h',
+                marker: {{color: '#764ba2'}}
+            }}];
+
+            var layout = {{
+                xaxis: {{title: 'Valor Investido (R$)'}},
+                margin: {{l: 220}},
+                height: Math.max(400, ordenado.length * 30)
+            }};
+
+            Plotly.newPlot('chart-historico', data, layout, {{responsive: true}});
+        }}
+
+        function renderizarRanking(dadosFiltrados) {{
+            var porEmpresa = {{}};
+            dadosFiltrados.forEach(function(d) {{
+                if (!porEmpresa[d.empresa]) {{
+                    porEmpresa[d.empresa] = {{valor: 0, count: 0}};
+                }}
+                porEmpresa[d.empresa].valor += d.valor;
+                porEmpresa[d.empresa].count += 1;
+            }});
+
+            var ranking = Object.keys(porEmpresa).map(function(emp) {{
+                return {{empresa: emp, valor: porEmpresa[emp].valor, count: porEmpresa[emp].count}};
+            }}).sort((a, b) => b.valor - a.valor);
+
+            var tbody = document.querySelector('#tabela-ranking-historico tbody');
+            tbody.innerHTML = '';
+
+            ranking.forEach(function(item, idx) {{
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + (idx + 1) + '</td>' +
+                    '<td>' + item.empresa + '</td>' +
+                    '<td>' + formatarMoeda(item.valor) + '</td>' +
+                    '<td>' + item.count + '</td>';
+                tbody.appendChild(tr);
+            }});
+        }}
+
+        function renderizarLista(dadosFiltrados) {{
+            var ordenado = [...dadosFiltrados].sort((a, b) => b.ano - a.ano || b.valor - a.valor);
+
+            var tbody = document.querySelector('#tabela-lista-historico tbody');
+            tbody.innerHTML = '';
+
+            ordenado.forEach(function(d) {{
+                var tr = document.createElement('tr');
+                var linkFonte = d.url ? '<a class="link-fonte" href="' + d.url + '" target="_blank">Ver fonte ↗</a>' : '-';
+                tr.innerHTML = '<td>' + d.ano + '</td>' +
+                    '<td>' + d.empresa + '</td>' +
+                    '<td>' + formatarMoeda(d.valor) + '</td>' +
+                    '<td>' + d.fase + '</td>' +
+                    '<td>' + linkFonte + '</td>';
+                tbody.appendChild(tr);
+            }});
+        }}
+
+        function renderizarHistorico() {{
+            if (document.getElementById('filtro-ano').options.length <= 1) {{
+                popularFiltros();
+            }}
+            aplicarFiltros();
+        }}
+    </script>
 </body>
 </html>
         """
@@ -1288,6 +1735,7 @@ class GeradorRelatorio:
                 ])
 
             ranking_table = Table(ranking_data)
+
             estilos_ranking = [
                 ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#667eea')),
                 ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -1298,7 +1746,7 @@ class GeradorRelatorio:
                 ('GRID', (0, 0), (-1, -1), 1, colors.grey),
             ]
 
-            # Zebra striping manual (substitui o ROWBACKGROUNDS inválido)
+            # Zebra striping manual (ROWBACKGROUNDS não existe no ReportLab)
             for i in range(1, len(ranking_data)):
                 cor = colors.white if i % 2 == 1 else colors.HexColor('#f9f9f9')
                 estilos_ranking.append(('BACKGROUND', (0, i), (-1, i), cor))
