@@ -1051,17 +1051,21 @@ classe GeradorRelatório:
         }}
 
         .tab-button:hover {{
-            cor: #037482;
+            cor: #667eea;
         }}
+
         .tab-button.active {{
-            cor: #037482;
-            cor-da-borda-inferior: #FF7A01;
+            cor: #667eea;
+            cor-da-borda-inferior: #667eea;
         }}
+
         .tab-content {{
             exibir: nenhum;
         }}
-        .tab-content.active {{
-            exibir: bloco;
+
+        .tab-button.active {{
+            cor: #037482;
+            cor-da-borda-inferior: #FF7A01;
         }}
 
         /* ===== FILTROS ===== */
@@ -1828,7 +1832,7 @@ classe GeradorRelatório:
 
                 ranking_hist_table.setStyle(TableStyle(estilos_hist))
 
-                história.append(tabela_hist_de_classificação)
+                história.append(tabela_hist_de_classificação )
 
             # Construir PDF
             doc.build(história)
