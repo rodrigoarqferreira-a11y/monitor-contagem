@@ -1,0 +1,67 @@
+{
+    "data_geracao": "2026-07-16T12:25:44.083417",
+    "resumo_executivo": {
+        "investimentos_detectados": 60,
+        "empresas_monitoradas": 59,
+        "novos_empregos": 0,
+        "valor_total": 242.3,
+        "confianca_media": 90,
+        "noticias_relevantes": 1,
+        "periodo": "2026-07-16 a 2026-07-16"
+    },
+    "investimentos_por_fase": {
+        "Anunciado": [
+            {
+                "titulo": "Obras concluídas liberam tráfego nos...",
+                "texto": "Um grande avanço para a mobilidade foi alcançado recentemente, com a liberação dos dois sentidos da via Vereador Joaquim Costa, mais conhecida como VM5, no bairro Campina Verde, região Ressaca. Com isso, o fluxo de veículos passa a operar nas duas pistas, em um trecho que sempre foi marcado por grandes congestionamentos. Mesmo com a liberação total da via para o tráfego de veículos, outras obras complementares seguem acontecendo, entre elas a implantação de meio-fios, sarjetas e passeios.\n\nA duplicação da via VM5 é uma parceria entre a Prefeitura de Contagem, que executou toda a parte de drenagem para resolver problemas históricos de alagamentos, e a empresa Tambasa, responsável pela pavimentação e obras de urbanização. Somente na parte de drenagem, os investimentos foram superiores aos R$ 2,3 milhões.\n\nDuplicação da via VM5 era demanda antiga de quem passa pela região Foto: Ricardo Lima / PMC\n\n“Com essas intervenções conseguimos resolver o problema dos constantes alagamentos nos períodos de chuva, além de melhorar significativamente o fluxo de veículos neste trecho, por onde passam aproximadamente 32 mil veículos por dia. Era uma demanda antiga da população, de todas as pessoas que transitam aqui, trazendo grandes benefícios também para as empresas da região e seus colaboradores, que agora vão conseguir chegar e sair com mais facilidade”. Subsecretário de obras, João Gustavo Lacerda.\n\n“Com essas intervenções conseguimos resolver o problema dos constantes alagamentos nos períodos de chuva, além de melhorar significativamente o fluxo de veículos neste trecho, por onde passam aproximadamente 32 mil veículos por dia. Era uma demanda antiga da população, de todas as pessoas que transitam aqui, trazendo grandes benefícios também para as empresas da região e seus colaboradores, que agora vão conseguir chegar e sair com mais facilidade”.\n\nSubsecretário de obras, João Gustavo Lacerda.\n\nAlém das obras de drenagem, duplicação e urbanização da via VM5, estão sendo elaborados estudos para que o trecho no sentido Ceasa possa receber projeto de iluminação, com um investimento de aproximadamente R$240 mil para dar mais segurança e conforto para os pedestres.",
+                "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84280/obras-concluidas-liberam-trafego-nos-dois-sentidos-da-via-vm5",
+                "fonte": "Portal Contagem",
+                "data": "2026-07-16",
+                "empresas": [
+                    "tambasa"
+                ],
+                "valores": [
+                    "R$ 2,3 milhões",
+                    "R$240 mil"
+                ],
+                "empregos": [],
+                "pontuacao": 120,
+                "relevante": true,
+                "fase": "Anunciado",
+                "status": "Em operação",
+                "confianca": 90,
+                "mencionou_contagem": true
+            }
+        ]
+    },
+    "ranking_empresas": [
+        {
+            "empresa": "tambasa",
+            "investimentos": 1,
+            "valor_total": 240.0,
+            "empregos": 0
+        }
+    ],
+    "evolucao_mensal": {
+        "2026-07": {
+            "investimentos": 1,
+            "empregos": 0,
+            "valor": 240.0
+        }
+    },
+    "analise_por_fonte": {
+        "Portal Contagem": {
+            "total": 1,
+            "relevantes": 1,
+            "taxa_precisao": 100.0,
+            "confianca_media": 90
+        }
+    },
+    "noticias_quase_relevantes": [],
+    "analise_confianca": {
+        "alta": 100.0,
+        "media": 0.0,
+        "baixa": 0.0,
+        "media_geral": 90
+    }
+}
