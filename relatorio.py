@@ -1,5 +1,5 @@
 """
-====================================================
+===================================================
 
 RELATORIO.PY
 
@@ -13,7 +13,7 @@ Formatos suportados:
 - HTML (painel web)
 - Gráficos (PNG/SVG)
 
-====================================================
+===================================================
 """
 
 importar json
@@ -48,7 +48,7 @@ tentar:
     matplotlib.use('Agg') # Interface gráfica de usuário do backend semântico
     HAS_MATPLOTLIB = Verdadeiro
 exceto ImportError:
-    HAS_MATPLOTLIB = False
+    HAS_MATPLOTLIB = Falso
 
 tentar:
     import plotly.graph_objects as go
@@ -1051,21 +1051,17 @@ classe GeradorRelatório:
         }}
 
         .tab-button:hover {{
-            cor: #667eea;
+            cor: #037482;
         }}
-
-        .tab-button.active {{
-            cor: #667eea;
-            cor-da-borda-inferior: #667eea;
-        }}
-
-        .tab-content {{
-            exibir: nenhum;
-        }}
-
         .tab-button.active {{
             cor: #037482;
             cor-da-borda-inferior: #FF7A01;
+        }}
+        .tab-content {{
+            exibir: nenhum;
+        }}
+        .tab-content.active {{
+            exibir: bloco;
         }}
 
         /* ===== FILTROS ===== */
@@ -1124,7 +1120,7 @@ classe GeradorRelatório:
 
         /* ===== CARTÕES HISTÓRICO ===== */
         .hist-summary {{
-            Exibição: grade;
+            Exibir: grade;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             espaço: 20px;
             margem-inferior: 30px;
@@ -1832,7 +1828,7 @@ classe GeradorRelatório:
 
                 ranking_hist_table.setStyle(TableStyle(estilos_hist))
 
-                história.append(tabela_hist_de_classificação )
+                história.append(tabela_hist_de_classificação)
 
             # Construir PDF
             doc.build(história)
