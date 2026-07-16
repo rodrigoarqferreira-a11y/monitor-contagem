@@ -1051,21 +1051,17 @@ class GeradorRelatorio:
         }}
 
         .tab-button:hover {{
-            color: #667eea;
+            color: #037482;
         }}
-
-        .tab-button.active {{
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }}
-
-        .tab-content {{
-            display: none;
-        }}
-
         .tab-button.active {{
             color: #037482;
             border-bottom-color: #FF7A01;
+        }}
+        .tab-content {{
+            display: none;
+        }}
+        .tab-content.active {{
+            display: block;
         }}
 
         /* ===== FILTROS ===== */
