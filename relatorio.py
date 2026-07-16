@@ -1,5 +1,5 @@
 """
-===================================================
+====================================================
 
 RELATORIO.PY
 
@@ -8,67 +8,67 @@ Monitor de Contagem
 
 Formatos suportados:
 - TXT (texto puro)
-- JSON (dados indonos)
+- JSON (dados estruturados)
 - PDF (documento formatado)
 - HTML (painel web)
 - Gráficos (PNG/SVG)
 
-===================================================
+====================================================
 """
 
-importar json
+import json
 from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict, Counter
-estatísticas de importação
+import statistics
 from io import BytesIO
 
-do banco import Banco
+from banco import Banco
 
 # =====================================================
 # IMPORTAÇÕES CONDICIONAIS
 # =====================================================
 
-tentar:
+try:
     from reportlab.lib.pagesizes import letter, A4
     from reportlab.lib import colors
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.units import inch
     from reportlab.platypus import (
-        SimpleDocTemplate, Tabela, Estilo de Tabela, Parágrafo, Espaçador,
-        PageBreak, Imagem como RLImage
+        SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer,
+        PageBreak, Image as RLImage
     )
-    HAS_REPORTLAB = Verdadeiro
-exceto ImportError:
-    HAS_REPORTLAB = Falso
+    HAS_REPORTLAB = True
+except ImportError:
+    HAS_REPORTLAB = False
 
-tentar:
+try:
     import matplotlib.pyplot as plt
     import matplotlib
-    matplotlib.use('Agg') # Interface gráfica de usuário do backend semântico
-    HAS_MATPLOTLIB = Verdadeiro
-exceto ImportError:
-    HAS_MATPLOTLIB = Falso
+    matplotlib.use('Agg')  # Backend sem GUI
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
 
-tentar:
+try:
     import plotly.graph_objects as go
     import plotly.express as px
-    HAS_PLOTLY = Verdadeiro
-exceto ImportError:
-    HAS_PLOTLY = Falso
+    HAS_PLOTLY = True
+except ImportError:
+    HAS_PLOTLY = False
 
 
-classe GeradorRelatório:
+class GeradorRelatorio:
     """
     Gera relatórios completos sobre investimentos
-    detectado pelo monitor.
+    detectados pelo monitor.
     """
 
     def __init__(self, banco: Banco = None):
         """Inicializa com dados do banco."""
-        self.banco = banco ou Banco()
+        self.banco = banco or Banco()
         self.data_geracao = datetime.now()
-        self.pasta_relatorios = Caminho("relatorios")
+        self.pasta_relatorios = Path("relatorios")
         self.pasta_relatorios.mkdir(exist_ok=True)
 
     # =====================================================
@@ -78,58 +78,58 @@ classe GeradorRelatório:
     def calcular_resumo_executivo(self):
         """Calcula os números principais do relatório."""
 
-        notícias = self.banco.noticias
+        noticias = self.banco.noticias
         investimentos = self.banco.investimentos
         empresas = self.banco.empresas
 
-        # Contar investimentos relevantes (mencionar Contagem)
-        _relevantes = [
-            inv para inv em y
-            se "id" em inv # ID do Tem
+        # Contar investimentos relevantes (mencionam Contagem)
+        investimentos_relevantes = [
+            inv for inv in investimentos
+            if "id" in inv  # Tem ID válido
         ]
 
-        # Valores Extrair
+        # Extrair valores
         valores = []
-        para noticia em noticias:
-            if noticia.get("relevante") e noticia.get("valores"):
-                para valor_str em noticia.get("valores", []):
+        for noticia in noticias:
+            if noticia.get("relevante") and noticia.get("valores"):
+                for valor_str in noticia.get("valores", []):
                     # Tenta extrair número
-                    tentar:
+                    try:
                         valor_limpo = valor_str.replace("R$", "").replace(",", ".").strip()
                         valor_num = float(valor_limpo.split()[0])
                         valores.append(valor_num)
-                    exceto:
-                        passar
+                    except:
+                        pass
 
-        # Extrairra
-        total_sem ...
-        para noticia em noticias:
-            if noticia.get("relevante") e noticia.get("empregos"):
-                para emp_str em noticia.get("empregos", []):
-                    tentar:
+        # Extrair empregos
+        empregos_total = 0
+        for noticia in noticias:
+            if noticia.get("relevante") and noticia.get("empregos"):
+                for emp_str in noticia.get("empregos", []):
+                    try:
                         emp_num = int("".join(filter(str.isdigit, emp_str.split()[0])))
-                        total_de_sinal += número_de_funcionários
-                    exceto:
-                        passar
+                        empregos_total += emp_num
+                    except:
+                        pass
 
         # Confiança média
         confiancas = [
             n.get("confianca", 0)
-            para n em notícias
-            se n.get("relevante")
+            for n in noticias
+            if n.get("relevante")
         ]
         confianca_media = int(statistics.mean(confiancas)) if confiancas else 0
 
-        valor_total = soma(valores) if valores else 0
+        valor_total = sum(valores) if valores else 0
 
-        retornar {
+        return {
             "investimentos_detectados": len(investimentos_relevantes),
             "empresas_monitoradas": len(empresas),
             "novos_empregos": empregos_total,
             "valor_total": valor_total,
             "confianca_media": confianca_media,
             "noticias_relevantes": len([n for n in noticias if n.get("relevante")]),
-            "período": self._obter_periodo_noticias()
+            "periodo": self._obter_periodo_noticias()
         }
 
     # =====================================================
@@ -139,15 +139,15 @@ classe GeradorRelatório:
     def investimentos_por_fase(self):
         """Agrupa investimentos por fase."""
 
-        notícias = self.banco.noticias
-        símbolo = defaultdict(lista)
+        noticias = self.banco.noticias
+        fases = defaultdict(list)
 
-        para noticia em noticias:
-            se noticia.get("relevante"):
-                fase = noticia.get("fase", "Não identificado")
-                g[fase].append(noticia)
+        for noticia in noticias:
+            if noticia.get("relevante"):
+                fase = noticia.get("fase", "Não identificada")
+                fases[fase].append(noticia)
 
-        retornar dict(fases)
+        return dict(fases)
 
     # =====================================================
     # RANKING DE EMPRESAS
@@ -156,147 +156,147 @@ classe GeradorRelatório:
     def ranking_empresas(self, top_n=10):
         """Retorna top N empresas com mais investimentos."""
 
-        notícias = self.banco.noticias
-        empresas_contagem = Contador()
+        noticias = self.banco.noticias
+        empresas_contagem = Counter()
         empresas_valor = defaultdict(float)
         empresas_empregos = defaultdict(int)
 
-        para noticia em noticias:
-            if noticia.get("relevante") e noticia.get("mencionou_contagem"):
-                para empresa em noticia.get("empresas", []):
+        for noticia in noticias:
+            if noticia.get("relevante") and noticia.get("mencionou_contagem"):
+                for empresa in noticia.get("empresas", []):
                     empresas_contagem[empresa] += 1
 
                     # Valor
-                    se noticia.get("valores"):
-                        para valor_str em noticia.get("valores"):
-                            tentar:
+                    if noticia.get("valores"):
+                        for valor_str in noticia.get("valores"):
+                            try:
                                 valor = float(
                                     valor_str.replace("R$", "").split()[0]
                                 )
                                 empresas_valor[empresa] += valor
-                            exceto:
-                                passar
+                            except:
+                                pass
 
                     # Empregos
-                    se noticia.get("empregos"):
-                        para emp_str em noticia.get("empregos"):
-                            tentar:
+                    if noticia.get("empregos"):
+                        for emp_str in noticia.get("empregos"):
+                            try:
                                 emp = int("".join(filter(str.isdigit, emp_str.split()[0])))
                                 empresas_empregos[empresa] += emp
-                            exceto:
-                                passar
+                            except:
+                                pass
 
-        # Ranking Montar
-        classificação = []
-        para empresa, conte em empresas_contagem.most_common(top_n):
+        # Montar ranking
+        ranking = []
+        for empresa, count in empresas_contagem.most_common(top_n):
             ranking.append({
                 "empresa": empresa,
-                "investimentos": contagem,
+                "investimentos": count,
                 "valor_total": empresas_valor.get(empresa, 0),
                 "empregos": empresas_empregos.get(empresa, 0)
             })
 
-        classificação de retorno
+        return ranking
 
     # =====================================================
     # EVOLUÇÃO TEMPORAL
     # =====================================================
 
-    def evolução_mensal(self):
-        """Cálculo da evolução dos investimentos por mês."""
+    def evolucao_mensal(self):
+        """Calcula evolução de investimentos por mês."""
 
-        notícias = self.banco.noticias
-        evolução = defaultdict(lambda: {
+        noticias = self.banco.noticias
+        evolucao = defaultdict(lambda: {
             "investimentos": 0,
             "empregos": 0,
             "valor": 0
         })
 
-        para noticia em noticias:
-            if noticia.get("relevante") e noticia.get("mencionou_contagem"):
+        for noticia in noticias:
+            if noticia.get("relevante") and noticia.get("mencionou_contagem"):
 
                 # Extrair mês
-                data_str = noticia.get("dados", "")
-                se data_str:
-                    tentar:
-                        # Suponha o formato AAAA-MM-DD ou DD/MM/AAAA
-                        se "-" em data_str:
-                            mes = data_str[:7] # AAAA-MM
-                        outro:
-                            mes = data_str[-4:] # Último ano
-                    exceto:
+                data_str = noticia.get("data", "")
+                if data_str:
+                    try:
+                        # Supõe formato YYYY-MM-DD ou DD/MM/YYYY
+                        if "-" in data_str:
+                            mes = data_str[:7]  # YYYY-MM
+                        else:
+                            mes = data_str[-4:]  # Último ano
+                    except:
                         mes = "Desconhecido"
-                outro:
+                else:
                     mes = "Desconhecido"
 
-                evolução[mes]["investimentos"] += 1
+                evolucao[mes]["investimentos"] += 1
 
                 # Empregos
-                se noticia.get("empregos"):
-                    para emp_str em noticia.get("empregos"):
-                        tentar:
+                if noticia.get("empregos"):
+                    for emp_str in noticia.get("empregos"):
+                        try:
                             emp = int("".join(filter(str.isdigit, emp_str.split()[0])))
                             evolucao[mes]["empregos"] += emp
-                        exceto:
-                            passar
+                        except:
+                            pass
 
                 # Valor
-                se noticia.get("valores"):
-                    para val_str em noticia.get("valores"):
-                        tentar:
+                if noticia.get("valores"):
+                    for val_str in noticia.get("valores"):
+                        try:
                             val = float(val_str.replace("R$", "").split()[0])
                             evolucao[mes]["valor"] += val
-                        exceto:
-                            passar
+                        except:
+                            pass
 
-        retornar dict(sorted(evolucao.items()))
+        return dict(sorted(evolucao.items()))
 
     # =====================================================
     # ANÁLISE POR FONTE
     # =====================================================
 
     def analise_por_fonte(self):
-        """Agrupa dados por fonte de notícias."""
+        """Agrupa dados por fonte de notícia."""
 
-        notícias = self.banco.noticias
+        noticias = self.banco.noticias
         por_fonte = defaultdict(lambda: {
             "total": 0,
             "relevantes": 0,
             "confianca_media": []
         })
 
-        para noticia em noticias:
+        for noticia in noticias:
             fonte = noticia.get("fonte", "Desconhecida")
 
             por_fonte[fonte]["total"] += 1
 
-            se noticia.get("relevante"):
+            if noticia.get("relevante"):
                 por_fonte[fonte]["relevantes"] += 1
 
-            confiança = noticia.get("confianca", 0)
-            se confianca > 0:
+            confianca = noticia.get("confianca", 0)
+            if confianca > 0:
                 por_fonte[fonte]["confianca_media"].append(confianca)
 
         # Calcular média de confiança
         resultado = {}
-        para fonte, dados em por_fonte.items():
+        for fonte, dados in por_fonte.items():
             confiancas = dados["confianca_media"]
             resultado[fonte] = {
                 "total": dados["total"],
                 "relevantes": dados["relevantes"],
-                "taxa_precisao": arredondar(
+                "taxa_precisao": round(
                     (dados["relevantes"] / dados["total"] * 100)
-                    se dados["total"] > 0 senão 0,
+                    if dados["total"] > 0 else 0,
                     1
                 ),
-                "confianca_media": redondo(
-                    estatísticas.média(confianças)
-                    se confiancas senão 0,
+                "confianca_media": round(
+                    statistics.mean(confiancas)
+                    if confiancas else 0,
                     1
                 )
             }
 
-        retornar resultado
+        return resultado
 
     # =====================================================
     # NOTÍCIAS "QUASE RELEVANTES"
@@ -304,58 +304,58 @@ classe GeradorRelatório:
 
     def noticias_quase_relevantes(self):
         """
-        Notícias com boa avaliação mas descartadas por
-        não mencionem Contagem.
+        Notícias com boa pontuação mas descartadas por
+        não mencionarem Contagem.
         """
 
-        notícias = self.banco.noticias
-        cotas = []
+        noticias = self.banco.noticias
+        quase = []
 
-        para noticia em noticias:
-            pontuacao_ok = noticia.get("pontuação", 0) >= 30
+        for noticia in noticias:
+            pontuacao_ok = noticia.get("pontuacao", 0) >= 30
             sem_contagem = not noticia.get("mencionou_contagem", False)
 
-            se pontuacao_ok e sem_contagem e não noticia.get("relevante"):
+            if pontuacao_ok and sem_contagem and not noticia.get("relevante"):
                 quase.append({
                     "titulo": noticia.get("titulo", ""),
                     "empresas": noticia.get("empresas", []),
-                    "pontuação": noticia.get("pontuação", 0),
+                    "pontuacao": noticia.get("pontuacao", 0),
                     "fase": noticia.get("fase", ""),
                     "fonte": noticia.get("fonte", ""),
                     "url": noticia.get("url", "")
                 })
 
-        return ordenado(quase, key=lambda x: x["pontuacao"], reverso=True)
+        return sorted(quase, key=lambda x: x["pontuacao"], reverse=True)
 
     # =====================================================
     # CONFIANÇA DOS DADOS
     # =====================================================
 
     def analise_confianca(self):
-        """Análise da distribuição de confiança dos dados."""
+        """Analisa distribuição de confiança dos dados."""
 
-        notícias = [
-            n por n em self.banco.noticias
-            se n.get("relevante")
+        noticias = [
+            n for n in self.banco.noticias
+            if n.get("relevante")
         ]
-        confiancas = [n.get("confianca", 0) for n em notícias]
+        confiancas = [n.get("confianca", 0) for n in noticias]
 
-        se não confiancas:
-            retornar {
+        if not confiancas:
+            return {
                 "alta": 0,
-                "mídia": 0,
+                "media": 0,
                 "baixa": 0,
                 "media_geral": 0
             }
 
-        alta = len([c for c em confiáveis ​​if c >= 80])
-        media = len([c para c em confiancas se 50 <= c < 80])
-        baixa = len([c for c em confiáveis ​​if c < 50])
-        total = alta + média +
+        alta = len([c for c in confiancas if c >= 80])
+        media = len([c for c in confiancas if 50 <= c < 80])
+        baixa = len([c for c in confiancas if c < 50])
+        total = alta + media + baixa
 
-        retornar {
-            "alta": arredondar((alta / total * 100) se total > 0 senão 0, 1),
-            "mídia": arredondar((mídia / total * 100) se total > 0 senão 0, 1),
+        return {
+            "alta": round((alta / total * 100) if total > 0 else 0, 1),
+            "media": round((media / total * 100) if total > 0 else 0, 1),
             "baixa": round((baixa / total * 100) if total > 0 else 0, 1),
             "media_geral": round(statistics.mean(confiancas), 1) if confiancas else 0
         }
@@ -366,15 +366,15 @@ classe GeradorRelatório:
 
     def dados_historico_completo(self):
         """
-        Monta uma estrutura completa de dados históricos,
-        pronto para ser embutido como JSON no HTML e
-        manipulado em JavaScript pelos filtros.
+        Monta a estrutura completa de dados históricos,
+        pronta para ser embutida como JSON no HTML e
+        manipulada em JavaScript pelos filtros.
         """
 
         investimentos = self.banco.investimentos
 
         registros = []
-        for inv em:
+        for inv in investimentos:
             registros.append({
                 "empresa": inv.get("empresa", ""),
                 "ano": inv.get("ano"),
@@ -385,7 +385,7 @@ classe GeradorRelatório:
                 "origem": inv.get("origem", "monitoramento"),
             })
 
-        registros de devolução
+        return registros
 
     def resumo_historico_por_ano(self):
         """
@@ -396,25 +396,25 @@ classe GeradorRelatório:
         investimentos = self.banco.investimentos
         por_ano = {}
 
-        for inv em:
+        for inv in investimentos:
             ano = inv.get("ano")
-            se ano for None:
-                continuar
+            if ano is None:
+                continue
 
-            se ano não estiver em por_ano:
+            if ano not in por_ano:
                 por_ano[ano] = {
                     "ano": ano,
                     "total_investido": 0,
                     "num_investimentos": 0,
-                    "empresas": conjunto(),
+                    "empresas": set(),
                 }
 
             por_ano[ano]["total_investido"] += inv.get("valor", 0)
             por_ano[ano]["num_investimentos"] += 1
-            por_ano[ano]["empresas"].add(inv.get("empresas", ""))
+            por_ano[ano]["empresas"].add(inv.get("empresa", ""))
 
         resultado = []
-        para ano em sorted(por_ano.keys()):
+        for ano in sorted(por_ano.keys()):
             dados = por_ano[ano]
             resultado.append({
                 "ano": dados["ano"],
@@ -423,27 +423,27 @@ classe GeradorRelatório:
                 "num_empresas": len(dados["empresas"]),
             })
 
-        retornar resultado
+        return resultado
 
-    def ranking_empresas_historico(self, ano=Nenhum):
+    def ranking_empresas_historico(self, ano=None):
         """
         Ranking de empresas por valor total investido,
         somando todos os anos (base histórica).
-        Se 'ano' for informado, filtre apenas aquele ano.
+        Se 'ano' for informado, filtra apenas aquele ano.
         """
 
         investimentos = self.banco.investimentos
         valores_por_empresa = {}
 
-        for inv em:
-            Se ano não for None e inv.get("ano") != ano:
-                continuar
+        for inv in investimentos:
+            if ano is not None and inv.get("ano") != ano:
+                continue
 
             empresa = inv.get("empresa", "")
-            se não for empresa:
-                continuar
+            if not empresa:
+                continue
 
-            se empresa não estiver em valores_por_empresa:
+            if empresa not in valores_por_empresa:
                 valores_por_empresa[empresa] = {
                     "empresa": empresa,
                     "valor_total": 0,
@@ -453,59 +453,59 @@ classe GeradorRelatório:
             valores_por_empresa[empresa]["valor_total"] += inv.get("valor", 0)
             valores_por_empresa[empresa]["num_investimentos"] += 1
 
-        classificação = ordenado(
-            valores_por_empresa.valores(),
-            chave=lambda x: x["valor_total"],
-            reverso=Verdadeiro
+        ranking = sorted(
+            valores_por_empresa.values(),
+            key=lambda x: x["valor_total"],
+            reverse=True
         )
 
-        classificação de retorno
+        return ranking
 
     def totais_gerais_historico(self):
         """Números consolidados de toda a base histórica."""
 
         investimentos = self.banco.investimentos
 
-        se não for:
-            retornar {
+        if not investimentos:
+            return {
                 "total_investido": 0,
                 "num_investimentos": 0,
                 "num_empresas": 0,
-                "ano_min": Nenhum,
-                "ano_max": Nenhum,
+                "ano_min": None,
+                "ano_max": None,
             }
 
-        empresas = set(inv.get("empresa", "") para inv em investimentos)
+        empresas = set(inv.get("empresa", "") for inv in investimentos)
         anos = [inv.get("ano") for inv in investimentos if inv.get("ano") is not None]
 
-        retornar {
-            "total_investido": sum(inv.get("valor", 0) para inv em investimentos),
+        return {
+            "total_investido": sum(inv.get("valor", 0) for inv in investimentos),
             "num_investimentos": len(investimentos),
             "num_empresas": len(empresas),
-            "ano_min": min(anos) if anos else Nenhum,
-            "ano_max": max(anos) if anos else Nenhum,
+            "ano_min": min(anos) if anos else None,
+            "ano_max": max(anos) if anos else None,
         }
 
     # =====================================================
-    # AJUDANTE: PERÍODO DE NOTÍCIAS
+    # HELPER: PERÍODO DE NOTICIAS
     # =====================================================
 
     def _obter_periodo_noticias(self):
         """Obtém período das notícias."""
 
-        notícias = self.banco.noticias
-        se não houver notícias:
-            retornar "Período desconhecido"
+        noticias = self.banco.noticias
+        if not noticias:
+            return "Período desconhecido"
 
-        dados = [
-            n.get("dados", "")
-            para n em notícias
-            se n.get("dados")
+        datas = [
+            n.get("data", "")
+            for n in noticias
+            if n.get("data")
         ]
 
-        se houver dados:
-            retornar f"{min(dados)} a {max(dados)}"
-        retornar "Período desconhecido"
+        if datas:
+            return f"{min(datas)} a {max(datas)}"
+        return "Período desconhecido"
 
     # =====================================================
     # GERAR RELATÓRIO TEXTO
@@ -517,7 +517,7 @@ classe GeradorRelatório:
         resumo = self.calcular_resumo_executivo()
         fases = self.investimentos_por_fase()
         ranking = self.ranking_empresas()
-        evolução = self.evolucao_mensal()
+        evolucao = self.evolucao_mensal()
         fontes = self.analise_por_fonte()
         quase_relevantes = self.noticias_quase_relevantes()
         confianca = self.analise_confianca()
@@ -531,8 +531,8 @@ classe GeradorRelatório:
         texto.append("RELATÓRIO DE INVESTIMENTOS PRIVADOS")
         texto.append("MONITOR DE CONTAGEM - MG")
         texto.append("=" * 70)
-        texto.append(f"\nDados de Geração: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}")
-        texto.append(f"Período: {resumo['período']}\n")
+        texto.append(f"\nData de Geração: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}")
+        texto.append(f"Período: {resumo['periodo']}\n")
 
         # =====================================================
         # SUMÁRIO EXECUTIVO
@@ -541,16 +541,16 @@ classe GeradorRelatório:
         texto.append("\n" + "=" * 70)
         texto.append("SUMÁRIO EXECUTIVO")
         texto.append("=" * 70)
-        texto.append(f"\n┌──────────────────────────────────────────┐")
-        texto.append(f"│ NÚMEROS PRINCIPAIS │")
-        texto.append(f"├───────────────────────────────────────────┤")
-        texto.append(f"│ Investimentos detectados..: {resumo['investimentos_detectados']:>10} │")
-        texto.append(f"│ Empresas monitoradas.....: {resumo['empresas_monitoradas']:>10} │")
-        texto.append(f"│ Novos empregos gerados..: {resumo['novos_empregos']:>10} │")
+        texto.append(f"\n┌─────────────────────────────────────────┐")
+        texto.append(f"│ NÚMEROS PRINCIPAIS                      │")
+        texto.append(f"├─────────────────────────────────────────┤")
+        texto.append(f"│ Investimentos detectados..: {resumo['investimentos_detectados']:>10}  │")
+        texto.append(f"│ Empresas monitoradas.....: {resumo['empresas_monitoradas']:>10}  │")
+        texto.append(f"│ Novos empregos gerados..: {resumo['novos_empregos']:>10}  │")
         texto.append(f"│ Valor total anunciado...: R$ {resumo['valor_total']/1e9:>7.2f} bi │")
-        texto.append(f"│ Notícias relevantes.....: {resumo['noticias_relevantes']:>10} │")
-        texto.append(f"│ Confiança média.........: {resumo['confianca_media']:>9}% │")
-        texto.append(f"└───────────────────────────────────────────┘")
+        texto.append(f"│ Notícias relevantes.....: {resumo['noticias_relevantes']:>10}  │")
+        texto.append(f"│ Confiança média.........: {resumo['confianca_media']:>9}%  │")
+        texto.append(f"└─────────────────────────────────────────┘")
 
         # =====================================================
         # INVESTIMENTOS POR FASE
@@ -560,7 +560,7 @@ classe GeradorRelatório:
         texto.append("INVESTIMENTOS POR FASE")
         texto.append("=" * 70)
 
-        para fase, noticias_fase em sorted(fases.items()):
+        for fase, noticias_fase in sorted(fases.items()):
             barra = "█" * len(noticias_fase)
             texto.append(f"\n{fase:<20} {barra} ({len(noticias_fase)})")
 
@@ -576,8 +576,8 @@ classe GeradorRelatório:
         ))
         texto.append("-" * 70)
 
-        para idx, emp em enumerate(ranking, 1):
-            valor_m = emp["valor_total"] / 1e6 se emp["valor_total"] > 0 senão 0
+        for idx, emp in enumerate(ranking, 1):
+            valor_m = emp["valor_total"] / 1e6 if emp["valor_total"] > 0 else 0
             texto.append("{:<5} {:<30} {:<15} {:<15.1f} {:<12} {:<15}".format(
                 str(idx),
                 emp["empresa"][:28],
@@ -599,10 +599,10 @@ classe GeradorRelatório:
         ))
         texto.append("-" * 70)
 
-        para período, dados em evolucao.items():
+        for periodo, dados in evolucao.items():
             valor_m = dados["valor"] / 1e6 if dados["valor"] > 0 else 0
             texto.append("{:<15} {:<20} {:<15} {:<15.1f}".format(
-                str(período),
+                str(periodo),
                 str(dados["investimentos"]),
                 str(dados["empregos"]),
                 valor_m
@@ -623,7 +623,7 @@ classe GeradorRelatório:
         total_geral = 0
         relevantes_geral = 0
 
-        para fonte em sorted(fontes.keys()):
+        for fonte in sorted(fontes.keys()):
             dados = fontes[fonte]
             total_geral += dados["total"]
             relevantes_geral += dados["relevantes"]
@@ -637,8 +637,8 @@ classe GeradorRelatório:
             ))
 
         texto.append("-" * 70)
-        taxa_geral = arredondar(
-            (relevantes_geral / total_geral * 100) se total_geral > 0 senão 0,
+        taxa_geral = round(
+            (relevantes_geral / total_geral * 100) if total_geral > 0 else 0,
             1
         )
         texto.append("{:<25} {:<12} {:<15} {:<19}%".format(
@@ -657,28 +657,28 @@ classe GeradorRelatório:
         texto.append("=" * 70)
         texto.append(f"\nConfiança média geral: {confianca['media_geral']}%")
         texto.append(f"\nDistribuição:")
-        texto.append(f" Alta (80-100%)........: {confianca['alta']}%")
-        texto.append(f" Média (50-80%)........: {confianca['media']}%")
-        texto.append(f" Baixa (< 50%).........: {confianca['baixa']}%")
+        texto.append(f"  Alta (80-100%)........: {confianca['alta']}%")
+        texto.append(f"  Média (50-80%)........: {confianca['media']}%")
+        texto.append(f"  Baixa (< 50%).........: {confianca['baixa']}%")
 
         # =====================================================
         # NOTÍCIAS "QUASE RELEVANTES"
         # =====================================================
 
-        se as questões forem relevantes:
+        if quase_relevantes:
             texto.append("\n" + "=" * 70)
             texto.append("NOTÍCIAS 'QUASE RELEVANTES'")
             texto.append("=" * 70)
             texto.append("\nNotícias com boa pontuação mas fora de Contagem:")
             texto.append("(Potencial impacto regional)\n")
 
-            para noticia em quase_relevantes[:5]:
+            for noticia in quase_relevantes[:5]:
                 texto.append(f"\n• {noticia['titulo']}")
-                se noticia['empresas']:
-                    texto.append(f" Empresa(s): {', '.join(noticia['empresas'])}")
-                texto.append(f" Pontuação: {noticia['pontuacao']}")
-                texto.append(f" Fase: {noticia['fase']}")
-                texto.append(f" URL: {noticia['url']}")
+                if noticia['empresas']:
+                    texto.append(f"  Empresa(s): {', '.join(noticia['empresas'])}")
+                texto.append(f"  Pontuação: {noticia['pontuacao']}")
+                texto.append(f"  Fase: {noticia['fase']}")
+                texto.append(f"  URL: {noticia['url']}")
 
         # =====================================================
         # RODAPÉ
@@ -687,56 +687,56 @@ classe GeradorRelatório:
         texto.append("\n" + "=" * 70)
         texto.append("NOTAS FINAIS")
         texto.append("=" * 70)
-        texto.append(f"\nDados de geração: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}")
+        texto.append(f"\nData de geração: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}")
         texto.append("Período de coleta: Últimos 30 dias")
         texto.append("\nCritérios de relevância:")
-        texto.append(" ✓ Pontuação mínima: 30 pontos")
-        texto.append(" ✓ Deve mencionar 'Contagem' explicitamente")
-        texto.append(" ✓ identificar ao menos uma empresa monitorada")
+        texto.append("  ✓ Pontuação mínima: 30 pontos")
+        texto.append("  ✓ Deve mencionar 'Contagem' explicitamente")
+        texto.append("  ✓ Identificar ao menos uma empresa monitorada")
 
-        retornar "\n".join(texto)
+        return "\n".join(texto)
 
     # =====================================================
     # GERAR GRÁFICOS
     # =====================================================
 
-    def gerar_gráficos(self):
+    def gerar_graficos(self):
         """Gera gráficos em matplotlib e plotly."""
 
-        se não HAS_MATPLOTLIB e não HAS_PLOTLY:
-            print("⚠️ Matplotlib ou Plotly não instalado. Pulando gráficos.")
-            retornar []
+        if not HAS_MATPLOTLIB and not HAS_PLOTLY:
+            print("⚠️  Matplotlib ou Plotly não instalados. Pulando gráficos.")
+            return []
 
         arquivos_gerados = []
 
-        tentar:
+        try:
             fases = self.investimentos_por_fase()
             ranking = self.ranking_empresas(10)
-            evolução = self.evolucao_mensal()
+            evolucao = self.evolucao_mensal()
             confianca = self.analise_confianca()
 
             # =====================================================
             # GRÁFICO 1: INVESTIMENTOS POR FASE
             # =====================================================
 
-            se HAS_MATPLOTLIB:
+            if HAS_MATPLOTLIB:
                 fig, ax = plt.subplots(figsize=(12, 6))
 
-                fases_nomes = lista(fases.chaves())
-                fases_contagem = [len(fases[f]) para f in fases_nomes]
+                fases_nomes = list(fases.keys())
+                fases_contagem = [len(fases[f]) for f in fases_nomes]
 
-                cores_fase = plt.cm.Set3(range(len(fases_nomes)))
+                colors_fase = plt.cm.Set3(range(len(fases_nomes)))
                 ax.barh(fases_nomes, fases_contagem, color=colors_fase)
                 ax.set_xlabel("Número de Investimentos", fontsize=12)
                 ax.set_title("Investimentos por Fase", fontsize=14, fontweight='bold')
                 ax.grid(axis='x', alpha=0.3)
 
-                para i, v em enumerar(fases_contagem):
+                for i, v in enumerate(fases_contagem):
                     ax.text(v + 0.1, i, str(v), va='center', fontweight='bold')
 
                 plt.tight_layout()
                 arquivo = self.pasta_relatorios / "grafico_fases.png"
-                plt.savefig(arquivo, dpi=300, bbox_inches='apertado')
+                plt.savefig(arquivo, dpi=300, bbox_inches='tight')
                 plt.close()
                 arquivos_gerados.append(arquivo)
                 print(f"✓ Gráfico: {arquivo}")
@@ -745,36 +745,36 @@ classe GeradorRelatório:
             # GRÁFICO 2: TOP 10 EMPRESAS
             # =====================================================
 
-            se HAS_MATPLOTLIB:
+            if HAS_MATPLOTLIB:
                 fig, ax = plt.subplots(figsize=(12, 8))
 
-                empresas_nomes = [e["empresa"] para e no ranking]
-                empresas_count = [e["investimentos"] para e no ranking]
+                empresas_nomes = [e["empresa"] for e in ranking]
+                empresas_count = [e["investimentos"] for e in ranking]
 
-                cores_emp = plt.cm.viridis(range(len(empresas_nomes)))
+                colors_emp = plt.cm.viridis(range(len(empresas_nomes)))
                 ax.barh(empresas_nomes, empresas_count, color=colors_emp)
                 ax.set_xlabel("Número de Investimentos", fontsize=12)
                 ax.set_title("Top 10 Empresas com Mais Investimentos", fontsize=14, fontweight='bold')
                 ax.grid(axis='x', alpha=0.3)
 
-                para i, v em enumerate(empresas_count):
+                for i, v in enumerate(empresas_count):
                     ax.text(v + 0.1, i, str(v), va='center', fontweight='bold')
 
                 plt.tight_layout()
                 arquivo = self.pasta_relatorios / "grafico_empresas.png"
-                plt.savefig(arquivo, dpi=300, bbox_inches='apertado')
+                plt.savefig(arquivo, dpi=300, bbox_inches='tight')
                 plt.close()
                 arquivos_gerados.append(arquivo)
                 print(f"✓ Gráfico: {arquivo}")
 
             # =====================================================
-            #GRÁFICO 3: EVOLUÇÃO TEMPORAL
+            # GRÁFICO 3: EVOLUÇÃO TEMPORAL
             # =====================================================
 
-            se HAS_MATPLOTLIB:
+            if HAS_MATPLOTLIB:
                 fig, ax = plt.subplots(figsize=(14, 6))
 
-                períodos = lista(evolucao.keys())
+                periodos = list(evolucao.keys())
                 investimentos = [evolucao[p]["investimentos"] for p in periodos]
 
                 ax.plot(periodos, investimentos, marker='o', linewidth=2, markersize=8, color='#2E86AB')
@@ -783,63 +783,63 @@ classe GeradorRelatório:
                 ax.set_ylabel("Número de Investimentos", fontsize=12)
                 ax.set_title("Evolução de Investimentos ao Longo do Tempo", fontsize=14, fontweight='bold')
                 ax.grid(True, alpha=0.3)
-                plt.xticks(rotação=45, ha='direita')
+                plt.xticks(rotation=45, ha='right')
 
                 plt.tight_layout()
                 arquivo = self.pasta_relatorios / "grafico_evolucao.png"
-                plt.savefig(arquivo, dpi=300, bbox_inches='apertado')
+                plt.savefig(arquivo, dpi=300, bbox_inches='tight')
                 plt.close()
                 arquivos_gerados.append(arquivo)
                 print(f"✓ Gráfico: {arquivo}")
 
             # =====================================================
-            # GRÁFICO 4: CONFIANÇA (TABELA DE TORTA)
+            # GRÁFICO 4: CONFIANÇA (PIE CHART)
             # =====================================================
 
-            se HAS_MATPLOTLIB:
+            if HAS_MATPLOTLIB:
                 fig, ax = plt.subplots(figsize=(10, 8))
 
-                = [confianca['alta'], confianca['media'], confianca['baixa']]
+                tamanhos = [confianca['alta'], confianca['media'], confianca['baixa']]
 
-                se sum(tamanhos) == 0:
+                if sum(tamanhos) == 0:
                     ax.text(
                         0.5, 0.5, "Sem dados ainda",
-                        ha='centro', va='centro',
-                        tamanho da fonte=14, cor='cinza',
-                        transformar=ax.transAxes
+                        ha='center', va='center',
+                        fontsize=14, color='gray',
+                        transform=ax.transAxes
                     )
                     ax.axis('off')
-                outro:
+                else:
                     rotulos = [
                         f"Alta (80-100%)\n{confianca['alta']}%",
-                        f"Mídia (50-80%)\n{confianca['media']}%",
+                        f"Média (50-80%)\n{confianca['media']}%",
                         f"Baixa (<50%)\n{confianca['baixa']}%"
                     ]
                     cores = ['#90EE90', '#FFD700', '#FF6B6B']
 
-                    cunhas, textos, autotextos = ax.pie(
+                    wedges, texts, autotexts = ax.pie(
                         tamanhos,
-                        rótulos=rotulos,
-                        cores=núcleos,
+                        labels=rotulos,
+                        colors=cores,
                         autopct='',
-                        ângulo inicial=90,
+                        startangle=90,
                         textprops={'fontsize': 11, 'fontweight': 'bold'}
                     )
 
                 ax.set_title(f"Distribuição de Confiança\nMédia Geral: {confianca['media_geral']}%",
-                           tamanho da fonte=14, peso da fonte='negrito')
+                           fontsize=14, fontweight='bold')
 
                 plt.tight_layout()
                 arquivo = self.pasta_relatorios / "grafico_confianca.png"
-                plt.savefig(arquivo, dpi=300, bbox_inches='apertado')
+                plt.savefig(arquivo, dpi=300, bbox_inches='tight')
                 plt.close()
                 arquivos_gerados.append(arquivo)
                 print(f"✓ Gráfico: {arquivo}")
 
-        exceto Exception como e:
+        except Exception as e:
             print(f"❌ Erro ao gerar gráficos: {e}")
 
-        retornar arquivos_gerados
+        return arquivos_gerados
 
     # =====================================================
     # GERAR HTML
@@ -851,27 +851,27 @@ classe GeradorRelatório:
         resumo = self.calcular_resumo_executivo()
         fases = self.investimentos_por_fase()
         ranking = self.ranking_empresas()
-        evolução = self.evolucao_mensal()
+        evolucao = self.evolucao_mensal()
         fontes = self.analise_por_fonte()
         confianca = self.analise_confianca()
 
         # Dados históricos (aba Histórico)
-        dados_histórico = self.dados_histórico_completo()
-        resumo_ano = self.resumo_histórico_por_ano()
-        totais_histórico = self.totais_gerais_histórico()
+        dados_historico = self.dados_historico_completo()
+        resumo_ano = self.resumo_historico_por_ano()
+        totais_historico = self.totais_gerais_historico()
 
         # Dados para gráficos
-        fases_rótulos = lista(fases.chaves())
-        fases_dados = [len(fases[f]) para f em fases_rótulos]
+        fases_labels = list(fases.keys())
+        fases_data = [len(fases[f]) for f in fases_labels]
 
-        empresas_labels = [e["empresa"] para e no ranking]
-        empresas_data = [e["investimentos"] para e no ranking]
+        empresas_labels = [e["empresa"] for e in ranking]
+        empresas_data = [e["investimentos"] for e in ranking]
 
-        períodos = lista(evolucao.keys())
+        periodos = list(evolucao.keys())
         investimentos_data = [evolucao[p]["investimentos"] for p in periodos]
 
-        ano_min = totais_historico['ano_min'] se totais_historico['ano_min'] não for Nenhum outro "-"
-        ano_max = totais_historico['ano_max'] se totais_historico['ano_max'] não for Nenhum outro "-"
+        ano_min = totais_historico['ano_min'] if totais_historico['ano_min'] is not None else "-"
+        ano_max = totais_historico['ano_max'] if totais_historico['ano_max'] is not None else "-"
 
         html = f"""
 <!DOCTYPE html>
@@ -883,290 +883,313 @@ classe GeradorRelatório:
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         * {{
-            margem: 0;
-            preenchimento: 0;
-            box-sized: caixa com borda;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }}
 
-        corpo {{
-            família de fontes: 'Segoe UI', Tahoma, Genebra, Verdana, sans-serif;
-            fundo: gradiente-linear(135deg, #667eea 0%, #764ba2 100%);
-            altura mínima: 100vh;
-            preenchimento: 20px;
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600;700&display=swap');
+
+        body {{
+            font-family: 'Fira Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e8eef0;
+            min-height: 100vh;
+            padding: 20px;
         }}
 
         .container {{
-            largura máxima: 1400px;
-            margem: 0 auto;
-            fundo: branco;
-            raio da borda: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: oculto;
+            overflow: hidden;
         }}
 
         .header {{
-            fundo: gradiente-linear(135deg, #667eea 0%, #764ba2 100%);
-            cor: branca;
-            preenchimento: 40px;
-            alinhamento do texto: centralizado;
+            background: #037482;
+            color: white;
+            padding: 30px 40px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }}
+
+        .header img {{
+            height: 60px;
+            background: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+        }}
+
+        .header .header-text h1 {{
+            font-size: 1.8em;
+            margin-bottom: 4px;
+        }}
+
+        .header .header-text p {{
+            font-size: 1em;
+            opacity: 0.9;
+        }}
+
+        .header .selo-trabalho {{
+            margin-left: auto;
+            background: #FF7A01;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            white-space: nowrap;
         }}
 
         .header h1 {{
-            tamanho da fonte: 2,5em;
-            margem-inferior: 10px;
+            font-size: 2.5em;
+            margin-bottom: 10px;
         }}
 
         .header p {{
-            tamanho da fonte: 1,1em;
-            opacidade: 0,9;
+            font-size: 1.1em;
+            opacity: 0.9;
         }}
 
-        .contente {{
-            preenchimento: 40px;
-        }}
-
-        .resumo {{
-            Exibir: grade;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            espaço: 20px;
-            margem-inferior: 40px;
+        .content {{
+            padding: 40px;
         }}
 
         .summary-card {{
-            fundo: gradiente-linear(135deg, #667eea 0%, #764ba2 100%);
-            cor: branca;
-            preenchimento: 25px;
-            raio da borda: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            alinhamento do texto: centralizado;
+            background: white;
+            color: #333;
+            padding: 25px;
+            border-radius: 10px;
+            border-top: 4px solid #037482;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
         }}
 
         .summary-card h3 {{
-            tamanho da fonte: 0,9em;
-            opacidade: 0,9;
-            margem-inferior: 10px;
-            text-transform: maiúsculas;
+            color: #037482;
         }}
 
         .summary-card .value {{
-            tamanho da fonte: 2em;
-            peso da fonte: negrito;
+            color: #FF7A01;
         }}
 
-        .seção {{
-            margem-inferior: 40px;
+        .section {{
+            margin-bottom: 40px;
         }}
 
-        .seção h2 {{
-            cor: #667eea;
-            margem-inferior: 20px;
-            preenchimento-inferior: 10px;
-            borda inferior: 3px sólida #667eea;
+        .section h2 {{
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
         }}
 
         .chart-container {{
-            fundo: #f8f9fa;
-            raio da borda: 10px;
-            preenchimento: 20px;
-            margem-inferior: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }}
 
-        mesa {{
-            largura: 100%;
-            colapso de fronteira: colapso;
-            margem superior: 20px;
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }}
 
-        tabela th {{
-            fundo: #667eea;
-            cor: branca;
-            preenchimento: 15px;
-            alinhamento de texto: esquerda;
-            peso da fonte: 600;
+        table th {{
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
         }}
 
-        tabela td {{
-            preenchimento: 12px 15px;
-            borda inferior: 1px sólida #e0e0e0;
+        table td {{
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
         }}
 
-        tabela tr:hover {{
-            fundo: #f5f5f5;
+        table tr:hover {{
+            background: #f5f5f5;
         }}
 
-        tabela tr:nth-child(par) {{
-            fundo: #f9f9f9;
+        table tr:nth-child(even) {{
+            background: #f9f9f9;
         }}
 
         .footer {{
-            fundo: #f8f9fa;
-            preenchimento: 20px;
-            alinhamento do texto: centralizado;
-            cor: #666;
-            borda superior: 1px sólida #e0e0e0;
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
         }}
 
         /* ===== ABAS ===== */
         .tabs {{
-            Exibir: flexível;
-            espaçamento: 10px;
-            borda inferior: 3px sólida #e0e0e0;
-            margem-inferior: 30px;
+            display: flex;
+            gap: 10px;
+            border-bottom: 3px solid #e0e0e0;
+            margin-bottom: 30px;
         }}
 
         .tab-button {{
-            preenchimento: 14px 28px;
-            Contexto: nenhum;
-            fronteira: nenhuma;
-            tamanho da fonte: 1em;
-            peso da fonte: 600;
-            cor: #888;
-            cursor: ponteiro;
-            borda inferior: 3px sólida transparente;
-            margem-inferior: -3px;
-            transição: todos os 0,2s;
+            padding: 14px 28px;
+            background: none;
+            border: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -3px;
+            transition: all 0.2s;
         }}
 
         .tab-button:hover {{
-            cor: #667eea;
+            color: #667eea;
         }}
 
         .tab-button.active {{
-            cor: #667eea;
-            cor-da-borda-inferior: #667eea;
+            color: #667eea;
+            border-bottom-color: #667eea;
         }}
 
         .tab-content {{
-            exibir: nenhum;
+            display: none;
         }}
 
-        .tab-content.active {{
-            exibir: bloco;
+        .tab-button.active {{
+            color: #037482;
+            border-bottom-color: #FF7A01;
         }}
 
         /* ===== FILTROS ===== */
         .filtros {{
-            Exibir: flexível;
-            espaçamento: 15px;
-            flex-wrap: envolver;
-            fundo: #f8f9fa;
-            preenchimento: 20px;
-            raio da borda: 10px;
-            margem-inferior: 25px;
-            alinhamento-itens: flex-end;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            align-items: flex-end;
         }}
 
         .filtro-grupo {{
-            Exibir: flexível;
-            flex-direction: coluna;
-            espaçamento: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }}
 
-        .filtro-grupo rótulo {{
-            tamanho da fonte: 0,85em;
-            peso da fonte: 600;
-            cor: #555;
+        .filtro-grupo label {{
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #555;
         }}
 
-        .filtro-grupo selecionar {{
-            preenchimento: 10px 15px;
-            borda: 2px sólida #e0e0e0;
-            raio da borda: 8px;
-            tamanho da fonte: 0,95em;
-            largura mínima: 180px;
-            fundo: branco;
-            cursor: ponteiro;
+        .filtro-grupo select {{
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            min-width: 180px;
+            background: white;
+            cursor: pointer;
         }}
 
         .filtro-grupo select:focus {{
-            Esboço: nenhum;
-            cor da borda: #667eea;
+            outline: none;
+            border-color: #667eea;
         }}
 
         .btn-limpar-filtros {{
-            preenchimento: 10px 20px;
-            fundo: #e0e0e0;
-            fronteira: nenhuma;
-            raio da borda: 8px;
-            peso da fonte: 600;
-            cursor: ponteiro;
-            cor: #555;
-            transição: fundo 0,2s;
+            padding: 10px 20px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #555;
+            transition: background 0.2s;
         }}
 
         .btn-limpar-filtros:hover {{
-            fundo: #d0d0d0;
+            background: #d0d0d0;
         }}
 
-        /* ===== CARTÕES HISTÓRICO ===== */
+        /* ===== CARDS HISTÓRICO ===== */
         .hist-summary {{
-            Exibir: grade;
+            display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            espaço: 20px;
-            margem-inferior: 30px;
+            gap: 20px;
+            margin-bottom: 30px;
         }}
 
         .hist-card {{
-            fundo: branco;
-            borda: 2px sólida #f0f0f0;
-            raio da borda: 10px;
-            preenchimento: 20px;
-            alinhamento do texto: centralizado;
+            background: white;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
         }}
 
         .hist-card h4 {{
-            tamanho da fonte: 0,85em;
-            cor: #888;
-            text-transform: maiúsculas;
-            margem-inferior: 8px;
+            font-size: 0.85em;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 8px;
         }}
 
         .hist-card .valor {{
-            tamanho da fonte: 1,8em;
-            peso da fonte: negrito;
-            cor: #667eea;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
         }}
 
-        /* ===== TABELA HISTÓRICA ===== */
+        /* ===== TABELA HISTÓRICO ===== */
         .tabela-scroll {{
-            altura máxima: 500px;
-            overflow-y: automático;
-            raio da borda: 10px;
-            borda: 1px sólida #e0e0e0;
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
         }}
 
-        .tabela-scroll tabela {{
-            margem superior: 0;
+        .tabela-scroll table {{
+            margin-top: 0;
         }}
 
-        .tabela-scroll cabeçalho th {{
-            posição: pegajosa;
-            topo: 0;
-            Índice z: 1;
+        .tabela-scroll thead th {{
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }}
 
         .link-fonte {{
-            cor: #667eea;
-            decoração de texto: nenhuma;
-            tamanho da fonte: 0,85em;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.85em;
         }}
 
         .link-fonte:hover {{
-            decoração de texto: sublinhado;
+            text-decoration: underline;
         }}
 
         @media (max-width: 768px) {{
             .header h1 {{
-                tamanho da fonte: 1,8em;
+                font-size: 1.8em;
             }}
 
-            .resumo {{
+            .summary {{
                 grid-template-columns: 1fr;
             }}
 
-            .contente {{
-                preenchimento: 20px;
+            .content {{
+                padding: 20px;
             }}
         }}
     </style>
@@ -1175,14 +1198,14 @@ classe GeradorRelatório:
     <div class="container">
         <div class="header">
             <h1>📊 Monitor de Investimentos Privados</h1>
-            <p>Contagem-MG | Relatório gerado em {self.data_geracao.strftime('%d/%m/%Y %H:%M')}</p>
+            <p>Contagem - MG | Relatório gerado em {self.data_geracao.strftime('%d/%m/%Y %H:%M')}</p>
         </div>
 
         <div class="content">
 
             <!-- SISTEMA DE ABAS -->
             <div class="tabs">
-                <button class="tab-button active" onclick="mostrarAba('recente')">🔴 Monitoramento recente</button>
+                <button class="tab-button active" onclick="mostrarAba('recente')">🔴 Monitoramento Recente</button>
                 <button class="tab-button" onclick="mostrarAba('historico')">📊 Histórico {ano_min}-{ano_max}</button>
                 <button class="tab-button" onclick="mostrarAba('analise')">🔍 Análise</button>
             </div>
@@ -1226,16 +1249,16 @@ classe GeradorRelatório:
                 <div class="chart-container" id="chart-fases"></div>
                 <script>
                     var data_fases = [{{
-                        x: {dados_fases},
-                        y: {rótulos_fases},
-                        tipo: 'barra',
-                        orientação: 'h',
-                        marcador: {{cor: '#667eea'}}
+                        x: {fases_data},
+                        y: {fases_labels},
+                        type: 'bar',
+                        orientation: 'h',
+                        marker: {{color: '#667eea'}}
                     }}];
                     var layout_fases = {{
-                        título: 'Distribuição por Fase do Investimento',
-                        xaxis: {{título: 'Quantidade'}},
-                        margem: {{l: 150}}
+                        title: 'Distribuição por Fase do Investimento',
+                        xaxis: {{title: 'Quantidade'}},
+                        margin: {{l: 150}}
                     }};
                     Plotly.newPlot('chart-fases', data_fases, layout_fases, {{responsive: true}});
                 </script>
@@ -1249,14 +1272,14 @@ classe GeradorRelatório:
                     var data_empresas = [{{
                         x: {empresas_data},
                         y: {empresas_labels},
-                        tipo: 'barra',
-                        orientação: 'h',
-                        marcador: {{cor: '#764ba2'}}
+                        type: 'bar',
+                        orientation: 'h',
+                        marker: {{color: '#764ba2'}}
                     }}];
                     var layout_empresas = {{
-                        título: 'Empresas com Mais Investimentos',
-                        xaxis: {{título: 'Quantidade'}},
-                        margem: {{l: 200}}
+                        title: 'Empresas com Mais Investimentos',
+                        xaxis: {{title: 'Quantidade'}},
+                        margin: {{l: 200}}
                     }};
                     Plotly.newPlot('chart-empresas', data_empresas, layout_empresas, {{responsive: true}});
                 </script>
@@ -1268,18 +1291,18 @@ classe GeradorRelatório:
                 <div class="chart-container" id="chart-evolucao"></div>
                 <script>
                     var data_evolucao = [{{
-                        x: {períodos},
+                        x: {periodos},
                         y: {investimentos_data},
-                        tipo: 'disperso',
-                        modo: 'linhas+marcadores',
-                        linha: {{cor: '#667eea', largura: 3}},
-                        marcador: {{tamanho: 8}}
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        line: {{color: '#667eea', width: 3}},
+                        marker: {{size: 8}}
                     }}];
                     var layout_evolucao = {{
-                        título: 'Evolução de Investimentos',
-                        eixo x: {{título: 'Período'}},
-                        eixo y: {{título: 'Quantidade'}},
-                        modo de pairar: 'mais próximo'
+                        title: 'Evolução de Investimentos',
+                        xaxis: {{title: 'Período'}},
+                        yaxis: {{title: 'Quantidade'}},
+                        hovermode: 'closest'
                     }};
                     Plotly.newPlot('chart-evolucao', data_evolucao, layout_evolucao, {{responsive: true}});
                 </script>
@@ -1294,19 +1317,19 @@ classe GeradorRelatório:
                             <th>Fonte</th>
                             <th>Total</th>
                             <th>Relevantes</th>
-                            <th>Taxa de Preence</th>
+                            <th>Taxa de Precisão</th>
                             <th>Confiança Média</th>
                         </tr>
                     </thead>
                     <tbody>
         """
 
-        para fonte em sorted(fontes.keys()):
+        for fonte in sorted(fontes.keys()):
             dados = fontes[fonte]
             html += f"""
                         <tr>
-                            <td>{fonte>
-                            <td>{dados['total']}td>
+                            <td>{fonte}</td>
+                            <td>{dados['total']}</td>
                             <td>{dados['relevantes']}</td>
                             <td>{dados['taxa_precisao']}%</td>
                             <td>{dados['confianca_media']}%</td>
@@ -1324,15 +1347,15 @@ classe GeradorRelatório:
                 <div class="chart-container" id="chart-confianca"></div>
                 <script>
                     var data_confianca = [{{
-                        valores: [{confianca['alta']}, {confianca['media']}, {confianca['baixa']}],
-                        rótulos: ['Alta (80-100%)', 'Média (50-80%)', 'Baixa (<50%)'],
-                        tipo: 'torta',
-                        marcador: {{cores: ['#90EE90', '#FFD700', '#FF6B6B']}}
+                        values: [{confianca['alta']}, {confianca['media']}, {confianca['baixa']}],
+                        labels: ['Alta (80-100%)', 'Média (50-80%)', 'Baixa (<50%)'],
+                        type: 'pie',
+                        marker: {{colors: ['#90EE90', '#FFD700', '#FF6B6B']}}
                     }}];
                     var layout_confianca = {{
-                        título: 'Distribuição de Confiança dos Dados'
+                        title: 'Distribuição de Confiança dos Dados'
                     }};
-                    Plotly.newPlot('chart-confianca', data_confianca, layout_confianca, {{responsivo: verdadeiro}});
+                    Plotly.newPlot('chart-confianca', data_confianca, layout_confianca, {{responsive: true}});
                 </script>
             </div>
 
@@ -1377,10 +1400,10 @@ classe GeradorRelatório:
                     <div class="filtro-grupo">
                         <label for="filtro-fase">Fase</label>
                         <select id="filtro-fase" onchange="aplicarFiltros()">
-                            <option value="">Todas as<option>
+                            <option value="">Todas as fases</option>
                         </select>
                     </div>
-                    <button class="btn-limpar-filtros" onclick="limparFiltros()">Filtros Limpar</button>
+                    <button class="btn-limpar-filtros" onclick="limparFiltros()">Limpar filtros</button>
                 </div>
 
                 <div class="section">
@@ -1436,11 +1459,11 @@ classe GeradorRelatório:
 
     <script>
         // ===== DADOS DO HISTÓRICO (embutidos pelo Python) =====
-        var dadosHistórico = {json.dumps(dados_historico, garanta_ascii=False)};
-        var resumoAno = {json.dumps(resumo_ano, garanta_ascii=False)};
+        var dadosHistorico = {json.dumps(dados_historico, ensure_ascii=False)};
+        var resumoAno = {json.dumps(resumo_ano, ensure_ascii=False)};
 
         // ===== SISTEMA DE ABAS =====
-        função mostrarAba(nome) {{
+        function mostrarAba(nome) {{
             document.querySelectorAll('.tab-content').forEach(function(el) {{
                 el.classList.remove('active');
             }});
@@ -1449,15 +1472,15 @@ classe GeradorRelatório:
             }});
 
             document.getElementById('aba-' + nome).classList.add('active');
-            evento.target.classList.add('ativo');
+            event.target.classList.add('active');
 
-            se (nome === 'histórico') {{
+            if (nome === 'historico') {{
                 renderizarHistorico();
             }}
         }}
 
-        // ===== FILTROS POPULARES (uma vez, ao carregar) =====
-        função popularFiltros() {{
+        // ===== POPULAR FILTROS (uma vez, ao carregar) =====
+        function popularFiltros() {{
             var anos = [...new Set(dadosHistorico.map(d => d.ano))].sort();
             var empresas = [...new Set(dadosHistorico.map(d => d.empresa))].sort();
             var fases = [...new Set(dadosHistorico.map(d => d.fase))].sort();
@@ -1479,7 +1502,7 @@ classe GeradorRelatório:
             }});
 
             var selFase = document.getElementById('filtro-fase');
-            g.forEach(function(fase) {{
+            fases.forEach(function(fase) {{
                 var opt = document.createElement('option');
                 opt.value = fase;
                 opt.textContent = fase;
@@ -1487,33 +1510,33 @@ classe GeradorRelatório:
             }});
         }}
 
-        função limparFiltros() {{
+        function limparFiltros() {{
             document.getElementById('filtro-ano').value = '';
             document.getElementById('filtro-empresa').value = '';
             document.getElementById('filtro-fase').value = '';
             aplicarFiltros();
         }}
 
-        função formatarMoeda(valor) {{
-            se (valor >= 1e9) retorne 'R$ ' + (valor/1e9).toFixed(2) + 'B';
-            se (valor >= 1e6) retorne 'R$ ' + (valor/1e6).toFixed(1) + 'M';
-            retornar 'R$ ' + valor.toLocaleString('pt-BR');
+        function formatarMoeda(valor) {{
+            if (valor >= 1e9) return 'R$ ' + (valor/1e9).toFixed(2) + 'B';
+            if (valor >= 1e6) return 'R$ ' + (valor/1e6).toFixed(1) + 'M';
+            return 'R$ ' + valor.toLocaleString('pt-BR');
         }}
 
         // ===== FILTRAR E RENDERIZAR TUDO =====
-        função aplicarFiltros() {{
+        function aplicarFiltros() {{
             var anoFiltro = document.getElementById('filtro-ano').value;
             var empresaFiltro = document.getElementById('filtro-empresa').value;
             var faseFiltro = document.getElementById('filtro-fase').value;
 
-            var dadosFiltrados = dadosHistórico.filter(function(d) {{
-                se (anoFiltro && String(d.ano) !== anoFiltro) retorne falso;
-                if (empresaFiltro && d.empresa !== empresaFiltro) retorna falso;
-                se (faseFiltro && d.fase !== faseFiltro) retorne falso;
-                retornar verdadeiro;
+            var dadosFiltrados = dadosHistorico.filter(function(d) {{
+                if (anoFiltro && String(d.ano) !== anoFiltro) return false;
+                if (empresaFiltro && d.empresa !== empresaFiltro) return false;
+                if (faseFiltro && d.fase !== faseFiltro) return false;
+                return true;
             }});
 
-            // Cartões de resumo
+            // Cards de resumo
             var totalInvestido = dadosFiltrados.reduce((s, d) => s + d.valor, 0);
             var numInvestimentos = dadosFiltrados.length;
             var numEmpresas = new Set(dadosFiltrados.map(d => d.empresa)).size;
@@ -1524,20 +1547,20 @@ classe GeradorRelatório:
 
             // Gráfico: se ano específico selecionado -> barras por empresa
             // se não -> linha do tempo por ano
-            se (anoFiltro) {{
+            if (anoFiltro) {{
                 renderizarGraficoBarrasEmpresa(dadosFiltrados, anoFiltro);
-            }} outro {{
-                renderizarGráficoLinhaDoTempo();
+            }} else {{
+                renderizarGraficoLinhaDoTempo();
             }}
 
-            // Classificação
+            // Ranking
             renderizarRanking(dadosFiltrados);
 
             // Lista
             renderizarLista(dadosFiltrados);
         }}
 
-        função renderizarGraficoLinhaDoTempo() {{
+        function renderizarGraficoLinhaDoTempo() {{
             document.getElementById('hist-titulo-grafico').textContent = '📈 Evolução do Investimento por Ano';
 
             var anos = resumoAno.map(d => d.ano);
@@ -1546,18 +1569,18 @@ classe GeradorRelatório:
             var data = [{{
                 x: anos,
                 y: valores,
-                tipo: 'disperso',
-                modo: 'linhas+marcadores',
-                linha: {{cor: '#667eea', largura: 3}},
-                marcador: {{tamanho: 10}},
-                preencher: 'zeroy',
-                cor de preenchimento: 'rgba(102, 126, 234, 0.15)'
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: {{color: '#667eea', width: 3}},
+                marker: {{size: 10}},
+                fill: 'tozeroy',
+                fillcolor: 'rgba(102, 126, 234, 0.15)'
             }}];
 
             var layout = {{
-                eixo x: {{título: 'Ano', dtick: 1}},
+                xaxis: {{title: 'Ano', dtick: 1}},
                 yaxis: {{title: 'Total Investido (R$)'}},
-                modo de pairar: 'mais próximo'
+                hovermode: 'closest'
             }};
 
             Plotly.newPlot('chart-historico', data, layout, {{responsive: true}});
@@ -1571,32 +1594,32 @@ classe GeradorRelatório:
             var data = [{{
                 x: ordenado.map(d => d.valor),
                 y: ordenado.map(d => d.empresa),
-                tipo: 'barra',
-                orientação: 'h',
-                marcador: {{cor: '#764ba2'}}
+                type: 'bar',
+                orientation: 'h',
+                marker: {{color: '#764ba2'}}
             }}];
 
             var layout = {{
                 xaxis: {{title: 'Valor Investido (R$)'}},
-                margem: {{l: 220}},
-                altura: Math.max(400, ordenado.length * 30)
+                margin: {{l: 220}},
+                height: Math.max(400, ordenado.length * 30)
             }};
 
             Plotly.newPlot('chart-historico', data, layout, {{responsive: true}});
         }}
 
-        função renderizarRanking(dadosFiltrados) {{
+        function renderizarRanking(dadosFiltrados) {{
             var porEmpresa = {{}};
             dadosFiltrados.forEach(function(d) {{
                 if (!porEmpresa[d.empresa]) {{
-                    porEmpresa[d.empresa] = {{valor: 0, contagem: 0}};
+                    porEmpresa[d.empresa] = {{valor: 0, count: 0}};
                 }}
                 porEmpresa[d.empresa].valor += d.valor;
                 porEmpresa[d.empresa].count += 1;
             }});
 
             var ranking = Object.keys(porEmpresa).map(function(emp) {{
-                return {{empresa: emp, valor: porEmpresa[emp].valor, contagem: porEmpresa[emp].count}};
+                return {{empresa: emp, valor: porEmpresa[emp].valor, count: porEmpresa[emp].count}};
             }}).sort((a, b) => b.valor - a.valor);
 
             var tbody = document.querySelector('#tabela-ranking-historico tbody');
@@ -1612,7 +1635,7 @@ classe GeradorRelatório:
             }});
         }}
 
-        função renderizarLista(dadosFiltrados) {{
+        function renderizarLista(dadosFiltrados) {{
             var ordenado = [...dadosFiltrados].sort((a, b) => b.ano - a.ano || b.valor - a.valor);
 
             var tbody = document.querySelector('#tabela-lista-historico tbody');
@@ -1630,9 +1653,9 @@ classe GeradorRelatório:
             }});
         }}
 
-        função renderizarHistorico() {{
+        function renderizarHistorico() {{
             if (document.getElementById('filtro-ano').options.length <= 1) {{
-                filtrosPopular();
+                popularFiltros();
             }}
             aplicarFiltros();
         }}
@@ -1641,66 +1664,66 @@ classe GeradorRelatório:
 </html>
         """
 
-        retornar html
+        return html
 
     # =====================================================
     # GERAR PDF
     # =====================================================
 
     def gerar_pdf(self):
-        """Gerar relatório em PDF usando ReportLab."""
+        """Gera relatório em PDF usando ReportLab."""
 
-        se não HAS_REPORTLAB:
-            print("⚠️ ReportLab não instalado. Pulando PDF.")
-            retornar Nenhum
+        if not HAS_REPORTLAB:
+            print("⚠️  ReportLab não instalado. Pulando PDF.")
+            return None
 
-        tentar:
+        try:
             resumo = self.calcular_resumo_executivo()
             ranking = self.ranking_empresas()
             fases = self.investimentos_por_fase()
             fontes = self.analise_por_fonte()
 
             nome_arquivo = (
-                self.pasta_relatórios /
+                self.pasta_relatorios /
                 f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.pdf"
             )
 
             doc = SimpleDocTemplate(
                 str(nome_arquivo),
-                tamanho_da_página=carta,
-                margemDireita = 0,75 polegadas
-                margemEsquerda = 0,75 polegadas
-                margemSuperior=0,75 polegadas
-                margemInferior=0,75*polegadas,
+                pagesize=letter,
+                rightMargin=0.75*inch,
+                leftMargin=0.75*inch,
+                topMargin=0.75*inch,
+                bottomMargin=0.75*inch,
             )
 
-            história = []
-            estilos = obterFolhaDeEstiloDeAmostra()
+            story = []
+            styles = getSampleStyleSheet()
 
             # Título
-            estilo_do_título = Estilo_do_parágrafo(
-                'Título personalizado',
-                pai=estilos['Cabeçalho1'],
-                tamanho da fonte=24,
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontSize=24,
                 textColor=colors.HexColor('#667eea'),
-                espaçoApós=10,
-                alinhamento=1
+                spaceAfter=10,
+                alignment=1
             )
             story.append(Paragraph("Monitor de Investimentos Privados", title_style))
             story.append(Paragraph("Contagem - MG", styles['Normal']))
-            história.append(Spacer(1, 0.3*polegada))
+            story.append(Spacer(1, 0.3*inch))
 
-            # Dados
-            história.append(Parágrafo(
-                f"Dados de Geração: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",
-                estilos['Normal']
+            # Data
+            story.append(Paragraph(
+                f"Data de Geração: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",
+                styles['Normal']
             ))
-            história.append(Spacer(1, 0.2*polegada))
+            story.append(Spacer(1, 0.2*inch))
 
             # Resumo
-            story.append(Parágrafo("SUMÁRIO EXECUTIVO", estilos['Título2']))
+            story.append(Paragraph("SUMÁRIO EXECUTIVO", styles['Heading2']))
 
-            resumo_dados = [
+            resumo_data = [
                 ["Investimentos detectados", str(resumo['investimentos_detectados'])],
                 ["Empresas monitoradas", str(resumo['empresas_monitoradas'])],
                 ["Novos empregos", f"{resumo['novos_empregos']:,}"],
@@ -1709,27 +1732,27 @@ classe GeradorRelatório:
                 ["Notícias relevantes", str(resumo['noticias_relevantes'])],
             ]
 
-            resumo_tabela = Tabela(resumo_dados)
+            resumo_table = Table(resumo_data)
             resumo_table.setStyle(TableStyle([
-                ('FUNDO', (0, 0), (-1, -1), cores.HexColor('#f0f0f0')),
-                ('TEXTCOLOR', (0, 0), (-1, -1), cores.preto),
+                ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f0f0f0')),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
                 ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
                 ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-                ('TAMANHO DA FONTE', (0, 0), (-1, -1), 10),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
                 ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-                ('GRID', (0, 0), (-1, -1), 1, cores.cinza),
+                ('GRID', (0, 0), (-1, -1), 1, colors.grey),
             ]))
 
-            história.append(tabela_resumo)
-            história.append(Spacer(1, 0.3*polegada))
+            story.append(resumo_table)
+            story.append(Spacer(1, 0.3*inch))
 
-            # 10 Melhores Empresas
+            # Top 10 Empresas
             story.append(Paragraph("TOP 10 EMPRESAS", styles['Heading2']))
 
-            ranking_data = [["Classificação", "Empresa", "Investimentos", "Valor (R$M)", "Empregos"]]
-            para idx, emp em enumerate(ranking, 1):
-                valor_m = emp["valor_total"] / 1e6 se emp["valor_total"] > 0 senão 0
-                ranking_dados.append([
+            ranking_data = [["Rank", "Empresa", "Investimentos", "Valor (R$M)", "Empregos"]]
+            for idx, emp in enumerate(ranking, 1):
+                valor_m = emp["valor_total"] / 1e6 if emp["valor_total"] > 0 else 0
+                ranking_data.append([
                     str(idx),
                     emp["empresa"][:25],
                     str(emp["investimentos"]),
@@ -1737,27 +1760,27 @@ classe GeradorRelatório:
                     str(emp["empregos"])
                 ])
 
-            tabela_de_classificação = Tabela(dados_de_classificação)
+            ranking_table = Table(ranking_data)
 
             estilos_ranking = [
-                ('FUNDO', (0, 0), (-1, 0), cores.HexColor('#667eea')),
-                ('TEXTCOLOR', (0, 0), (-1, 0), cores.fumaçabranca),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#667eea')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                 ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('TAMANHO DA FONTE', (0, 0), (-1, -1), 9),
+                ('FONTSIZE', (0, 0), (-1, -1), 9),
                 ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-                ('GRID', (0, 0), (-1, -1), 1, cores.cinza),
+                ('GRID', (0, 0), (-1, -1), 1, colors.grey),
             ]
 
-            # Manual de striping Zebra (ROWBACKGROUNDS não existe no ReportLab)
-            para i em range(1, len(ranking_data)):
-                cor = cores.branco se i % 2 == 1 senão cores.HexColor('#f9f9f9')
+            # Zebra striping manual (ROWBACKGROUNDS não existe no ReportLab)
+            for i in range(1, len(ranking_data)):
+                cor = colors.white if i % 2 == 1 else colors.HexColor('#f9f9f9')
                 estilos_ranking.append(('BACKGROUND', (0, i), (-1, i), cor))
 
             ranking_table.setStyle(TableStyle(estilos_ranking))
 
-            história.append(tabela_de_classificação)
-            história.append(Spacer(1, 0.4*polegada))
+            story.append(ranking_table)
+            story.append(Spacer(1, 0.4*inch))
 
             # =====================================================
             # RANKING HISTÓRICO (2021-2026)
@@ -1766,24 +1789,24 @@ classe GeradorRelatório:
             totais_hist = self.totais_gerais_historico()
             ranking_hist = self.ranking_empresas_historico()[:10]
 
-            se ranking_hist:
+            if ranking_hist:
                 ano_min = totais_hist['ano_min']
                 ano_max = totais_hist['ano_max']
 
-                história.append(Parágrafo(
+                story.append(Paragraph(
                     f"TOP 10 EMPRESAS — HISTÓRICO {ano_min}-{ano_max}",
-                    estilos['Título2']
+                    styles['Heading2']
                 ))
-                história.append(Parágrafo(
+                story.append(Paragraph(
                     f"Total investido no período: R$ {totais_hist['total_investido']/1e9:.2f}B "
                     f"em {totais_hist['num_investimentos']} investimentos",
-                    estilos['Normal']
+                    styles['Normal']
                 ))
-                história.append(Spacer(1, 0.15*polegada))
+                story.append(Spacer(1, 0.15*inch))
 
-                ranking_hist_data = [["Classificação", "Empresa", "Valor Total (R$M)", "Investimentos"]]
-                para idx, emp em enumerate(ranking_hist, 1):
-                    valor_m = emp["valor_total"] / 1e6 se emp["valor_total"] > 0 senão 0
+                ranking_hist_data = [["Rank", "Empresa", "Valor Total (R$M)", "Investimentos"]]
+                for idx, emp in enumerate(ranking_hist, 1):
+                    valor_m = emp["valor_total"] / 1e6 if emp["valor_total"] > 0 else 0
                     ranking_hist_data.append([
                         str(idx),
                         emp["empresa"][:35],
@@ -1791,33 +1814,33 @@ classe GeradorRelatório:
                         str(emp["num_investimentos"])
                     ])
 
-                tabela_hist_de_classificação = Tabela(dados_hist_de_classificação)
+                ranking_hist_table = Table(ranking_hist_data)
 
                 estilos_hist = [
-                    ('FUNDO', (0, 0), (-1, 0), cores.HexColor('#764ba2')),
-                    ('TEXTCOLOR', (0, 0), (-1, 0), cores.fumaçabranca),
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#764ba2')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
                     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
                     ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                    ('TAMANHO DA FONTE', (0, 0), (-1, -1), 9),
+                    ('FONTSIZE', (0, 0), (-1, -1), 9),
                     ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-                    ('GRID', (0, 0), (-1, -1), 1, cores.cinza),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.grey),
                 ]
 
-                para i em range(1, len(ranking_hist_data)):
-                    cor = cores.branco se i % 2 == 1 senão cores.HexColor('#f5f0fa')
+                for i in range(1, len(ranking_hist_data)):
+                    cor = colors.white if i % 2 == 1 else colors.HexColor('#f5f0fa')
                     estilos_hist.append(('BACKGROUND', (0, i), (-1, i), cor))
 
                 ranking_hist_table.setStyle(TableStyle(estilos_hist))
 
-                história.append(tabela_hist_de_classificação)
+                story.append(ranking_hist_table)
 
             # Construir PDF
-            doc.build(história)
-            retornar nome_arquivo
+            doc.build(story)
+            return nome_arquivo
 
-        exceto Exception como e:
+        except Exception as e:
             print(f"❌ Erro ao gerar PDF: {e}")
-            retornar Nenhum
+            return None
 
     # =====================================================
     # SALVAR RELATÓRIO
@@ -1826,17 +1849,17 @@ classe GeradorRelatório:
     def salvar_relatorio_texto(self):
         """Salva relatório em arquivo TXT."""
 
-        relatorio = self.gerar_relatori o_texto()
+        relatorio = self.gerar_relatorio_texto()
 
         nome_arquivo = (
-            self.pasta_relatórios /
+            self.pasta_relatorios /
             f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.txt"
         )
 
-        com open(nome_arquivo, "w", encoding="utf-8") as f:
-            f.escrever(relatório)
+        with open(nome_arquivo, "w", encoding="utf-8") as f:
+            f.write(relatorio)
 
-        retornar nome_arquivo
+        return nome_arquivo
 
     def salvar_relatorio_json(self):
         """Salva dados do relatório em JSON."""
@@ -1853,14 +1876,14 @@ classe GeradorRelatório:
         }
 
         nome_arquivo = (
-            self.pasta_relatórios /
+            self.pasta_relatorios /
             f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.json"
         )
 
-        com open(nome_arquivo, "w", encoding="utf-8") as f:
-            json.dump(dados, f, recuo=4, garantir_ascii=Falso)
+        with open(nome_arquivo, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=4, ensure_ascii=False)
 
-        retornar nome_arquivo
+        return nome_arquivo
 
     def salvar_relatorio_html(self):
         """Salva relatório em HTML."""
@@ -1868,28 +1891,28 @@ classe GeradorRelatório:
         html = self.gerar_html()
 
         nome_arquivo = (
-            self.pasta_relatórios /
+            self.pasta_relatorios /
             f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.html"
         )
 
-        com open(nome_arquivo, "w", encoding="utf-8") as f:
-            f.escrever(html)
+        with open(nome_arquivo, "w", encoding="utf-8") as f:
+            f.write(html)
 
         # Salva também uma cópia fixa, sempre com o mesmo nome,
         # para manter uma URL estável no GitHub Pages
         caminho_fixo = self.pasta_relatorios / "ultimo_relatorio.html"
-        com open(caminho_fixo, "w", encoding="utf-8") como f:
-            f.escrever(html)
+        with open(caminho_fixo, "w", encoding="utf-8") as f:
+            f.write(html)
 
-        retornar nome_arquivo
+        return nome_arquivo
 
     # =====================================================
     # IMPRIMIR RELATÓRIO
     # =====================================================
 
-    def imprimir_relatório(self):
+    def imprimir_relatorio(self):
         """Imprime relatório no console."""
-        imprimir(self.gerar_relatorio_texto())
+        print(self.gerar_relatorio_texto())
 
     # =====================================================
     # GERAR TODOS OS RELATÓRIOS
@@ -1899,73 +1922,73 @@ classe GeradorRelatório:
         """Gera todos os formatos de relatório."""
 
         print("\n" + "=" * 70)
-        imprimir("GERANDO RELATÓRIOS")
+        print("GERANDO RELATÓRIOS")
         print("=" * 70 + "\n")
 
         arquivos = []
 
         # TXT
-        tentar:
+        try:
             txt_path = self.salvar_relatorio_texto()
             print(f"✓ Relatório TXT: {txt_path}")
             arquivos.append(txt_path)
-        exceto Exception como e:
+        except Exception as e:
             print(f"❌ Erro ao gerar TXT: {e}")
 
         # JSON
-        tentar:
-            json_path=self.salvar_relatorio_json()
+        try:
+            json_path = self.salvar_relatorio_json()
             print(f"✓ Relatório JSON: {json_path}")
-            arquivos.append(caminho_json)
-        exceto Exception como e:
+            arquivos.append(json_path)
+        except Exception as e:
             print(f"❌ Erro ao gerar JSON: {e}")
 
         # HTML
-        tentar:
+        try:
             html_path = self.salvar_relatorio_html()
             print(f"✓ Painel HTML: {html_path}")
             arquivos.append(html_path)
-        exceto Exception como e:
+        except Exception as e:
             print(f"❌ Erro ao gerar HTML: {e}")
 
         # PDF
-        tentar:
+        try:
             pdf_path = self.gerar_pdf()
-            se pdf_path:
+            if pdf_path:
                 print(f"✓ Relatório PDF: {pdf_path}")
-                arquivos.append(caminho_pdf)
-        exceto Exception como e:
+                arquivos.append(pdf_path)
+        except Exception as e:
             print(f"❌ Erro ao gerar PDF: {e}")
 
         # GRÁFICOS
-        tentar:
-            gráficos = self.gerar_graficos()
-            para gráfico em gráficos:
-                arquivos.append(gráfico)
-        exceto Exception como e:
+        try:
+            graficos = self.gerar_graficos()
+            for grafico in graficos:
+                arquivos.append(grafico)
+        except Exception as e:
             print(f"❌ Erro ao gerar gráficos: {e}")
 
         print("\n" + "=" * 70)
         print(f"✓ {len(arquivos)} arquivo(s) gerado(s) com sucesso!")
         print("=" * 70 + "\n")
 
-        devolver arquivos
+        return arquivos
 
 
 # =====================================================
-# PRINCIPAL
+# MAIN
 # =====================================================
 
-se __name__ == "__main__":
+if __name__ == "__main__":
 
     banco = Banco()
-    gerador = GeradorRelatório(banco)
+    gerador = GeradorRelatorio(banco)
 
-    # Gerar todos os se
+    # Gerar todos os formatos
     gerador.gerar_todos()
 
     # Exibir relatório no console
     print("\n" + "=" * 70)
     print("PRÉVIA DO RELATÓRIO TEXTO")
     print("=" * 70 + "\n")
-    gerador.imprimir_relatório()
+    gerador.imprimir_relatorio()
