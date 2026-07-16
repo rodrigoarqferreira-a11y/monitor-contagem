@@ -888,11 +888,9 @@ class GeradorRelatorio:
             box-sizing: border-box;
         }}
 
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600;700&display=swap');
-
         body {{
-            font-family: 'Fira Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #e8eef0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }}
@@ -907,40 +905,10 @@ class GeradorRelatorio:
         }}
 
         .header {{
-            background: #037482;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px 40px;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }}
-
-        .header img {{
-            height: 60px;
-            background: white;
-            padding: 8px 14px;
-            border-radius: 6px;
-        }}
-
-        .header .header-text h1 {{
-            font-size: 1.8em;
-            margin-bottom: 4px;
-        }}
-
-        .header .header-text p {{
-            font-size: 1em;
-            opacity: 0.9;
-        }}
-
-        .header .selo-trabalho {{
-            margin-left: auto;
-            background: #FF7A01;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            white-space: nowrap;
+            padding: 40px;
+            text-align: center;
         }}
 
         .header h1 {{
@@ -957,22 +925,32 @@ class GeradorRelatorio:
             padding: 40px;
         }}
 
+        .summary {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }}
+
         .summary-card {{
-            background: white;
-            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 25px;
             border-radius: 10px;
-            border-top: 4px solid #037482;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
         }}
 
         .summary-card h3 {{
-            color: #037482;
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }}
 
         .summary-card .value {{
-            color: #FF7A01;
+            font-size: 2em;
+            font-weight: bold;
         }}
 
         .section {{
@@ -1063,9 +1041,8 @@ class GeradorRelatorio:
             display: none;
         }}
 
-        .tab-button.active {{
-            color: #037482;
-            border-bottom-color: #FF7A01;
+        .tab-content.active {{
+            display: block;
         }}
 
         /* ===== FILTROS ===== */
@@ -1207,7 +1184,6 @@ class GeradorRelatorio:
             <div class="tabs">
                 <button class="tab-button active" onclick="mostrarAba('recente')">🔴 Monitoramento Recente</button>
                 <button class="tab-button" onclick="mostrarAba('historico')">📊 Histórico {ano_min}-{ano_max}</button>
-                <button class="tab-button" onclick="mostrarAba('analise')">🔍 Análise</button>
             </div>
 
             <!-- ABA: MONITORAMENTO RECENTE -->
@@ -1232,16 +1208,14 @@ class GeradorRelatorio:
                     <div class="value">R$ {resumo['valor_total']/1e9:.2f}B</div>
                 </div>
                 <div class="summary-card">
+                    <h3>Confiança Média</h3>
+                    <div class="value">{resumo['confianca_media']}%</div>
+                </div>
+                <div class="summary-card">
                     <h3>Notícias Relevantes</h3>
                     <div class="value">{resumo['noticias_relevantes']}</div>
                 </div>
             </div>
-
-            </div>
-            <!-- FIM ABA: MONITORAMENTO RECENTE -->
-
-            <!-- ABA: ANÁLISE -->
-            <div id="aba-analise" class="tab-content">
 
             <!-- INVESTIMENTOS POR FASE -->
             <div class="section">
@@ -1360,7 +1334,7 @@ class GeradorRelatorio:
             </div>
 
             </div>
-            <!-- FIM ABA: ANÁLISE -->
+            <!-- FIM ABA: MONITORAMENTO RECENTE -->
 
             <!-- ABA: HISTÓRICO -->
             <div id="aba-historico" class="tab-content">
@@ -1780,59 +1754,6 @@ class GeradorRelatorio:
             ranking_table.setStyle(TableStyle(estilos_ranking))
 
             story.append(ranking_table)
-            story.append(Spacer(1, 0.4*inch))
-
-            # =====================================================
-            # RANKING HISTÓRICO (2021-2026)
-            # =====================================================
-
-            totais_hist = self.totais_gerais_historico()
-            ranking_hist = self.ranking_empresas_historico()[:10]
-
-            if ranking_hist:
-                ano_min = totais_hist['ano_min']
-                ano_max = totais_hist['ano_max']
-
-                story.append(Paragraph(
-                    f"TOP 10 EMPRESAS — HISTÓRICO {ano_min}-{ano_max}",
-                    styles['Heading2']
-                ))
-                story.append(Paragraph(
-                    f"Total investido no período: R$ {totais_hist['total_investido']/1e9:.2f}B "
-                    f"em {totais_hist['num_investimentos']} investimentos",
-                    styles['Normal']
-                ))
-                story.append(Spacer(1, 0.15*inch))
-
-                ranking_hist_data = [["Rank", "Empresa", "Valor Total (R$M)", "Investimentos"]]
-                for idx, emp in enumerate(ranking_hist, 1):
-                    valor_m = emp["valor_total"] / 1e6 if emp["valor_total"] > 0 else 0
-                    ranking_hist_data.append([
-                        str(idx),
-                        emp["empresa"][:35],
-                        f"{valor_m:,.1f}",
-                        str(emp["num_investimentos"])
-                    ])
-
-                ranking_hist_table = Table(ranking_hist_data)
-
-                estilos_hist = [
-                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#764ba2')),
-                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                    ('FONTSIZE', (0, 0), (-1, -1), 9),
-                    ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.grey),
-                ]
-
-                for i in range(1, len(ranking_hist_data)):
-                    cor = colors.white if i % 2 == 1 else colors.HexColor('#f5f0fa')
-                    estilos_hist.append(('BACKGROUND', (0, i), (-1, i), cor))
-
-                ranking_hist_table.setStyle(TableStyle(estilos_hist))
-
-                story.append(ranking_hist_table)
 
             # Construir PDF
             doc.build(story)
