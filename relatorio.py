@@ -367,8 +367,8 @@ body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var
 .tab.on{{background:var(--branco);color:var(--azul);border-color:var(--borda);border-bottom-color:var(--branco)}}
 
 /* PAINÉIS */
-.painel{{display:none;padding:24px 36px}}
-.painel.on{{display:block}}
+.aba{{display:none;padding:24px 36px}}
+.aba.on{{display:block}}
 
 /* SEÇÃO */
 .sec{{margin-bottom:28px}}
@@ -418,7 +418,7 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
         padding:16px;font-size:.76rem;margin-top:16px}}
 
 @media(max-width:768px){{
-  .hdr,.cards,.tabs-wrap,.painel{{padding-left:14px;padding-right:14px}}
+  .hdr,.cards,.tabs-wrap,.aba{{padding-left:14px;padding-right:14px}}
   .grid2{{grid-template-columns:1fr}}
 }}
 </style>
@@ -517,13 +517,18 @@ const CONF_D   = {{alta:{cf['alta']},media:{cf['media']},baixa:{cf['baixa']},mg:
 const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
 
 // ── abas ───────────────────────────────────────────────────
-let grafOk=false;
-function aba(id, btn){{
-  document.querySelectorAll('.painel').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
-  document.getElementById('p-'+id).classList.add('on');
+function aba(id, btn){
+
+  document.querySelectorAll('.aba')
+      .forEach(p => p.classList.remove('active'));
+
+  document.querySelectorAll('.tab')
+      .forEach(b => b.classList.remove('on'));
+
+  document.getElementById(id)
+      .classList.add('active');
+
   btn.classList.add('on');
-  if(id==='graficos' && !grafOk){{grafOk=true; renderGraf();}}
 }}
 
 // ── badge fase ─────────────────────────────────────────────
@@ -664,19 +669,6 @@ document.addEventListener('DOMContentLoaded',()=>{{
   renderRecentes(); renderHist(); renderQuase(); renderRanking();
 }});
 
-function aba(id, btn){
-
-    document.querySelectorAll(".painel")
-        .forEach(p => p.classList.remove("on"));
-
-    document.querySelectorAll(".tab")
-        .forEach(t => t.classList.remove("on"));
-
-    document.getElementById(id)
-        .classList.add("on");
-
-    btn.classList.add("on");
-}
 </script>
 </body>
 </html>"""
