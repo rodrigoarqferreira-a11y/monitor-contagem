@@ -43,15 +43,6 @@ jobs:
             exit 1
           fi
 
-      - name: Verificar dados historicos
-        run: |
-          python -c "
-          from banco import Banco
-          banco = Banco()
-          print('Total investimentos no banco:', len(banco.investimentos))
-          print('Amostra:', banco.investimentos[:2])
-          "    
-
       - name: Salvar no repositório
         run: |
           git config --global user.name "github-actions"
