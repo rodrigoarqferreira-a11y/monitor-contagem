@@ -457,74 +457,50 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
     </button>
 </div>
 
-<!-- RECENTES -->
-<div id="p-resumo" class="painel on">
-  <div class="filtros">
-    <label>Empresa</label><select id="r-emp" onchange="renderRecentes()"><option value="">Todas</option></select>
-    <label>Fase</label><select id="r-fase" onchange="renderRecentes()"><option value="">Todas</option></select>
-    <label>Buscar</label><input id="r-txt" placeholder="Palavra no título..." oninput="renderRecentes()">
-    <button class="btn-x" onclick="limpar('r-emp','r-fase','r-txt')">✕ Limpar</button>
-  </div>
-  <div id="lista-recentes"></div>
+<!-- ABA RESUMO -->
+<div id="resumo" class="painel on">
+    <!-- CONTEÚDO ATUAL DO RELATÓRIO -->
 </div>
 
-<!-- GRÁFICOS -->
-<div id="p-graficos" class="painel">
-  <div class="grid2">
-    <div class="sec"><div class="sec-title">Por fase</div><div class="graf" id="g-fases"></div></div>
-    <div class="sec"><div class="sec-title">Top empresas</div><div class="graf" id="g-emp"></div></div>
-  </div>
-  <div class="sec"><div class="sec-title">Evolução mensal</div><div class="graf" id="g-evol" style="height:260px"></div></div>
-  <div class="grid2">
-    <div class="sec"><div class="sec-title">Confiança dos dados</div><div class="graf" id="g-conf"></div></div>
-    <div class="sec">
-      <div class="sec-title">Ranking detalhado</div>
-      <div class="tbl-wrap">
-        <table><thead><tr><th>#</th><th>Empresa</th><th>Invest.</th><th>R$ M</th><th>Empregos</th></tr></thead>
-        <tbody id="tb-rk"></tbody></table>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- ABA HISTORICO -->
+<div id="historico" class="painel">
+    <h2>Histórico de Investimentos</h2>
 
-<!-- HISTÓRICO -->
-<div id="p-historico" class="painel">
-  <div class="filtros">
-    <label>Empresa</label><select id="h-emp" onchange="renderHist()"><option value="">Todas</option></select>
-    <label>Fase</label><select id="h-fase" onchange="renderHist()"><option value="">Todas</option></select>
-    <label>Relevância</label>
-    <select id="h-rel" onchange="renderHist()">
-      <option value="">Todas</option><option value="s">Relevantes</option><option value="n">Descartadas</option>
-    </select>
-    <label>Buscar</label><input id="h-txt" placeholder="Palavra no título..." oninput="renderHist()">
-    <button class="btn-x" onclick="limpar('h-emp','h-fase','h-rel','h-txt')">✕ Limpar</button>
-  </div>
-  <div id="lista-hist"></div>
-</div>
-
-<!-- FONTES -->
-<div id="p-noticias" class="painel">
-  <div class="sec">
-    <div class="sec-title">Desempenho por fonte</div>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th>Fonte</th><th>Total</th><th>Relevantes</th><th>Precisão</th><th>Confiança</th></tr></thead>
-        <tbody>{f_rows}</tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- QUASE RELEVANTES -->
-<div id="p-quase" class="painel">
-  <div class="sec">
-    <div class="sec-title">🔍 Boa pontuação, mas fora de Contagem</div>
-    <p style="color:var(--cinza);font-size:.83rem;margin-bottom:14px">
-      Pontuação ≥ 30, empresa monitorada identificada, mas sem menção explícita a Contagem.
-      Possível impacto regional a observar.
+    <p>
+        Em breve serão exibidos os gráficos e ranking de empresas.
     </p>
-    <div id="lista-quase"></div>
+</div>
+
+<!-- ABA NOTÍCIAS -->
+<div id="noticias" class="painel">
+    <h2>Notícias Monitoradas</h2>
+
+      <div class="sec">
+          <div class="sec-title">Desempenho por fonte</div>
+
+          <div class="tbl-wrap">
+              <table>
+                  <thead>
+                      <tr>
+                          <th>Fonte</th>
+                          <th>Total</th>
+                          <th>Relevantes</th>
+                          <th>Precisão</th>
+                          <th>Confiança</th>
+                      </tr>
+                  </thead>
+
+                  <tbody>
+                      {f_rows}
+                  </tbody>
+
+              </table>
+          </div>
+
+      </div>
+
   </div>
+
 </div>
 
 <footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · {self.data_geracao.strftime('%d/%m/%Y %H:%M')}</footer>
@@ -687,6 +663,20 @@ document.addEventListener('DOMContentLoaded',()=>{{
   popSelect('h-fase', TODAS.map(n=>n.fase).filter(Boolean));
   renderRecentes(); renderHist(); renderQuase(); renderRanking();
 }});
+
+function aba(id, btn){
+
+    document.querySelectorAll(".painel")
+        .forEach(p => p.classList.remove("on"));
+
+    document.querySelectorAll(".tab")
+        .forEach(t => t.classList.remove("on"));
+
+    document.getElementById(id)
+        .classList.add("on");
+
+    btn.classList.add("on");
+}
 </script>
 </body>
 </html>"""
