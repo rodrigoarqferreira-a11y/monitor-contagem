@@ -528,7 +528,7 @@ const CONF_D   = {{alta:{cf['alta']},media:{cf['media']},baixa:{cf['baixa']},mg:
 const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
 
 // ── abas ───────────────────────────────────────────────────
-function aba(id, btn){
+function aba(id, btn){{
 
     document.querySelectorAll(".painel")
         .forEach(p => p.classList.remove("on"));
@@ -540,7 +540,7 @@ function aba(id, btn){
         .classList.add("on");
 
     btn.classList.add("on");
-}
+}}
 
 // ── badge fase ─────────────────────────────────────────────
 function bdgFase(f){{
