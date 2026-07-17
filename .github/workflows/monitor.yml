@@ -32,11 +32,20 @@ jobs:
         run: |
           python monitor.py
 
+      - name: Verificar arquivos gerados
+        run: |
+          echo "=== Pasta dados/ ==="
+          ls -la dados/ || echo "Pasta dados/ não encontrada"
+          echo "=== Pasta relatorios/ ==="
+          ls -la relatorios/ || echo "Pasta relatorios/ não encontrada"
+
       - name: Salvar dados e relatório no repositório
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add relatorios/
-          git add dados/
-          git commit -m "Relatório automático $(date +'%d/%m/%Y %H:%M')" || exit 0
-          git push
+          git add -f relatorios/
+          git add -f dados/
+          git status
+          git diff --cached --stat
+          git commit -m "Relatório automático $(date +'%d/%m/%Y %H:%M')" || echo "Nada novo para commitar"
+          git push || echo "Push sem alterações"
