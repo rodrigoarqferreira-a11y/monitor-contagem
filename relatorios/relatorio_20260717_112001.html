@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Monitor de Investimentos — Contagem MG</title>
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+<style>
+:root{
+  --azul:#1a3a5c;--ouro:#e8a020;--bg:#f0f4fa;--branco:#fff;
+  --cinza:#6b7280;--borda:#dde3ec;--verde:#16a34a;--text:#1f2937;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+
+/* HEADER */
+.hdr{background:var(--azul);color:#fff;padding:24px 36px;
+      display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.hdr h1{font-size:1.4rem;font-weight:700}
+.hdr p{font-size:.82rem;opacity:.75;margin-top:3px}
+.badge-periodo{background:var(--ouro);color:var(--azul);padding:5px 14px;
+                border-radius:20px;font-weight:700;font-size:.78rem}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+        gap:14px;padding:24px 36px 0}
+.card{background:var(--branco);border:1px solid var(--borda);border-radius:10px;
+       padding:18px;text-align:center;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--azul)}
+.card.ouro::before{background:var(--ouro)}
+.card.verde::before{background:var(--verde)}
+.card-val{font-size:1.9rem;font-weight:800;color:var(--azul);line-height:1;margin-bottom:5px}
+.card-lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;color:var(--cinza);font-weight:600}
+
+/* ABAS */
+.tabs-wrap{padding:24px 36px 0}
+.tabs{display:flex;gap:3px;border-bottom:2px solid var(--borda)}
+.tab{padding:9px 20px;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;
+      background:none;font-size:.88rem;font-weight:600;color:var(--cinza);cursor:pointer;
+      position:relative;bottom:-2px;transition:all .15s}
+.tab:hover{background:var(--bg);color:var(--azul)}
+.tab.on{background:var(--branco);color:var(--azul);border-color:var(--borda);border-bottom-color:var(--branco)}
+
+/* PAINÉIS */
+.painel{display:none;padding:24px 36px}
+.painel.on{display:block}
+
+/* SEÇÃO */
+.sec{margin-bottom:28px}
+.sec-title{font-size:.95rem;font-weight:700;color:var(--azul);padding-bottom:8px;
+            border-bottom:2px solid var(--ouro);margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+/* FILTROS */
+.filtros{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.filtros label{font-size:.8rem;font-weight:600;color:var(--cinza)}
+.filtros select,.filtros input{padding:6px 11px;border:1px solid var(--borda);border-radius:6px;
+  font-size:.83rem;background:var(--branco);color:var(--text);min-width:150px}
+.btn-x{padding:6px 13px;background:var(--azul);color:#fff;border:none;border-radius:6px;
+         font-size:.8rem;font-weight:600;cursor:pointer;transition:opacity .15s}
+.btn-x:hover{opacity:.85}
+
+/* TABELA */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.86rem}
+th{background:var(--azul);color:#fff;padding:10px 13px;text-align:left;font-size:.78rem;
+    text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+td{padding:9px 13px;border-bottom:1px solid var(--borda);vertical-align:top}
+tr:hover td{background:#eef2fa}
+.tr-total td{background:var(--bg);font-weight:600}
+
+/* CARD NOTICIA */
+.ncard{background:var(--branco);border:1px solid var(--borda);border-radius:8px;
+        padding:14px;margin-bottom:10px;border-left:4px solid var(--azul)}
+.ncard.quase{border-left-color:var(--ouro)}
+.ncard-title{font-weight:700;font-size:.93rem;color:var(--azul);margin-bottom:5px;line-height:1.4}
+.ncard-meta{font-size:.76rem;color:var(--cinza);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:5px}
+.ncard-url{font-size:.76rem;color:var(--azul);text-decoration:none;word-break:break-all}
+.ncard-url:hover{text-decoration:underline}
+
+/* BADGE */
+.bdg{display:inline-block;padding:2px 7px;border-radius:11px;font-size:.7rem;font-weight:700;text-transform:uppercase}
+.bdg-v{background:#dcfce7;color:#15803d}.bdg-o{background:#fef9c3;color:#a16207}
+.bdg-c{background:#f1f5f9;color:#475569}.bdg-a{background:#dbeafe;color:#1d4ed8}
+
+/* GRÁFICO */
+.graf{height:300px;background:var(--branco);border:1px solid var(--borda);border-radius:8px;margin-bottom:16px}
+
+/* VAZIO */
+.vazio{text-align:center;padding:36px;color:var(--cinza);font-style:italic}
+
+footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
+        padding:16px;font-size:.76rem;margin-top:16px}
+
+@media(max-width:768px){
+  .hdr,.cards,.tabs-wrap,.painel{padding-left:14px;padding-right:14px}
+  .grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <h1>📊 Monitor de Investimentos Privados</h1>
+    <p>SEDECON · Prefeitura de Contagem MG &nbsp;|&nbsp; 17/07/2026 11:20</p>
+  </div>
+  <div class="badge-periodo">Período: —</div>
+</div>
+
+<div class="cards">
+  <div class="card"><div class="card-val">59</div><div class="card-lbl">Investimentos</div></div>
+  <div class="card"><div class="card-val">59</div><div class="card-lbl">Empresas</div></div>
+  <div class="card ouro"><div class="card-val">0</div><div class="card-lbl">Empregos gerados</div></div>
+  <div class="card ouro"><div class="card-val">R$ 0M</div><div class="card-lbl">Valor total</div></div>
+  <div class="card verde"><div class="card-val">0%</div><div class="card-lbl">Confiança média</div></div>
+  <div class="card"><div class="card-val">0</div><div class="card-lbl">Notícias relevantes</div></div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab on"  onclick="aba('recente',this)">🔔 Recentes</button>
+    <button class="tab"     onclick="aba('graficos',this)">📈 Gráficos</button>
+    <button class="tab"     onclick="aba('historico',this)">📋 Histórico</button>
+    <button class="tab"     onclick="aba('fontes',this)">📰 Fontes</button>
+    <button class="tab"     onclick="aba('quase',this)">🔍 Quase relevantes</button>
+  </div>
+</div>
+
+<!-- RECENTES -->
+<div id="p-recente" class="painel on">
+  <div class="filtros">
+    <label>Empresa</label><select id="r-emp" onchange="renderRecentes()"><option value="">Todas</option></select>
+    <label>Fase</label><select id="r-fase" onchange="renderRecentes()"><option value="">Todas</option></select>
+    <label>Buscar</label><input id="r-txt" placeholder="Palavra no título..." oninput="renderRecentes()">
+    <button class="btn-x" onclick="limpar('r-emp','r-fase','r-txt')">✕ Limpar</button>
+  </div>
+  <div id="lista-recentes"></div>
+</div>
+
+<!-- GRÁFICOS -->
+<div id="p-graficos" class="painel">
+  <div class="grid2">
+    <div class="sec"><div class="sec-title">Por fase</div><div class="graf" id="g-fases"></div></div>
+    <div class="sec"><div class="sec-title">Top empresas</div><div class="graf" id="g-emp"></div></div>
+  </div>
+  <div class="sec"><div class="sec-title">Evolução mensal</div><div class="graf" id="g-evol" style="height:260px"></div></div>
+  <div class="grid2">
+    <div class="sec"><div class="sec-title">Confiança dos dados</div><div class="graf" id="g-conf"></div></div>
+    <div class="sec">
+      <div class="sec-title">Ranking detalhado</div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>#</th><th>Empresa</th><th>Invest.</th><th>R$ M</th><th>Empregos</th></tr></thead>
+        <tbody id="tb-rk"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTÓRICO -->
+<div id="p-historico" class="painel">
+  <div class="filtros">
+    <label>Empresa</label><select id="h-emp" onchange="renderHist()"><option value="">Todas</option></select>
+    <label>Fase</label><select id="h-fase" onchange="renderHist()"><option value="">Todas</option></select>
+    <label>Relevância</label>
+    <select id="h-rel" onchange="renderHist()">
+      <option value="">Todas</option><option value="s">Relevantes</option><option value="n">Descartadas</option>
+    </select>
+    <label>Buscar</label><input id="h-txt" placeholder="Palavra no título..." oninput="renderHist()">
+    <button class="btn-x" onclick="limpar('h-emp','h-fase','h-rel','h-txt')">✕ Limpar</button>
+  </div>
+  <div id="lista-hist"></div>
+</div>
+
+<!-- FONTES -->
+<div id="p-fontes" class="painel">
+  <div class="sec">
+    <div class="sec-title">Desempenho por fonte</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Fonte</th><th>Total</th><th>Relevantes</th><th>Precisão</th><th>Confiança</th></tr></thead>
+        <tbody><tr class="tr-total"><td><b>TOTAL</b></td><td><b>0</b></td><td><b>0</b></td><td><b>0%</b></td><td>—</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- QUASE RELEVANTES -->
+<div id="p-quase" class="painel">
+  <div class="sec">
+    <div class="sec-title">🔍 Boa pontuação, mas fora de Contagem</div>
+    <p style="color:var(--cinza);font-size:.83rem;margin-bottom:14px">
+      Pontuação ≥ 30, empresa monitorada identificada, mas sem menção explícita a Contagem.
+      Possível impacto regional a observar.
+    </p>
+    <div id="lista-quase"></div>
+  </div>
+</div>
+
+<footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · 17/07/2026 11:20</footer>
+
+<script>
+// ── dados ──────────────────────────────────────────────────
+const NOTICIAS = [];
+const TODAS    = [];
+const FASES_D  = {};
+const EMPS_D   = [];
+const EVOL_D   = {};
+const QUASE_D  = [];
+const CONF_D   = {alta:0,media:0,baixa:0,mg:0};
+const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
+
+// ── abas ───────────────────────────────────────────────────
+let grafOk=false;
+function aba(id, btn){
+  document.querySelectorAll('.painel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='graficos' && !grafOk){grafOk=true; renderGraf();}
+}
+
+// ── badge fase ─────────────────────────────────────────────
+function bdgFase(f){
+  const m={'Anunciado':'bdg-a','Construção':'bdg-o','Operação':'bdg-v','Expansão':'bdg-v'};
+  return `<span class="bdg ${m[f]||'bdg-c'}">${f||'—'}</span>`;
+}
+
+// ── card notícia ───────────────────────────────────────────
+function cardN(n, extra){
+  const emps=(n.empresas||[]).join(', ')||'—';
+  const vals=(n.valores ||[]).join(', ')||'—';
+  const empr=(n.empregos||[]).join(', ')||'—';
+  return `<div class="ncard${extra?' quase':''}">
+    <div class="ncard-title">${n.titulo||'—'}</div>
+    <div class="ncard-meta">
+      <span>📍 ${n.fonte||'—'}</span><span>📅 ${n.data||'—'}</span>
+      <span>🎯 ${n.pontuacao||0} pts</span>${bdgFase(n.fase)}
+      ${n.relevante?'<span class="bdg bdg-v">✓ Relevante</span>':''}
+    </div>
+    <div class="ncard-meta">🏢 ${emps} &nbsp;|&nbsp; 💰 ${vals} &nbsp;|&nbsp; 👥 ${empr}</div>
+    <a class="ncard-url" href="${n.url}" target="_blank">${n.url}</a>
+  </div>`;
+}
+
+// ── popular selects ────────────────────────────────────────
+function popSelect(selId, arr){
+  const s=document.getElementById(selId);
+  [...new Set(arr)].sort().forEach(v=>s.add(new Option(v,v)));
+}
+function limpar(...ids){
+  ids.forEach(id=>{const el=document.getElementById(id); if(el)el.value=''});
+  renderRecentes(); renderHist();
+}
+
+// ── RECENTES ───────────────────────────────────────────────
+function renderRecentes(){
+  const e=document.getElementById('r-emp').value.toLowerCase();
+  const f=document.getElementById('r-fase').value.toLowerCase();
+  const t=document.getElementById('r-txt').value.toLowerCase();
+  const lista=NOTICIAS.filter(n=>
+    (!e||(n.empresas||[]).join(' ').toLowerCase().includes(e))&&
+    (!f|(n.fase||'').toLowerCase()===f)&&
+    (!t|(n.titulo||'').toLowerCase().includes(t))
+  );
+  document.getElementById('lista-recentes').innerHTML=
+    lista.length ? lista.map(n=>cardN(n,false)).join('') : '<div class="vazio">Nenhuma notícia com esses filtros.</div>';
+}
+
+// ── HISTÓRICO ──────────────────────────────────────────────
+function renderHist(){
+  const e=document.getElementById('h-emp').value.toLowerCase();
+  const f=document.getElementById('h-fase').value.toLowerCase();
+  const r=document.getElementById('h-rel').value;
+  const t=document.getElementById('h-txt').value.toLowerCase();
+  const lista=TODAS.filter(n=>
+    (!e||(n.empresas||[]).join(' ').toLowerCase().includes(e))&&
+    (!f|(n.fase||'').toLowerCase()===f)&&
+    (!r||(r==='s'?n.relevante:!n.relevante))&&
+    (!t|(n.titulo||'').toLowerCase().includes(t))
+  );
+  document.getElementById('lista-hist').innerHTML=
+    lista.length ? lista.map(n=>cardN(n,false)).join('') : '<div class="vazio">Nenhuma notícia com esses filtros.</div>';
+}
+
+// ── QUASE ──────────────────────────────────────────────────
+function renderQuase(){
+  document.getElementById('lista-quase').innerHTML=
+    QUASE_D.length ? QUASE_D.map(n=>cardN(n,true)).join('') : '<div class="vazio">Nenhuma notícia quase relevante.</div>';
+}
+
+// ── RANKING tabela ─────────────────────────────────────────
+function renderRanking(){
+  document.getElementById('tb-rk').innerHTML=
+    EMPS_D.map((e,i)=>`<tr>
+      <td><b>${i+1}</b></td><td>${e.empresa}</td><td>${e.investimentos}</td>
+      <td>R$ ${(e.valor_total/1e6).toFixed(1)}M</td><td>${e.empregos}</td>
+    </tr>`).join('') || '<tr><td colspan="5" class="vazio">Sem dados.</td></tr>';
+}
+
+// ── GRÁFICOS Plotly ────────────────────────────────────────
+function renderGraf(){
+  const cfg={responsive:true,displayModeBar:false};
+  const base={font:{family:'Segoe UI,system-ui',size:12},
+               paper_bgcolor:'#fff',plot_bgcolor:'#fff'};
+
+  // Fases — horizontal
+  Plotly.newPlot('g-fases',[{
+    x:Object.values(FASES_D), y:Object.keys(FASES_D),
+    type:'bar', orientation:'h',
+    marker:{color:AZUL},
+    text:Object.values(FASES_D), textposition:'outside'
+  }],{...base,title:'Por Fase',margin:{l:140,r:30,t:40,b:40},
+       xaxis:{title:'Quantidade'}},cfg);
+
+  // Empresas — horizontal
+  Plotly.newPlot('g-emp',[{
+    x:EMPS_D.map(e=>e.investimentos), y:EMPS_D.map(e=>e.empresa),
+    type:'bar', orientation:'h',
+    marker:{color:OURO},
+    text:EMPS_D.map(e=>e.investimentos), textposition:'outside'
+  }],{...base,title:'Top Empresas',margin:{l:160,r:30,t:40,b:40},
+       xaxis:{title:'Investimentos'}},cfg);
+
+  // Evolução — linha
+  const ps=Object.keys(EVOL_D), ivs=ps.map(p=>EVOL_D[p].investimentos);
+  Plotly.newPlot('g-evol',[{
+    x:ps, y:ivs, type:'scatter', mode:'lines+markers',
+    line:{color:AZUL,width:2.5},
+    marker:{size:8,color:OURO},
+    fill:'tozeroy', fillcolor:'rgba(26,58,92,0.08)'
+  }],{...base,title:'Evolução Mensal',margin:{l:60,r:20,t:40,b:60},
+       xaxis:{tickangle:-40},yaxis:{title:'Investimentos'}},cfg);
+
+  // Confiança — pizza
+  const cv=[CONF_D.alta,CONF_D.media,CONF_D.baixa];
+  if(cv.some(v=>v>0)){
+    Plotly.newPlot('g-conf',[{
+      values:cv,
+      labels:[`Alta ≥80% (${CONF_D.alta}%)`,`Média (${CONF_D.media}%)`,`Baixa (${CONF_D.baixa}%)`],
+      type:'pie', hole:0.4,
+      marker:{colors:[VERDE,OURO,'#dc2626'],line:{color:'white',width:2}},
+      textinfo:'percent'
+    }],{...base,title:`Confiança — Média ${CONF_D.mg}%`,
+         margin:{l:20,r:20,t:50,b:20},
+         showlegend:true,legend:{orientation:'h',y:-0.15}},cfg);
+  } else {
+    document.getElementById('g-conf').innerHTML='<div class="vazio" style="padding-top:80px">Sem dados ainda.</div>';
+  }
+}
+
+// ── init ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  popSelect('r-emp', NOTICIAS.flatMap(n=>n.empresas||[]));
+  popSelect('r-fase', NOTICIAS.map(n=>n.fase).filter(Boolean));
+  popSelect('h-emp', TODAS.flatMap(n=>n.empresas||[]));
+  popSelect('h-fase', TODAS.map(n=>n.fase).filter(Boolean));
+  renderRecentes(); renderHist(); renderQuase(); renderRanking();
+});
+</script>
+</body>
+</html>
