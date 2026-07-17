@@ -444,16 +444,21 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab on"  onclick="aba('recente',this)">🔔 Recentes</button>
-    <button class="tab"     onclick="aba('graficos',this)">📈 Gráficos</button>
-    <button class="tab"     onclick="aba('historico',this)">📋 Histórico</button>
-    <button class="tab"     onclick="aba('fontes',this)">📰 Fontes</button>
-    <button class="tab"     onclick="aba('quase',this)">🔍 Quase relevantes</button>
-  </div>
+    <button class="tab on" onclick="aba('resumo',this)">
+        📊 Resumo
+    </button>
+
+    <button class="tab" onclick="aba('historico',this)">
+        📈 Histórico
+    </button>
+
+    <button class="tab" onclick="aba('noticias',this)">
+        📰 Notícias
+    </button>
 </div>
 
 <!-- RECENTES -->
-<div id="p-recente" class="painel on">
+<div id="p-resumo" class="painel on">
   <div class="filtros">
     <label>Empresa</label><select id="r-emp" onchange="renderRecentes()"><option value="">Todas</option></select>
     <label>Fase</label><select id="r-fase" onchange="renderRecentes()"><option value="">Todas</option></select>
@@ -498,7 +503,7 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 </div>
 
 <!-- FONTES -->
-<div id="p-fontes" class="painel">
+<div id="p-noticias" class="painel">
   <div class="sec">
     <div class="sec-title">Desempenho por fonte</div>
     <div class="tbl-wrap">
