@@ -1,18 +1,15 @@
 """
 =====================================================
-
-MONITOR DE INVESTIMENTOS PRIVADOS
-
-CONTAGEM - MG
-
-Arquivo principal do sistema.
-
+MONITOR.PY
+Monitor de Investimentos Privados — Contagem MG
 =====================================================
 """
 
 from crawler import executar
 from analisador import processar
 from intel import analisar_inteligencia
+from relatorio import GeradorRelatorio
+from banco import Banco
 from datetime import datetime
 
 
@@ -21,40 +18,25 @@ def main():
     print()
     print("=" * 70)
     print("MONITOR DE INVESTIMENTOS PRIVADOS")
-    print(
-        f"Execução: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
-    )
+    print(f"Execução: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
     print("=" * 70)
 
+    # ── coleta ───────────────────────────────────────
+
     try:
-
         noticias = executar()
-
     except Exception as erro:
-
         import traceback
         traceback.print_exc()
-
-        print()
-        print("Erro no monitor:")
-        print(erro)
-
+        print("\nErro no crawler:", erro)
         return
 
-    print()
-    print(f"{len(noticias)} notícias encontradas.")
-    print()
+    print(f"\n{len(noticias)} notícias encontradas.\n")
 
-    relevantes = 0
+    # ── análise ──────────────────────────────────────
 
-    # ---------------------------------------------
-    # Lista de notícias "quase relevantes":
-    # pontuação boa, mas descartadas só por não
-    # mencionarem Contagem (ex: notícias sobre
-    # Betim, BH, etc. que citam empresas monitoradas)
-    # ---------------------------------------------
-
-    quase_relevantes = []
+    relevantes    = 0
+    quase_rel     = []
 
     for noticia in noticias:
 
@@ -63,167 +45,77 @@ def main():
         if noticia.relevante:
 
             inteligencia = analisar_inteligencia(noticia)
-
-            relevantes += 1
+            relevantes  += 1
 
             print("-" * 70)
             print(noticia.titulo)
             print()
-
             print("Empresa(s):")
-
-            if noticia.empresas:
-
-                for empresa in noticia.empresas:
-
-                    print(" •", empresa)
-
-            else:
-
-                print(" • Não identificada")
-
+            for emp in (noticia.empresas or ["Não identificada"]):
+                print(" •", emp)
             print()
-
-            print("Fase:", noticia.fase)
-            print("Status:", inteligencia["status"])
-
-            print(
-                "Classificação:",
-                inteligencia["classificacao"]
-            )
-
-            print(
-                "Confiança:",
-                inteligencia["confianca"],
-                "%"
-            )
-
-            print(
-                "Estrelas:",
-                inteligencia["estrelas"]
-            )
-
-            print(
-                "Pontuação:",
-                noticia.pontuacao
-            )
-
+            print("Fase        :", noticia.fase)
+            print("Status      :", inteligencia["status"])
+            print("Classificação:", inteligencia["classificacao"])
+            print("Confiança   :", inteligencia["confianca"], "%")
+            print("Estrelas    :", inteligencia["estrelas"])
+            print("Pontuação   :", noticia.pontuacao)
             if noticia.valores:
-
-                print(
-                    "Valor:",
-                    ", ".join(noticia.valores)
-                )
-
+                print("Valor       :", ", ".join(noticia.valores))
             if noticia.empregos:
-
-                print(
-                    "Empregos:",
-                    ", ".join(noticia.empregos)
-                )
-
-            print("Fonte:", noticia.fonte)
-            print("URL:", noticia.url)
+                print("Empregos    :", ", ".join(noticia.empregos))
+            print("Fonte       :", noticia.fonte)
+            print("URL         :", noticia.url)
             print("-" * 70)
             print()
 
         else:
+            # guarda "quase relevantes" para o resumo
+            if (getattr(noticia, "pontuacao", 0) >= 30
+                    and not getattr(noticia, "mencionou_contagem", True)):
+                quase_rel.append(noticia)
 
-            # Notícia descartada. Verifica se seria
-            # relevante apenas pela pontuação, mas
-            # não mencionou Contagem — vale a pena
-            # ficar de olho nessas, sem salvar no banco.
-
-            pontuacao_ok = (
-                noticia.pontuacao >= 30
-            )
-
-            sem_contagem = (
-                not getattr(noticia, "mencionou_contagem", True)
-            )
-
-            if pontuacao_ok and sem_contagem:
-
-                quase_relevantes.append(noticia)
+    # ── resumo no console ────────────────────────────
 
     print()
     print("=" * 70)
     print("RESUMO FINAL")
     print("=" * 70)
+    print(f"Total de notícias........: {len(noticias)}")
+    print(f"Notícias relevantes......: {relevantes}")
+    print(f"Notícias descartadas.....: {len(noticias) - relevantes}")
 
-    print(
-        f"Total de notícias........: {len(noticias)}"
-    )
-
-    print(
-        f"Notícias relevantes......: {relevantes}"
-    )
-
-    print(
-        f"Notícias descartadas.....: {len(noticias)-relevantes}"
-    )
-
-    print()
-
-    # ---------------------------------------------
-    # Seção extra: quase relevantes
-    # ---------------------------------------------
-
-    if quase_relevantes:
-
-        print("-" * 70)
-        print(
-            f"Descartadas por falta de menção a Contagem: "
-            f"{len(quase_relevantes)}"
-        )
-        print(
-            "(pontuação boa, mas fala de outra cidade "
-            "ou não menciona Contagem)"
-        )
-        print("-" * 70)
-
-        for noticia in quase_relevantes:
-
-            print()
-            print(" •", noticia.titulo)
-
-            if noticia.empresas:
-
-                print(
-                    "   Empresa(s):",
-                    ", ".join(noticia.empresas)
-                )
-
-            print("   Pontuação:", noticia.pontuacao)
-            print("   Fase:", noticia.fase)
-            print("   URL:", noticia.url)
-
+    if quase_rel:
         print()
-
-    else:
-
-        print(
-            "Nenhuma notícia 'quase relevante' "
-            "encontrada hoje."
-        )
-# DEPOIS — salva o banco e dispara o gerador de relatório:
-    from banco import Banco
-    from relatorio import GeradorRelatorio   # ajuste o nome da classe se diferente
-
-    banco = Banco()
-    # (opcional) salvar notícias novas no banco antes do relatório:
-    for noticia in noticias:
-        if noticia.relevante:
-            banco.adicionar_noticia(noticia)
-    banco.salvar()
+        print(f"Quase relevantes (boa pontuação, fora de Contagem): {len(quase_rel)}")
+        for n in quase_rel:
+            print(f"  • {n.titulo}")
+            print(f"    Pontos: {n.pontuacao} | Fase: {n.fase} | URL: {n.url}")
 
     print()
-    print("Gerando relatórios...")
-    gerador = GeradorRelatorio(banco)
-    gerador.gerar_todos()
+
+    # ── gerar relatórios ─────────────────────────────
+    # Lê o banco que acabou de ser atualizado pelo
+    # processar() → analisador.py → salvar_noticia()
+    # e gera todos os formatos (TXT, JSON, HTML, PDF).
+
+    print("=" * 70)
+    print("GERANDO RELATÓRIOS")
+    print("=" * 70)
+
+    try:
+        banco   = Banco()
+        gerador = GeradorRelatorio(banco)
+        arquivos = gerador.gerar_todos()
+        print(f"\n{len(arquivos)} arquivo(s) gerado(s) em /relatorios/")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"\nErro ao gerar relatórios: {e}")
 
     print()
     print("Monitoramento concluído.")
+
 
 if __name__ == "__main__":
     main()
