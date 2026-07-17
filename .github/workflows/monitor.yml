@@ -33,23 +33,15 @@ jobs:
 
       - name: Copiar HTML mais recente como ultimo_relatorio
         run: |
-          # Pega o HTML mais recente gerado hoje (por timestamp no nome)
           ULTIMO=$(ls -t relatorios/relatorio_*.html 2>/dev/null | head -1)
           if [ -n "$ULTIMO" ]; then
             cp "$ULTIMO" relatorios/ultimo_relatorio.html
-            echo "Copiado: $ULTIMO → relatorios/ultimo_relatorio.html"
+            echo "Copiado: $ULTIMO"
             echo "Tamanho: $(wc -c < relatorios/ultimo_relatorio.html) bytes"
           else
-            echo "Nenhum HTML gerado encontrado"
+            echo "Nenhum HTML encontrado"
+            exit 1
           fi
-
-      - name: Verificar o que será commitado
-        run: |
-          echo "=== Status git ==="
-          git status
-          echo "=== Arquivos novos/modificados ==="
-          git diff --name-only HEAD 2>/dev/null || true
-          git ls-files --others --exclude-standard relatorios/ dados/ 2>/dev/null || true
 
       - name: Salvar no repositório
         run: |
@@ -57,6 +49,11 @@ jobs:
           git config --global user.email "actions@github.com"
           git add -f relatorios/
           git add -f dados/
-          git status
-          git commit -m "Monitor $(date +'%d/%m/%Y %H:%M') - automático" || echo "Sem alterações"
-          git push
+          echo "--- Arquivos no commit ---"
+          git diff --cached --name-only
+          echo "--- Fazendo commit ---"
+          git commit -m "Monitor $(date +'%d/%m/%Y %H:%M') - automático"
+          echo "--- Fazendo push ---"
+          git pull --rebase origin main
+          git push origin main
+          echo "--- Push concluído ---"
