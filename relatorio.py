@@ -458,12 +458,12 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 </div>
 
 <!-- ABA RESUMO -->
-<div id="resumo" class="painel on">
+<div id="resumo" class="aba">
     <!-- CONTEÚDO ATUAL DO RELATÓRIO -->
 </div>
 
 <!-- ABA HISTORICO -->
-<div id="historico" class="painel">
+<div id="historico" class="aba">
     <h2>Histórico de Investimentos</h2>
 
     <p>
@@ -472,7 +472,7 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 </div>
 
 <!-- ABA NOTÍCIAS -->
-<div id="noticias" class="painel">
+<div id="noticias" class="aba">
     <h2>Notícias Monitoradas</h2>
 
       <div class="sec">
