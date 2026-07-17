@@ -288,7 +288,7 @@ class GeradorRelatorio:
 
         return arqs
 
-# ── HTML ─────────────────────────────────────
+    # ── HTML ─────────────────────────────────────
 
     def gerar_html(self):
         r   = self.calcular_resumo_executivo()
@@ -862,4 +862,3 @@ document.addEventListener('DOMContentLoaded',()=>{{
 # ─────────────────────────────────────────────────
 if __name__ == "__main__":
     GeradorRelatorio().gerar_todos()
-        
