@@ -367,8 +367,14 @@ body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var
 .tab.on{{background:var(--branco);color:var(--azul);border-color:var(--borda);border-bottom-color:var(--branco)}}
 
 /* PAINÉIS */
-.aba{{display:none;padding:24px 36px}}
-.aba.on{{display:block}}
+.painel{
+    display:none;
+    padding:24px 36px;
+}
+
+.painel.on{
+    display:block;
+}
 
 /* SEÇÃO */
 .sec{{margin-bottom:28px}}
@@ -455,15 +461,20 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
     <button class="tab" onclick="aba('noticias',this)">
         📰 Notícias
     </button>
+  </div>
 </div>
 
 <!-- ABA RESUMO -->
-<div id="resumo" class="aba">
-    <!-- CONTEÚDO ATUAL DO RELATÓRIO -->
+<div id="resumo" class="painel on">
+    <h2>Sumário executivo</h2>
+    <h2>Cards</h2>
+    <h2>Ranking</h2>
+    <h2>Quase relevantes</h2>
+    <h2>etc</h2>
 </div>
 
 <!-- ABA HISTORICO -->
-<div id="historico" class="aba">
+<div id="historico" class="painel">
     <h2>Histórico de Investimentos</h2>
 
     <p>
@@ -472,7 +483,7 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 </div>
 
 <!-- ABA NOTÍCIAS -->
-<div id="noticias" class="aba">
+<div id="noticias" class="painel">
     <h2>Notícias Monitoradas</h2>
 
       <div class="sec">
@@ -517,19 +528,19 @@ const CONF_D   = {{alta:{cf['alta']},media:{cf['media']},baixa:{cf['baixa']},mg:
 const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
 
 // ── abas ───────────────────────────────────────────────────
-function aba(id, btn){{
+function aba(id, btn){
 
-  document.querySelectorAll('.aba')
-      .forEach(p => p.classList.remove('active'));
+    document.querySelectorAll(".painel")
+        .forEach(p => p.classList.remove("on"));
 
-  document.querySelectorAll('.tab')
-      .forEach(b => b.classList.remove('on'));
+    document.querySelectorAll(".tab")
+        .forEach(t => t.classList.remove("on"));
 
-  document.getElementById(id)
-      .classList.add('active');
+    document.getElementById(id)
+        .classList.add("on");
 
-  btn.classList.add('on');
-}}
+    btn.classList.add("on");
+}
 
 // ── badge fase ─────────────────────────────────────────────
 function bdgFase(f){{
