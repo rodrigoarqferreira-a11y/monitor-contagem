@@ -517,7 +517,7 @@ const CONF_D   = {{alta:{cf['alta']},media:{cf['media']},baixa:{cf['baixa']},mg:
 const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
 
 // ── abas ───────────────────────────────────────────────────
-function aba(id, btn){
+function aba(id, btn){{
 
   document.querySelectorAll('.aba')
       .forEach(p => p.classList.remove('active'));
