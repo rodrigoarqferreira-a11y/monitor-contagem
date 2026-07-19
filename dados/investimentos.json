@@ -883,5 +883,19 @@
         "fonte": "Governador participa de inauguração de empresa do setor de óleos lubrificantes em Contagem",
         "url": "Governador participa de inauguração de empresa do setor de óleos lubrificantes em Contagem",
         "origem": "historico"
+    },
+    {
+        "id": 60,
+        "empresa": "patrus transportes",
+        "ano": "2026",
+        "valor": "",
+        "empregos": "",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-07-19",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": ""
     }
 ]

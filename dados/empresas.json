@@ -411,5 +411,12 @@
         "primeira_aparicao": "2026-07-15",
         "ultima_atualizacao": "2026-07-15",
         "investimentos": []
+    },
+    {
+        "id": 60,
+        "nome": "patrus transportes",
+        "primeira_aparicao": "2026-07-19",
+        "ultima_atualizacao": "2026-07-19",
+        "investimentos": []
     }
 ]
