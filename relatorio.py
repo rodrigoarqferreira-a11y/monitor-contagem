@@ -1050,13 +1050,6 @@ document.addEventListener('DOMContentLoaded',()=>{{
 
     def salvar_html(self):
         p = self.pasta / f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.html"
-
-        html = self.gerar_html()
-
-        print("===== TESTE HTML =====")
-        print(html[:500])
-        print("======================")
-
         p.write_text(html, encoding="utf-8")
         return p
 
