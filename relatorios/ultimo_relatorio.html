@@ -103,7 +103,7 @@ footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 <div class="hdr">
   <div>
     <h1>📊 Monitor de Investimentos Privados</h1>
-    <p>SEDECON · Prefeitura de Contagem MG &nbsp;|&nbsp; 17/07/2026 16:51</p>
+    <p>SEDECON · Prefeitura de Contagem MG &nbsp;|&nbsp; 17/07/2026 11:50</p>
   </div>
   <div class="badge-periodo">Período: —</div>
 </div>
@@ -119,21 +119,16 @@ footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab on" onclick="aba('resumo',this)">
-        📊 Resumo
-    </button>
-
-    <button class="tab" onclick="aba('historico',this)">
-        📈 Histórico
-    </button>
-
-    <button class="tab" onclick="aba('noticias',this)">
-        📰 Notícias
-    </button>
+    <button class="tab on"  onclick="aba('recente',this)">🔔 Recentes</button>
+    <button class="tab"     onclick="aba('graficos',this)">📈 Gráficos</button>
+    <button class="tab"     onclick="aba('historico',this)">📋 Histórico</button>
+    <button class="tab"     onclick="aba('fontes',this)">📰 Fontes</button>
+    <button class="tab"     onclick="aba('quase',this)">🔍 Quase relevantes</button>
+  </div>
 </div>
 
 <!-- RECENTES -->
-<div id="p-resumo" class="painel on">
+<div id="p-recente" class="painel on">
   <div class="filtros">
     <label>Empresa</label><select id="r-emp" onchange="renderRecentes()"><option value="">Todas</option></select>
     <label>Fase</label><select id="r-fase" onchange="renderRecentes()"><option value="">Todas</option></select>
@@ -178,7 +173,7 @@ footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 </div>
 
 <!-- FONTES -->
-<div id="p-noticias" class="painel">
+<div id="p-fontes" class="painel">
   <div class="sec">
     <div class="sec-title">Desempenho por fonte</div>
     <div class="tbl-wrap">
@@ -202,7 +197,7 @@ footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
   </div>
 </div>
 
-<footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · 17/07/2026 16:51</footer>
+<footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · 17/07/2026 11:50</footer>
 
 <script>
 // ── dados ──────────────────────────────────────────────────
