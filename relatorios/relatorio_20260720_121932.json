@@ -1,0 +1,45 @@
+{
+    "data_geracao": "2026-07-20T12:19:32.681552",
+    "resumo_executivo": {
+        "investimentos_detectados": 60,
+        "empresas_monitoradas": 60,
+        "novos_empregos": 0,
+        "valor_total": 0,
+        "confianca_media": 80,
+        "noticias_relevantes": 1,
+        "periodo": "2026-07-19 a 2026-07-19"
+    },
+    "investimentos_por_fase": {
+        "Licenciamento": 1
+    },
+    "ranking_empresas": [
+        {
+            "empresa": "patrus transportes",
+            "investimentos": 1,
+            "valor_total": 0.0,
+            "empregos": 0
+        }
+    ],
+    "evolucao_mensal": {
+        "2026-07": {
+            "investimentos": 1,
+            "empregos": 0,
+            "valor": 0
+        }
+    },
+    "analise_por_fonte": {
+        "Portal Contagem": {
+            "total": 1,
+            "relevantes": 1,
+            "taxa_precisao": 100.0,
+            "confianca_media": 80
+        }
+    },
+    "quase_relevantes": [],
+    "analise_confianca": {
+        "alta": 100.0,
+        "media": 0.0,
+        "baixa": 0.0,
+        "media_geral": 80
+    }
+}

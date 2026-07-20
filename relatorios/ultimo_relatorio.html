@@ -42,8 +42,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .tab.on{background:var(--branco);color:var(--azul);border-color:var(--borda);border-bottom-color:var(--branco)}
 
 /* PAINÉIS */
-.aba{display:none;padding:24px 36px}
-.aba.on{display:block}
+.painel{display:none;padding:24px 36px}
+.painel.on{display:block}
 
 /* SEÇÃO */
 .sec{margin-bottom:28px}
@@ -93,7 +93,7 @@ footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
         padding:16px;font-size:.76rem;margin-top:16px}
 
 @media(max-width:768px){
-  .hdr,.cards,.tabs-wrap,.aba{padding-left:14px;padding-right:14px}
+  .hdr,.cards,.tabs-wrap,.painel{padding-left:14px;padding-right:14px}
   .grid2{grid-template-columns:1fr}
 }
 </style>
@@ -103,7 +103,7 @@ footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 <div class="hdr">
   <div>
     <h1>📊 Monitor de Investimentos Privados</h1>
-    <p>SEDECON · Prefeitura de Contagem MG &nbsp;|&nbsp; 17/07/2026 17:44</p>
+    <p>SEDECON · Prefeitura de Contagem MG &nbsp;|&nbsp; 17/07/2026 16:51</p>
   </div>
   <div class="badge-periodo">Período: —</div>
 </div>
@@ -132,53 +132,77 @@ footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
     </button>
 </div>
 
-<!-- ABA RESUMO -->
-<div id="resumo" class="aba">
-    <!-- CONTEÚDO ATUAL DO RELATÓRIO -->
-</div>
-
-<!-- ABA HISTORICO -->
-<div id="historico" class="aba">
-    <h2>Histórico de Investimentos</h2>
-
-    <p>
-        Em breve serão exibidos os gráficos e ranking de empresas.
-    </p>
-</div>
-
-<!-- ABA NOTÍCIAS -->
-<div id="noticias" class="aba">
-    <h2>Notícias Monitoradas</h2>
-
-      <div class="sec">
-          <div class="sec-title">Desempenho por fonte</div>
-
-          <div class="tbl-wrap">
-              <table>
-                  <thead>
-                      <tr>
-                          <th>Fonte</th>
-                          <th>Total</th>
-                          <th>Relevantes</th>
-                          <th>Precisão</th>
-                          <th>Confiança</th>
-                      </tr>
-                  </thead>
-
-                  <tbody>
-                      <tr class="tr-total"><td><b>TOTAL</b></td><td><b>0</b></td><td><b>0</b></td><td><b>0%</b></td><td>—</td></tr>
-                  </tbody>
-
-              </table>
-          </div>
-
-      </div>
-
+<!-- RECENTES -->
+<div id="p-resumo" class="painel on">
+  <div class="filtros">
+    <label>Empresa</label><select id="r-emp" onchange="renderRecentes()"><option value="">Todas</option></select>
+    <label>Fase</label><select id="r-fase" onchange="renderRecentes()"><option value="">Todas</option></select>
+    <label>Buscar</label><input id="r-txt" placeholder="Palavra no título..." oninput="renderRecentes()">
+    <button class="btn-x" onclick="limpar('r-emp','r-fase','r-txt')">✕ Limpar</button>
   </div>
-
+  <div id="lista-recentes"></div>
 </div>
 
-<footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · 17/07/2026 17:44</footer>
+<!-- GRÁFICOS -->
+<div id="p-graficos" class="painel">
+  <div class="grid2">
+    <div class="sec"><div class="sec-title">Por fase</div><div class="graf" id="g-fases"></div></div>
+    <div class="sec"><div class="sec-title">Top empresas</div><div class="graf" id="g-emp"></div></div>
+  </div>
+  <div class="sec"><div class="sec-title">Evolução mensal</div><div class="graf" id="g-evol" style="height:260px"></div></div>
+  <div class="grid2">
+    <div class="sec"><div class="sec-title">Confiança dos dados</div><div class="graf" id="g-conf"></div></div>
+    <div class="sec">
+      <div class="sec-title">Ranking detalhado</div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>#</th><th>Empresa</th><th>Invest.</th><th>R$ M</th><th>Empregos</th></tr></thead>
+        <tbody id="tb-rk"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTÓRICO -->
+<div id="p-historico" class="painel">
+  <div class="filtros">
+    <label>Empresa</label><select id="h-emp" onchange="renderHist()"><option value="">Todas</option></select>
+    <label>Fase</label><select id="h-fase" onchange="renderHist()"><option value="">Todas</option></select>
+    <label>Relevância</label>
+    <select id="h-rel" onchange="renderHist()">
+      <option value="">Todas</option><option value="s">Relevantes</option><option value="n">Descartadas</option>
+    </select>
+    <label>Buscar</label><input id="h-txt" placeholder="Palavra no título..." oninput="renderHist()">
+    <button class="btn-x" onclick="limpar('h-emp','h-fase','h-rel','h-txt')">✕ Limpar</button>
+  </div>
+  <div id="lista-hist"></div>
+</div>
+
+<!-- FONTES -->
+<div id="p-noticias" class="painel">
+  <div class="sec">
+    <div class="sec-title">Desempenho por fonte</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Fonte</th><th>Total</th><th>Relevantes</th><th>Precisão</th><th>Confiança</th></tr></thead>
+        <tbody><tr class="tr-total"><td><b>TOTAL</b></td><td><b>0</b></td><td><b>0</b></td><td><b>0%</b></td><td>—</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- QUASE RELEVANTES -->
+<div id="p-quase" class="painel">
+  <div class="sec">
+    <div class="sec-title">🔍 Boa pontuação, mas fora de Contagem</div>
+    <p style="color:var(--cinza);font-size:.83rem;margin-bottom:14px">
+      Pontuação ≥ 30, empresa monitorada identificada, mas sem menção explícita a Contagem.
+      Possível impacto regional a observar.
+    </p>
+    <div id="lista-quase"></div>
+  </div>
+</div>
+
+<footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · 17/07/2026 16:51</footer>
 
 <script>
 // ── dados ──────────────────────────────────────────────────
@@ -192,18 +216,13 @@ const CONF_D   = {alta:0,media:0,baixa:0,mg:0};
 const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
 
 // ── abas ───────────────────────────────────────────────────
+let grafOk=false;
 function aba(id, btn){
-
-  document.querySelectorAll('.aba')
-      .forEach(p => p.classList.remove('active'));
-
-  document.querySelectorAll('.tab')
-      .forEach(b => b.classList.remove('on'));
-
-  document.getElementById(id)
-      .classList.add('active');
-
+  document.querySelectorAll('.painel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
   btn.classList.add('on');
+  if(id==='graficos' && !grafOk){grafOk=true; renderGraf();}
 }
 
 // ── badge fase ─────────────────────────────────────────────
@@ -343,7 +362,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   popSelect('h-fase', TODAS.map(n=>n.fase).filter(Boolean));
   renderRecentes(); renderHist(); renderQuase(); renderRanking();
 });
-
 </script>
 </body>
 </html>
