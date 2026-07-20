@@ -339,24 +339,28 @@ class GeradorRelatorio:
 body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px}}
 
 /* HEADER */
-.hdr{{
-    background:var(--azul);
-    color:white;
-    padding:35px 40px;
-    text-align:center;
-    position:relative;
+.hdr {{
+    background: #037482; /* Corrigido: removido o 'var()' inválido */
+    color: white;
+    padding: 35px 40px;
+    text-align: center;
+    position: relative; /* Mantido: essencial para fixar a logo aqui dentro */
 }}
 
 .titulo-area{{
-    display:flex;
+    display:block;
     align-items:center;
     justify-content:center;
     gap:25px;
 }}
 
-.logo-sedecon{{
-    height:100px;
-    width:auto;
+.logo-sedecon {{
+    height: 100px;
+    width: auto;
+    position: absolute; /* Tira a logo do fluxo para não empurrar o título */
+    left: 40px;         /* Alinha com o padding lateral do seu .hdr */
+    top: 50%;           /* Move até a metade da altura */
+    transform: translateY(-50%); /* Centraliza verticalmente de forma perfeita */
 }}
 
 .titulo-monitor{{
@@ -372,11 +376,6 @@ body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var
     color:rgba(255,255,255,0.85);
 }}
 
-.badge-periodo{{
-    position:absolute;
-    right:25px;
-    top:25px;
-}}
 /* CARDS */
 .cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
         gap:14px;padding:24px 36px 0}}
@@ -476,8 +475,7 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
             </h1>
 
             <p>
-                SEDECON · Prefeitura de Contagem MG |
-                {self.data_geracao.strftime('%d/%m/%Y %H:%M')}
+                SEDECON · Prefeitura de Contagem MG
             </p>
 
             <p class="subtitulo-monitor">
@@ -487,11 +485,6 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
         </div>
 
     </div>
-
-    <div class="badge-periodo">
-        Período: {r['periodo']}
-    </div>
-
 </div>
 
 <div class="cards">
