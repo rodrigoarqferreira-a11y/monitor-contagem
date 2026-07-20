@@ -339,12 +339,52 @@ class GeradorRelatorio:
 body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px}}
 
 /* HEADER */
-.hdr{{background:var(--azul);color:#fff;padding:24px 36px;
-      display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}}
-.hdr h1{{font-size:1.4rem;font-weight:700}}
-.hdr p{{font-size:.82rem;opacity:.75;margin-top:3px}}
-.badge-periodo{{background:var(--ouro);color:var(--azul);padding:5px 14px;
-                border-radius:20px;font-weight:700;font-size:.78rem}}
+.hdr{
+    background:var(--azul);
+    color:#fff;
+    padding:28px 36px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.hdr-centro{
+    flex:1;
+}
+
+.titulo-linha{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+}
+
+.logo-sedecon{
+    height:90px;
+    width:auto;
+}
+
+.hdr h1{
+    font-size:2.4rem;
+    font-weight:800;
+    text-align:center;
+    letter-spacing:1px;
+    margin-bottom:6px;
+}
+
+.hdr p{
+    text-align:center;
+    font-size:.9rem;
+    opacity:.9;
+}
+
+.subtitulo{
+    margin-top:4px;
+    font-size:.85rem;
+    opacity:.85;
+    font-weight:500;
+}
 
 /* CARDS */
 .cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
@@ -449,19 +489,35 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 </div>
 
 <div class="tabs-wrap">
-  <div class="tabs">
-    <button class="tab on" onclick="aba('resumo',this)">
-        📊 Resumo
-    </button>
+ <div class="hdr">
 
-    <button class="tab" onclick="aba('historico',this)">
-        📈 Histórico
-    </button>
+  <div class="hdr-centro">
 
-    <button class="tab" onclick="aba('noticias',this)">
-        📰 Notícias
-    </button>
+      <div class="titulo-linha">
+
+          <img src="dados/logo secretaria sedecon.png" class="logo-sedecon">
+
+          <div>
+              <h1>MONITOR DE INVESTIMENTOS PRIVADOS</h1>
+
+              <p>
+                  SEDECON · Prefeitura de Contagem MG |
+                  {self.data_geracao.strftime('%d/%m/%Y %H:%M')}
+              </p>
+
+              <p class="subtitulo">
+                  Superintendência de Inovação e Informações Estratégicas
+              </p>
+          </div>
+
+      </div>
+
   </div>
+
+  <div class="badge-periodo">
+      Período: {r['periodo']}
+  </div>
+
 </div>
 
 <!-- ABA RESUMO -->
