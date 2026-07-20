@@ -340,34 +340,42 @@ body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var
 
 /* HEADER */
 .hdr{
-    background:#1a3a5c;
+    background:var(--azul);
     color:white;
-    padding:30px;
+    padding:35px 40px;
+    text-align:center;
+    position:relative;
 }
 
 .titulo-area{
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:20px;
-    text-align:center;
+    gap:25px;
 }
 
 .logo-sedecon{
-    height:80px;
+    height:100px;
     width:auto;
 }
 
 .titulo-monitor{
-    font-size:2.4rem;
-    font-weight:800;
     margin:0;
+    font-size:3rem;
+    font-weight:900;
+    letter-spacing:1px;
 }
 
 .subtitulo-monitor{
-    margin-top:4px;
-    font-size:0.9rem;
+    margin-top:6px;
+    font-size:1rem;
     color:rgba(255,255,255,0.85);
+}
+
+.badge-periodo{
+    position:absolute;
+    right:25px;
+    top:25px;
 }
 /* CARDS */
 .cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
