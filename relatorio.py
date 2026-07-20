@@ -367,14 +367,14 @@ body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var
 .tab.on{{background:var(--branco);color:var(--azul);border-color:var(--borda);border-bottom-color:var(--branco)}}
 
 /* PAINÉIS */
-.painel{
+.painel{{
     display:none;
     padding:24px 36px;
-}
+}}
 
-.painel.on{
+.painel.on{{
     display:block;
-}
+}}
 
 /* SEÇÃO */
 .sec{{margin-bottom:28px}}
@@ -699,7 +699,7 @@ const CONF_D   = {{alta:{cf['alta']},media:{cf['media']},baixa:{cf['baixa']},mg:
 const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
 
 // ── abas ───────────────────────────────────────────────────
-function aba(id, btn){
+function aba(id, btn){{
 
     document.querySelectorAll(".painel")
         .forEach(p => p.classList.remove("on"));
@@ -712,15 +712,15 @@ function aba(id, btn){
 
     btn.classList.add("on");
 
-    if(id==="resumo"){
+    if(id==="resumo"){{
 
         renderGraf();
 
         renderRanking();
 
-    }
+    }}
 
-}}
+}]
 
 // ── badge fase ─────────────────────────────────────────────
 function bdgFase(f){{
@@ -852,7 +852,7 @@ function renderGraf(){{
 }}
 
 // ── init ───────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',()=>{{
 
     popSelect('r-emp', NOTICIAS.flatMap(n=>n.empresas||[]));
     popSelect('r-fase', NOTICIAS.map(n=>n.fase).filter(Boolean));
@@ -864,7 +864,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     renderGraf();
 
-});
+}});
 
 </script>
 </body>
