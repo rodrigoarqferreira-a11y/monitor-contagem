@@ -455,11 +455,35 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 <body>
 
 <div class="hdr">
-  <div>
-    <h1>📊 Monitor de Investimentos Privados</h1>
-    <p>SEDECON · Prefeitura de Contagem MG &nbsp;|&nbsp; {self.data_geracao.strftime('%d/%m/%Y %H:%M')}</p>
-  </div>
-  <div class="badge-periodo">Período: {r['periodo']}</div>
+
+    <div class="titulo-area">
+
+        <img src="dados/logo secretaria sedecon.png"
+             class="logo-sedecon">
+
+        <div>
+
+            <h1 class="titulo-monitor">
+                MONITOR DE INVESTIMENTOS PRIVADOS
+            </h1>
+
+            <p>
+                SEDECON · Prefeitura de Contagem MG |
+                {self.data_geracao.strftime('%d/%m/%Y %H:%M')}
+            </p>
+
+            <p class="subtitulo-monitor">
+                Superintendência de Inovação e Informações Estratégicas
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="badge-periodo">
+        Período: {r['periodo']}
+    </div>
+
 </div>
 
 <div class="cards">
@@ -469,40 +493,6 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
   <div class="card ouro"><div class="card-val">R$ {vm:.0f}M</div><div class="card-lbl">Valor total</div></div>
   <div class="card verde"><div class="card-val">{r['confianca_media']}%</div><div class="card-lbl">Confiança média</div></div>
   <div class="card"><div class="card-val">{r['noticias_relevantes']}</div><div class="card-lbl">Notícias relevantes</div></div>
-</div>
-
-<div class="tabs-wrap">
- <div class="hdr">
-
-  <div class="hdr-centro">
-
-      <div class="titulo-area">
-
-          <img src="dados/logo secretaria sedecon.png" class="logo-sedecon">
-
-          <div>
-              <h1 class="titulo-monitor">
-              MONITOR DE INVESTIMENTOS PRIVADOS
-              </h1>
-
-              <p>
-                  SEDECON · Prefeitura de Contagem MG |
-                  {self.data_geracao.strftime('%d/%m/%Y %H:%M')}
-              </p>
-
-              <p class="subtitulo-monitor">
-                  Superintendência de Inovação e Informações Estratégicas
-              </p>
-          </div>
-
-      </div>
-
-  </div>
-
-  <div class="badge-periodo">
-      Período: {r['periodo']}
-  </div>
-
 </div>
 
 <!-- ABA RESUMO -->
