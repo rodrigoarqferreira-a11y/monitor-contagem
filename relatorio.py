@@ -340,52 +340,35 @@ body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var
 
 /* HEADER */
 .hdr{
-    background:var(--azul);
-    color:#fff;
-    padding:28px 36px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
+    background:#1a3a5c;
+    color:white;
+    padding:30px;
 }
 
-.hdr-centro{
-    flex:1;
-}
-
-.titulo-linha{
+.titulo-area{
     display:flex;
     align-items:center;
     justify-content:center;
     gap:20px;
+    text-align:center;
 }
 
 .logo-sedecon{
-    height:90px;
+    height:80px;
     width:auto;
 }
 
-.hdr h1{
+.titulo-monitor{
     font-size:2.4rem;
     font-weight:800;
-    text-align:center;
-    letter-spacing:1px;
-    margin-bottom:6px;
+    margin:0;
 }
 
-.hdr p{
-    text-align:center;
-    font-size:.9rem;
-    opacity:.9;
-}
-
-.subtitulo{
+.subtitulo-monitor{
     margin-top:4px;
-    font-size:.85rem;
-    opacity:.85;
-    font-weight:500;
+    font-size:0.9rem;
+    color:rgba(255,255,255,0.85);
 }
-
 /* CARDS */
 .cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
         gap:14px;padding:24px 36px 0}}
@@ -493,19 +476,21 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 
   <div class="hdr-centro">
 
-      <div class="titulo-linha">
+      <div class="titulo-area">
 
           <img src="dados/logo secretaria sedecon.png" class="logo-sedecon">
 
           <div>
-              <h1>MONITOR DE INVESTIMENTOS PRIVADOS</h1>
+              <h1 class="titulo-monitor">
+              MONITOR DE INVESTIMENTOS PRIVADOS
+              </h1>
 
               <p>
                   SEDECON · Prefeitura de Contagem MG |
                   {self.data_geracao.strftime('%d/%m/%Y %H:%M')}
               </p>
 
-              <p class="subtitulo">
+              <p class="subtitulo-monitor">
                   Superintendência de Inovação e Informações Estratégicas
               </p>
           </div>
