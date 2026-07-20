@@ -1057,7 +1057,17 @@ document.addEventListener('DOMContentLoaded',()=>{{
 
     def salvar_html(self):
         p = self.pasta / f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.html"
-        p.write_text(self.gerar_html(), encoding="utf-8"); return p
+
+        html = self.gerar_html()
+
+        print("=" * 60)
+        print("TESTE DO HTML")
+        print("=" * 60)
+        print("Contém 'Superintendência'? ", "Superintendência" in html)
+        print("=" * 60)
+
+        p.write_text(html, encoding="utf-8")
+        return p
 
     # ── gerar tudo ───────────────────────────────
 
