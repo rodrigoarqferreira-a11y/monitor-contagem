@@ -1064,7 +1064,7 @@ document.addEventListener('DOMContentLoaded',()=>{{
         print(html[:500])
         print("======================")
 
-p.write_text(html, encoding="utf-8")
+        p.write_text(html, encoding="utf-8")
         return p
 
     # ── gerar tudo ───────────────────────────────
