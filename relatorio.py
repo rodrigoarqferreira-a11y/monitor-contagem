@@ -336,7 +336,7 @@ class GeradorRelatorio:
   --cinza:#6b7280;--borda:#dde3ec;--verde:#16a34a;--text:#1f2937;
 }}
 *{{box-sizing:border-box;margin:0;padding:0}}
-body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px}}
+body{{font-family:'Segoe UI',system-ui,sans-serif;background:#037482;color:var(--text);font-size:15px}}
 
 /* HEADER */
 .hdr {{
