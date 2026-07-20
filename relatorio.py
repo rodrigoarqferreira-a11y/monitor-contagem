@@ -466,11 +466,153 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 
 <!-- ABA RESUMO -->
 <div id="resumo" class="painel on">
-    <h2>Sumário executivo</h2>
-    <h2>Cards</h2>
-    <h2>Ranking</h2>
-    <h2>Quase relevantes</h2>
-    <h2>etc</h2>
+
+    <!-- =============================== -->
+    <!-- RESUMO EXECUTIVO -->
+    <!-- =============================== -->
+
+    <div class="sec">
+
+        <div class="sec-title">
+            Resumo Executivo
+        </div>
+
+        <div class="ncard">
+
+            <p style="line-height:1.8">
+
+                O Monitor identificou
+
+                <b>{r['investimentos_detectados']}</b>
+                investimentos privados envolvendo
+
+                <b>{r['empresas_monitoradas']}</b>
+                empresas.
+
+                <br><br>
+
+                O volume financeiro identificado
+                ultrapassa
+
+                <b>R$ {vm:.0f} milhões</b>
+
+                com potencial de geração de
+
+                <b>{r['novos_empregos']:,}</b>
+                empregos.
+
+                <br><br>
+
+                A confiança média dos dados é de
+
+                <b>{r['confianca_media']}%</b>.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- =============================== -->
+    <!-- GRÁFICOS -->
+    <!-- =============================== -->
+
+    <div class="sec">
+
+        <div class="sec-title">
+
+            Panorama Geral
+
+        </div>
+
+        <div class="grid2">
+
+            <div id="g-fases" class="graf"></div>
+
+            <div id="g-emp" class="graf"></div>
+
+        </div>
+
+    </div>
+
+    <!-- =============================== -->
+    <!-- EVOLUÇÃO -->
+    <!-- =============================== -->
+
+    <div class="sec">
+
+        <div class="sec-title">
+
+            Evolução dos Investimentos
+
+        </div>
+
+        <div id="g-evol" class="graf"></div>
+
+    </div>
+
+    <!-- =============================== -->
+    <!-- RANKING -->
+    <!-- =============================== -->
+
+    <div class="sec">
+
+        <div class="sec-title">
+
+            Ranking das Empresas
+
+        </div>
+
+        <div class="tbl-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Empresa</th>
+
+                        <th>Investimentos</th>
+
+                        <th>Valor</th>
+
+                        <th>Empregos</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tb-rk">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- =============================== -->
+    <!-- QUASE RELEVANTES -->
+    <!-- =============================== -->
+
+    <div class="sec">
+
+        <div class="sec-title">
+
+            Notícias Quase Relevantes
+
+        </div>
+
+        <div id="lista-quase">
+
+        </div>
+
+    </div>
+
 </div>
 
 <!-- ABA HISTORICO -->
