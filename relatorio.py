@@ -1,8 +1,7 @@
 """
 ====================================================
-RELATORIO.PY
-Monitor de Investimentos Privados — SEDECON
-Prefeitura de Contagem MG
+RELATORIO.PY — Monitor de Investimentos Privados
+SEDECON · Prefeitura de Contagem MG
 ====================================================
 """
 
@@ -13,10 +12,6 @@ from datetime import datetime
 from pathlib import Path
 
 from banco import Banco
-
-# ─────────────────────────────────────────────────
-# DEPENDÊNCIAS OPCIONAIS
-# ─────────────────────────────────────────────────
 
 try:
     from reportlab.lib import colors
@@ -40,10 +35,6 @@ except ImportError:
     HAS_MATPLOTLIB = False
 
 
-# ─────────────────────────────────────────────────
-# GERADOR PRINCIPAL
-# ─────────────────────────────────────────────────
-
 class GeradorRelatorio:
 
     def __init__(self, banco: Banco = None):
@@ -52,276 +43,266 @@ class GeradorRelatorio:
         self.pasta        = Path("relatorios")
         self.pasta.mkdir(exist_ok=True)
 
-    # ── helpers ──────────────────────────────────
-
     def _relevantes(self):
         return [n for n in self.banco.noticias if n.get("relevante")]
+
+    def _todas(self):
+        return list(self.banco.noticias)
+
+    def _historico(self):
+        return [i for i in self.banco.investimentos if i.get("origem") == "historico"]
 
     def _periodo(self):
         datas = [n.get("data","") for n in self.banco.noticias if n.get("data")]
         return f"{min(datas)} a {max(datas)}" if datas else "—"
 
-    def _num_valor(self, s):
+    def _vnum(self, v):
+        if isinstance(v, (int, float)): return float(v)
         try:
-            return float(s.replace("R$","").replace(".","").replace(",",".").strip().split()[0])
-        except:
-            return 0.0
+            return float(str(v).replace("R$","").replace(".","").replace(",",".").strip().split()[0])
+        except: return 0.0
 
-    def _num_emprego(self, s):
-        try:
-            return int("".join(c for c in s.split()[0] if c.isdigit()))
-        except:
-            return 0
+    def _enum(self, s):
+        try: return int("".join(c for c in str(s).split()[0] if c.isdigit()))
+        except: return 0
 
-    # ── análises ─────────────────────────────────
+    # ── ANÁLISES RECENTES ─────────────────────────────
 
-    def calcular_resumo_executivo(self):
-        ns = self._relevantes()
-        valores   = [self._num_valor(v)   for n in ns for v in n.get("valores",[])]
-        empregos  = sum(self._num_emprego(e) for n in ns for e in n.get("empregos",[]))
-        confs     = [n.get("confianca",0) for n in ns if n.get("confianca",0)>0]
+    def resumo_recente(self):
+        ns   = self._relevantes()
+        vals = [self._vnum(v) for n in ns for v in n.get("valores",[])]
+        emps = sum(self._enum(e) for n in ns for e in n.get("empregos",[]))
+        cfs  = [n.get("confianca",0) for n in ns if n.get("confianca",0)>0]
         return {
-            "investimentos_detectados": len(self.banco.investimentos),
-            "empresas_monitoradas":     len(self.banco.empresas),
-            "novos_empregos":           empregos,
-            "valor_total":              sum(valores),
-            "confianca_media":          int(statistics.mean(confs)) if confs else 0,
-            "noticias_relevantes":      len(ns),
-            "periodo":                  self._periodo(),
+            "noticias_relevantes": len(ns),
+            "novos_empregos":      emps,
+            "valor_total":         sum(vals),
+            "confianca_media":     int(statistics.mean(cfs)) if cfs else 0,
+            "periodo":             self._periodo(),
         }
 
-    def investimentos_por_fase(self):
-        d = defaultdict(list)
+    def fases_recentes(self):
+        d = defaultdict(int)
         for n in self._relevantes():
-            d[n.get("fase","Não identificada")].append(n)
+            d[n.get("fase","Não identificada")] += 1
         return dict(d)
 
-    def ranking_empresas(self, top=10):
-        cnt = Counter(); vals = defaultdict(float); emps = defaultdict(int)
-        for n in self._relevantes():
-            for e in n.get("empresas",[]):
-                cnt[e] += 1
-                for v in n.get("valores",[]): vals[e] += self._num_valor(v)
-                for em in n.get("empregos",[]): emps[e] += self._num_emprego(em)
-        return [{"empresa":e,"investimentos":c,"valor_total":vals[e],"empregos":emps[e]}
-                for e,c in cnt.most_common(top)]
-
-    def evolucao_mensal(self):
-        d = defaultdict(lambda:{"investimentos":0,"empregos":0,"valor":0})
-        for n in self._relevantes():
-            dt = n.get("data","")
-            mes = dt[:7] if dt and "-" in dt else (dt[-4:] if dt else "?")
-            d[mes]["investimentos"] += 1
-            for em in n.get("empregos",[]): d[mes]["empregos"] += self._num_emprego(em)
-            for v  in n.get("valores", []): d[mes]["valor"]    += self._num_valor(v)
-        return dict(sorted(d.items()))
-
-    def analise_por_fonte(self):
-        d = defaultdict(lambda:{"total":0,"relevantes":0,"confs":[]})
+    def fontes_recentes(self):
+        d = defaultdict(lambda:{"total":0,"relevantes":0,"cfs":[]})
         for n in self.banco.noticias:
             f = n.get("fonte","Desconhecida")
             d[f]["total"] += 1
             if n.get("relevante"): d[f]["relevantes"] += 1
             c = n.get("confianca",0)
-            if c > 0: d[f]["confs"].append(c)
+            if c>0: d[f]["cfs"].append(c)
         return {
             f: {
-                "total":        v["total"],
-                "relevantes":   v["relevantes"],
-                "taxa_precisao": round(v["relevantes"]/v["total"]*100 if v["total"] else 0, 1),
-                "confianca_media": round(statistics.mean(v["confs"]) if v["confs"] else 0, 1),
-            } for f, v in d.items()
+                "total":      v["total"],
+                "relevantes": v["relevantes"],
+                "taxa":       round(v["relevantes"]/v["total"]*100 if v["total"] else 0,1),
+                "confianca":  round(statistics.mean(v["cfs"]) if v["cfs"] else 0,1),
+            } for f,v in d.items()
         }
 
-    def noticias_quase_relevantes(self):
-        quase = [
-            {"titulo": n.get("titulo",""), "empresas": n.get("empresas",[]),
-             "pontuacao": n.get("pontuacao",0), "fase": n.get("fase",""),
-             "fonte": n.get("fonte",""), "url": n.get("url","")}
+    def quase_relevantes(self):
+        return sorted([
+            {"titulo":n.get("titulo",""), "empresas":n.get("empresas",[]),
+             "pontuacao":n.get("pontuacao",0), "fase":n.get("fase",""),
+             "fonte":n.get("fonte",""), "url":n.get("url","")}
             for n in self.banco.noticias
-            if n.get("pontuacao",0) >= 30
-            and not n.get("mencionou_contagem", False)
+            if n.get("pontuacao",0)>=30
+            and not n.get("mencionou_contagem",False)
             and not n.get("relevante")
-        ]
-        return sorted(quase, key=lambda x: x["pontuacao"], reverse=True)
+        ], key=lambda x: x["pontuacao"], reverse=True)
 
-    def analise_confianca(self):
+    def confianca_recente(self):
         cs = [n.get("confianca",0) for n in self._relevantes()]
-        if not cs: return {"alta":0,"media":0,"baixa":0,"media_geral":0}
+        if not cs: return {"alta":0,"media":0,"baixa":0,"mg":0}
         t = len(cs)
         return {
-            "alta":        round(len([c for c in cs if c>=80])/t*100,1),
-            "media":       round(len([c for c in cs if 50<=c<80])/t*100,1),
-            "baixa":       round(len([c for c in cs if c<50])/t*100,1),
-            "media_geral": round(statistics.mean(cs),1),
+            "alta":  round(len([c for c in cs if c>=80])/t*100,1),
+            "media": round(len([c for c in cs if 50<=c<80])/t*100,1),
+            "baixa": round(len([c for c in cs if c<50])/t*100,1),
+            "mg":    round(statistics.mean(cs),1),
         }
 
-    # ── texto ────────────────────────────────────
+    # ── ANÁLISES HISTÓRICO ────────────────────────────
+
+    def resumo_historico(self):
+        h   = self._historico()
+        tv  = sum(float(i.get("valor",0) or 0) for i in h)
+        emp = set(i.get("empresa","") for i in h if i.get("empresa"))
+        anos= set(i.get("ano",0) for i in h if i.get("ano"))
+        return {
+            "total_investimentos": len(h),
+            "total_valor":         tv,
+            "empresas_unicas":     len(emp),
+            "periodo":             f"{min(anos)} – {max(anos)}" if anos else "—",
+        }
+
+    def ranking_historico(self, top=15):
+        h   = self._historico()
+        cnt = Counter(); vals = defaultdict(float)
+        for i in h:
+            e = i.get("empresa","")
+            if not e: continue
+            cnt[e] += 1
+            vals[e] += float(i.get("valor",0) or 0)
+        return [
+            {"empresa":e,"investimentos":c,"valor_total":vals[e]}
+            for e,c in cnt.most_common(top)
+        ]
+
+    def por_ano_historico(self):
+        h = self._historico()
+        d = defaultdict(lambda:{"investimentos":0,"valor":0})
+        for i in h:
+            a = str(i.get("ano","?"))
+            d[a]["investimentos"] += 1
+            d[a]["valor"] += float(i.get("valor",0) or 0)
+        return dict(sorted(d.items()))
+
+    def lista_historico(self):
+        return sorted(
+            self._historico(),
+            key=lambda x: (x.get("ano",0), -(float(x.get("valor",0) or 0)))
+        )
+
+    # ── TEXTO ─────────────────────────────────────────
 
     def gerar_relatorio_texto(self):
-        r  = self.calcular_resumo_executivo()
-        fs = self.investimentos_por_fase()
-        rk = self.ranking_empresas()
-        ev = self.evolucao_mensal()
-        fn = self.analise_por_fonte()
-        cf = self.analise_confianca()
-        qr = self.noticias_quase_relevantes()
-
-        L = []
-        def h(t): L.extend(["\n"+"="*70, t, "="*70])
-
-        L += ["="*70,"RELATÓRIO DE INVESTIMENTOS PRIVADOS — CONTAGEM MG",
-              "SEDECON · Secretaria de Desenvolvimento Econômico","="*70,
-              f"Gerado em : {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",
-              f"Período   : {r['periodo']}"]
-
-        h("SUMÁRIO EXECUTIVO")
-        L += [f"  Investimentos detectados : {r['investimentos_detectados']}",
-              f"  Empresas monitoradas     : {r['empresas_monitoradas']}",
-              f"  Novos empregos           : {r['novos_empregos']:,}",
-              f"  Valor total anunciado    : R$ {r['valor_total']/1e6:.1f} milhões",
-              f"  Notícias relevantes      : {r['noticias_relevantes']}",
-              f"  Confiança média          : {r['confianca_media']}%"]
-
-        h("INVESTIMENTOS POR FASE")
-        for fase, ns in sorted(fs.items()):
-            L.append(f"  {fase:<22} {'█'*len(ns)} ({len(ns)})")
-
-        h("TOP 10 EMPRESAS")
-        L.append(f"  {'#':<4}{'Empresa':<28}{'Invest.':<10}{'Valor R$M':<12}{'Empregos'}")
-        L.append("  "+"-"*60)
+        r  = self.resumo_recente()
+        rh = self.resumo_historico()
+        rk = self.ranking_historico()
+        pa = self.por_ano_historico()
+        L  = ["="*70,"RELATÓRIO DE INVESTIMENTOS PRIVADOS — CONTAGEM MG",
+              "SEDECON","="*70,
+              f"Gerado em: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",
+              f"\n=== MONITORAMENTO RECENTE ===",
+              f"  Notícias relevantes : {r['noticias_relevantes']}",
+              f"  Novos empregos      : {r['novos_empregos']:,}",
+              f"  Valor detectado     : R$ {r['valor_total']/1e6:.1f} M",
+              f"  Confiança média     : {r['confianca_media']}%",
+              f"\n=== HISTÓRICO 2021-2026 ===",
+              f"  Total investimentos : {rh['total_investimentos']}",
+              f"  Valor total         : R$ {rh['total_valor']/1e9:.2f} bi",
+              f"  Empresas únicas     : {rh['empresas_unicas']}",
+              f"  Período             : {rh['periodo']}",
+              f"\n=== RANKING EMPRESAS ==="]
         for i,e in enumerate(rk,1):
-            L.append(f"  {i:<4}{e['empresa'][:26]:<28}{e['investimentos']:<10}{e['valor_total']/1e6:<12.1f}{e['empregos']}")
-
-        h("EVOLUÇÃO MENSAL")
-        for p,d in ev.items():
-            L.append(f"  {p:<12}{d['investimentos']:<10}{d['empregos']:<10}{d['valor']/1e6:.1f}M")
-
-        h("ANÁLISE DE CONFIANÇA")
-        L += [f"  Média geral : {cf['media_geral']}%",
-              f"  Alta (≥80%) : {cf['alta']}%",
-              f"  Média 50–80%: {cf['media']}%",
-              f"  Baixa (<50%): {cf['baixa']}%"]
-
-        if qr:
-            h("QUASE RELEVANTES")
-            for n in qr[:5]:
-                L += [f"  • {n['titulo']}",
-                      f"    Empresa(s): {', '.join(n['empresas']) or '—'} | Pontos: {n['pontuacao']}",
-                      f"    URL: {n['url']}"]
-
+            L.append(f"  {i:>2}. {e['empresa'][:35]:<36} R$ {e['valor_total']/1e6:>8.1f}M  ({e['investimentos']} inv.)")
+        L.append(f"\n=== POR ANO ===")
+        for a,d in pa.items():
+            L.append(f"  {a}: {d['investimentos']} invest. — R$ {d['valor']/1e9:.2f} bi")
         return "\n".join(L)
 
-    # ── gráficos ─────────────────────────────────
+    # ── GRÁFICOS ──────────────────────────────────────
 
     def gerar_graficos(self):
-        if not HAS_MATPLOTLIB:
-            print("⚠  Matplotlib não instalado.")
-            return []
-
-        arqs = []
-        fs = self.investimentos_por_fase()
-        rk = self.ranking_empresas(10)
-        ev = self.evolucao_mensal()
-        cf = self.analise_confianca()
-        AZUL = "#1a3a5c"; OURO = "#e8a020"
+        if not HAS_MATPLOTLIB: return []
+        arqs=[]; AZUL="#1a3a5c"; OURO="#e8a020"
 
         def salvar(nome):
-            p = self.pasta / nome
-            plt.savefig(p, dpi=200, bbox_inches="tight")
+            p=self.pasta/nome
+            plt.savefig(p,dpi=180,bbox_inches="tight")
             plt.close(); arqs.append(p); print(f"  ✓ {p}")
 
         try:
-            # Fases (horizontal)
-            if fs:
-                fig, ax = plt.subplots(figsize=(10,5))
-                nomes = list(fs.keys()); vals = [len(fs[f]) for f in nomes]
-                bars = ax.barh(nomes, vals, color=AZUL)
+            rk = self.ranking_historico(10)
+            pa = self.por_ano_historico()
+            fs = self.fases_recentes()
+            cf = self.confianca_recente()
+
+            if rk:
+                fig,ax=plt.subplots(figsize=(10,6))
+                nomes=[e["empresa"][:28] for e in rk]
+                vals=[e["valor_total"]/1e6 for e in rk]
+                bars=ax.barh(nomes,vals,color=AZUL)
                 for b,v in zip(bars,vals):
-                    ax.text(b.get_width()+.05, b.get_y()+b.get_height()/2,
-                            str(v), va="center", fontweight="bold", color=AZUL)
-                ax.set_xlabel("Quantidade"); ax.spines[["top","right"]].set_visible(False)
-                ax.set_title("Investimentos por Fase", fontsize=13, fontweight="bold", color=AZUL)
+                    ax.text(b.get_width()+2,b.get_y()+b.get_height()/2,
+                            f"R$ {v:.0f}M",va="center",fontsize=8,color=AZUL)
+                ax.set_xlabel("R$ Milhões")
+                ax.set_title("Top Empresas por Valor Investido",fontsize=12,fontweight="bold",color=AZUL)
+                ax.spines[["top","right"]].set_visible(False)
+                plt.tight_layout(); salvar("grafico_ranking.png")
+
+            if pa:
+                fig,ax=plt.subplots(figsize=(10,5))
+                anos=list(pa.keys()); vals=[pa[a]["valor"]/1e9 for a in anos]
+                bars=ax.bar(anos,vals,color=OURO,edgecolor="white",linewidth=1.5)
+                for b,v in zip(bars,vals):
+                    ax.text(b.get_x()+b.get_width()/2,b.get_height()+0.02,
+                            f"R$ {v:.1f}bi",ha="center",fontsize=8,fontweight="bold",color=AZUL)
+                ax.set_ylabel("R$ Bilhões")
+                ax.set_title("Investimentos por Ano",fontsize=12,fontweight="bold",color=AZUL)
+                ax.spines[["top","right"]].set_visible(False)
+                plt.tight_layout(); salvar("grafico_por_ano.png")
+
+            if fs:
+                fig,ax=plt.subplots(figsize=(9,4))
+                nomes=list(fs.keys()); vals=list(fs.values())
+                bars=ax.barh(nomes,vals,color=AZUL)
+                for b,v in zip(bars,vals):
+                    ax.text(b.get_width()+.05,b.get_y()+b.get_height()/2,
+                            str(v),va="center",fontweight="bold",color=AZUL)
+                ax.set_xlabel("Notícias")
+                ax.set_title("Notícias Recentes por Fase",fontsize=12,fontweight="bold",color=AZUL)
+                ax.spines[["top","right"]].set_visible(False)
                 plt.tight_layout(); salvar("grafico_fases.png")
 
-            # Empresas (horizontal)
-            if rk:
-                fig, ax = plt.subplots(figsize=(10,6))
-                nomes = [e["empresa"] for e in rk]; vals = [e["investimentos"] for e in rk]
-                bars = ax.barh(nomes, vals, color=OURO)
-                for b,v in zip(bars,vals):
-                    ax.text(b.get_width()+.05, b.get_y()+b.get_height()/2,
-                            str(v), va="center", fontweight="bold", color="#333")
-                ax.set_xlabel("Investimentos"); ax.spines[["top","right"]].set_visible(False)
-                ax.set_title("Top Empresas", fontsize=13, fontweight="bold", color=AZUL)
-                plt.tight_layout(); salvar("grafico_empresas.png")
-
-            # Evolução (linha)
-            if ev:
-                fig, ax = plt.subplots(figsize=(12,5))
-                ps = list(ev.keys()); ivs = [ev[p]["investimentos"] for p in ps]
-                ax.plot(ps, ivs, marker="o", linewidth=2.5, color=AZUL,
-                        markersize=7, markerfacecolor=OURO)
-                ax.fill_between(ps, ivs, alpha=.12, color=AZUL)
-                ax.set_ylabel("Investimentos"); ax.spines[["top","right"]].set_visible(False)
-                ax.set_title("Evolução Mensal", fontsize=13, fontweight="bold", color=AZUL)
-                plt.xticks(rotation=40, ha="right"); plt.tight_layout()
-                salvar("grafico_evolucao.png")
-
-            # Confiança (pizza)
-            vals_cf = [cf["alta"], cf["media"], cf["baixa"]]
-            if any(v > 0 for v in vals_cf):
-                fig, ax = plt.subplots(figsize=(7,7))
-                labels = [f"Alta ≥80%\n{cf['alta']}%",
-                          f"Média 50–80%\n{cf['media']}%",
-                          f"Baixa <50%\n{cf['baixa']}%"]
-                ax.pie(vals_cf, labels=labels,
-                       colors=["#2ecc71", OURO, "#e74c3c"],
-                       startangle=90,
-                       wedgeprops={"edgecolor":"white","linewidth":2})
-                ax.set_title(f"Confiança dos Dados\nMédia: {cf['media_geral']}%",
-                             fontsize=13, fontweight="bold", color=AZUL)
+            cv=[cf["alta"],cf["media"],cf["baixa"]]
+            if any(v>0 for v in cv):
+                fig,ax=plt.subplots(figsize=(6,6))
+                ax.pie(cv,
+                       labels=[f"Alta\n{cf['alta']}%",f"Média\n{cf['media']}%",f"Baixa\n{cf['baixa']}%"],
+                       colors=["#2ecc71",OURO,"#e74c3c"],
+                       startangle=90,wedgeprops={"edgecolor":"white","linewidth":2})
+                ax.set_title(f"Confiança dos Dados — Média {cf['mg']}%",
+                             fontsize=12,fontweight="bold",color=AZUL)
                 plt.tight_layout(); salvar("grafico_confianca.png")
 
         except Exception as e:
-            print(f"  ❌ Erro gráficos: {e}")
-
+            print(f"  Erro gráficos: {e}")
         return arqs
 
-    # ── HTML ─────────────────────────────────────
+
+    # ── HTML ──────────────────────────────────────────
 
     def gerar_html(self):
-        r   = self.calcular_resumo_executivo()
-        fs  = self.investimentos_por_fase()
-        rk  = self.ranking_empresas()
-        ev  = self.evolucao_mensal()
-        fn  = self.analise_por_fonte()
-        cf  = self.analise_confianca()
-        qr  = self.noticias_quase_relevantes()
+        r   = self.resumo_recente()
+        rh  = self.resumo_historico()
+        rk  = self.ranking_historico()
+        pa  = self.por_ano_historico()
+        fs  = self.fases_recentes()
+        fn  = self.fontes_recentes()
+        cf  = self.confianca_recente()
+        qr  = self.quase_relevantes()
         nrs = self._relevantes()
-        all_n = list(self.banco.noticias)
+        all_n = self._todas()
+        hist  = self.lista_historico()
 
-        # serializar para JS
-        njs = json.dumps(nrs,    ensure_ascii=False)
-        ajs = json.dumps(all_n,  ensure_ascii=False)
-        fjs = json.dumps({k:len(v) for k,v in fs.items()}, ensure_ascii=False)
-        ejs = json.dumps(rk,     ensure_ascii=False)
-        vjs = json.dumps(ev,     ensure_ascii=False)
-        qjs = json.dumps(qr,     ensure_ascii=False)
+        njs  = json.dumps(nrs,    ensure_ascii=False)
+        ajs  = json.dumps(all_n,  ensure_ascii=False)
+        hjs  = json.dumps(hist,   ensure_ascii=False)
+        rkjs = json.dumps(rk,     ensure_ascii=False)
+        pajs = json.dumps(pa,     ensure_ascii=False)
+        fsjs = json.dumps(fs,     ensure_ascii=False)
+        qjs  = json.dumps(qr,     ensure_ascii=False)
+        cfjs = json.dumps(cf,     ensure_ascii=False)
 
-        # fontes HTML
-        f_rows = ""
+        f_rows=""
         tg=rg=0
         for f in sorted(fn):
             d=fn[f]; tg+=d["total"]; rg+=d["relevantes"]
-            f_rows += (f'<tr><td>{f}</td><td>{d["total"]}</td>'
-                       f'<td>{d["relevantes"]}</td><td>{d["taxa_precisao"]}%</td>'
-                       f'<td>{d["confianca_media"]}%</td></tr>')
-        taxa = round(rg/tg*100 if tg else 0,1)
-        f_rows += (f'<tr class="tr-total"><td><b>TOTAL</b></td><td><b>{tg}</b></td>'
-                   f'<td><b>{rg}</b></td><td><b>{taxa}%</b></td><td>—</td></tr>')
+            f_rows+=(f'<tr><td>{f}</td><td>{d["total"]}</td>'
+                     f'<td>{d["relevantes"]}</td><td>{d["taxa"]}%</td>'
+                     f'<td>{d["confianca"]}%</td></tr>')
+        taxa=round(rg/tg*100 if tg else 0,1)
+        f_rows+=(f'<tr class="tr-tot"><td><b>TOTAL</b></td><td><b>{tg}</b></td>'
+                 f'<td><b>{rg}</b></td><td><b>{taxa}%</b></td><td>—</td></tr>')
 
         vm = r["valor_total"]/1e6
+        vhb= rh["total_valor"]/1e9
 
         return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -331,744 +312,477 @@ class GeradorRelatorio:
 <title>Monitor de Investimentos — Contagem MG</title>
 <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 <style>
-:root{{
-  --azul:#1a3a5c;--ouro:#e8a020;--bg:#f0f4fa;--branco:#fff;
-  --cinza:#6b7280;--borda:#dde3ec;--verde:#16a34a;--text:#1f2937;
-}}
+:root{{--az:#1a3a5c;--ou:#e8a020;--bg:#f0f4fa;--br:#fff;--ci:#6b7280;--bo:#dde3ec;--vd:#16a34a;--tx:#1f2937}}
 *{{box-sizing:border-box;margin:0;padding:0}}
-body{{font-family:'Segoe UI',system-ui,sans-serif;background:#037482;color:var(--text);font-size:15px}}
-
-/* HEADER */
-.hdr {{
-    background: #037482; /* Corrigido: removido o 'var()' inválido */
-    color: white;
-    padding: 35px 40px;
-    text-align: center;
-    position: relative; /* Mantido: essencial para fixar a logo aqui dentro */
-}}
-
-.titulo-area{{
-    display:block;
-    align-items:center;
-    justify-content:center;
-    gap:25px;
-}}
-
-.logo-sedecon {{
-    height: 100px;
-    width: auto;
-    position: absolute; /* Tira a logo do fluxo para não empurrar o título */
-    left: 40px;         /* Alinha com o padding lateral do seu .hdr */
-    top: 50%;           /* Move até a metade da altura */
-    transform: translateY(-50%); /* Centraliza verticalmente de forma perfeita */
-}}
-
-.titulo-monitor{{
-    margin:0;
-    font-size:3rem;
-    font-weight:900;
-    letter-spacing:1px;
-}}
-
-.subtitulo-monitor{{
-    margin-top:6px;
-    font-size:1rem;
-    color:rgba(255,255,255,0.85);
-}}
-
-/* CARDS */
-.cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-        gap:14px;padding:24px 36px 0}}
-.card{{background:var(--branco);border:1px solid var(--borda);border-radius:10px;
-       padding:18px;text-align:center;position:relative;overflow:hidden}}
-.card::before{{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--azul)}}
-.card.ouro::before{{background:var(--ouro)}}
-.card.verde::before{{background:var(--verde)}}
-.card-val{{font-size:1.9rem;font-weight:800;color:var(--azul);line-height:1;margin-bottom:5px}}
-.card-lbl{{font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;color:var(--cinza);font-weight:600}}
-
-/* ABAS */
-.tabs-wrap{{padding:24px 36px 0}}
-.tabs{{display:flex;gap:3px;border-bottom:2px solid var(--borda)}}
-.tab{{padding:9px 20px;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;
-      background:none;font-size:.88rem;font-weight:600;color:var(--cinza);cursor:pointer;
+body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:15px}}
+.hdr{{background:var(--az);color:#fff;padding:22px 36px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}}
+.hdr-l h1{{font-size:1.35rem;font-weight:700}}.hdr-l p{{font-size:.8rem;opacity:.7;margin-top:3px}}
+.hdr-r img{{height:60px;object-fit:contain}}
+.cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;padding:22px 36px 0}}
+.card{{background:var(--br);border:1px solid var(--bo);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden}}
+.card::before{{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--az)}}
+.card.ou::before{{background:var(--ou)}}.card.vd::before{{background:var(--vd)}}
+.cval{{font-size:1.7rem;font-weight:800;color:var(--az);line-height:1;margin-bottom:4px}}
+.clbl{{font-size:.67rem;text-transform:uppercase;letter-spacing:.6px;color:var(--ci);font-weight:600}}
+.tabs-wrap{{padding:22px 36px 0}}
+.tabs{{display:flex;gap:3px;border-bottom:2px solid var(--bo);flex-wrap:wrap}}
+.tab{{padding:9px 18px;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;
+      background:none;font-size:.85rem;font-weight:600;color:var(--ci);cursor:pointer;
       position:relative;bottom:-2px;transition:all .15s}}
-.tab:hover{{background:var(--bg);color:var(--azul)}}
-.tab.on{{background:var(--branco);color:var(--azul);border-color:var(--borda);border-bottom-color:var(--branco)}}
-
-/* PAINÉIS */
-.painel{{
-    display:none;
-    padding:24px 36px;
-}}
-
-.painel.on{{
-    display:block;
-}}
-
-/* SEÇÃO */
-.sec{{margin-bottom:28px}}
-.sec-title{{font-size:.95rem;font-weight:700;color:var(--azul);padding-bottom:8px;
-            border-bottom:2px solid var(--ouro);margin-bottom:14px}}
-.grid2{{display:grid;grid-template-columns:1fr 1fr;gap:18px}}
-
-/* FILTROS */
-.filtros{{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}}
-.filtros label{{font-size:.8rem;font-weight:600;color:var(--cinza)}}
-.filtros select,.filtros input{{padding:6px 11px;border:1px solid var(--borda);border-radius:6px;
-  font-size:.83rem;background:var(--branco);color:var(--text);min-width:150px}}
-.btn-x{{padding:6px 13px;background:var(--azul);color:#fff;border:none;border-radius:6px;
-         font-size:.8rem;font-weight:600;cursor:pointer;transition:opacity .15s}}
-.btn-x:hover{{opacity:.85}}
-
-/* TABELA */
-.tbl-wrap{{overflow-x:auto}}
-table{{width:100%;border-collapse:collapse;font-size:.86rem}}
-th{{background:var(--azul);color:#fff;padding:10px 13px;text-align:left;font-size:.78rem;
-    text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}}
-td{{padding:9px 13px;border-bottom:1px solid var(--borda);vertical-align:top}}
+.tab:hover{{background:var(--bg);color:var(--az)}}
+.tab.on{{background:var(--br);color:var(--az);border-color:var(--bo);border-bottom-color:var(--br)}}
+.pan{{display:none;padding:22px 36px}}.pan.on{{display:block}}
+.sec{{margin-bottom:26px}}
+.stit{{font-size:.93rem;font-weight:700;color:var(--az);padding-bottom:8px;border-bottom:2px solid var(--ou);margin-bottom:14px}}
+.g2{{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
+.g3{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}}
+.sbox{{background:var(--br);border:1px solid var(--bo);border-radius:10px;padding:18px;text-align:center}}
+.sval{{font-size:1.9rem;font-weight:800;color:var(--az);line-height:1}}
+.slbl{{font-size:.7rem;color:var(--ci);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}}
+.flt{{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}}
+.flt label{{font-size:.78rem;font-weight:600;color:var(--ci)}}
+.flt select,.flt input{{padding:6px 10px;border:1px solid var(--bo);border-radius:6px;font-size:.82rem;background:var(--br);color:var(--tx);min-width:140px}}
+.btnx{{padding:6px 12px;background:var(--az);color:#fff;border:none;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer}}
+.btnx:hover{{opacity:.85}}
+.twrap{{overflow-x:auto}}
+table{{width:100%;border-collapse:collapse;font-size:.84rem}}
+th{{background:var(--az);color:#fff;padding:9px 12px;text-align:left;font-size:.76rem;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}}
+td{{padding:8px 12px;border-bottom:1px solid var(--bo);vertical-align:top}}
 tr:hover td{{background:#eef2fa}}
-.tr-total td{{background:var(--bg);font-weight:600}}
-
-/* CARD NOTICIA */
-.ncard{{background:var(--branco);border:1px solid var(--borda);border-radius:8px;
-        padding:14px;margin-bottom:10px;border-left:4px solid var(--azul)}}
-.ncard.quase{{border-left-color:var(--ouro)}}
-.ncard-title{{font-weight:700;font-size:.93rem;color:var(--azul);margin-bottom:5px;line-height:1.4}}
-.ncard-meta{{font-size:.76rem;color:var(--cinza);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:5px}}
-.ncard-url{{font-size:.76rem;color:var(--azul);text-decoration:none;word-break:break-all}}
-.ncard-url:hover{{text-decoration:underline}}
-
-/* BADGE */
-.bdg{{display:inline-block;padding:2px 7px;border-radius:11px;font-size:.7rem;font-weight:700;text-transform:uppercase}}
-.bdg-v{{background:#dcfce7;color:#15803d}}.bdg-o{{background:#fef9c3;color:#a16207}}
-.bdg-c{{background:#f1f5f9;color:#475569}}.bdg-a{{background:#dbeafe;color:#1d4ed8}}
-
-/* GRÁFICO */
-.graf{{height:300px;background:var(--branco);border:1px solid var(--borda);border-radius:8px;margin-bottom:16px}}
-
-/* VAZIO */
-.vazio{{text-align:center;padding:36px;color:var(--cinza);font-style:italic}}
-
-footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
-        padding:16px;font-size:.76rem;margin-top:16px}}
-
-@media(max-width:768px){{
-  .hdr,.cards,.tabs-wrap,.aba{{padding-left:14px;padding-right:14px}}
-  .grid2{{grid-template-columns:1fr}}
-}}
+.tr-tot td{{background:var(--bg);font-weight:600}}
+.nc{{background:var(--br);border:1px solid var(--bo);border-radius:8px;padding:13px;margin-bottom:9px;border-left:4px solid var(--az)}}
+.nc.q{{border-left-color:var(--ou)}}
+.nt{{font-weight:700;font-size:.9rem;color:var(--az);margin-bottom:4px;line-height:1.4}}
+.nm{{font-size:.74rem;color:var(--ci);display:flex;gap:9px;flex-wrap:wrap;margin-bottom:4px}}
+.nu{{font-size:.74rem;color:var(--az);text-decoration:none;word-break:break-all}}
+.nu:hover{{text-decoration:underline}}
+.bdg{{display:inline-block;padding:2px 7px;border-radius:11px;font-size:.68rem;font-weight:700;text-transform:uppercase}}
+.bv{{background:#dcfce7;color:#15803d}}.bo2{{background:#fef9c3;color:#a16207}}
+.bc{{background:#f1f5f9;color:#475569}}.ba{{background:#dbeafe;color:#1d4ed8}}
+.graf{{height:300px;background:var(--br);border:1px solid var(--bo);border-radius:8px;margin-bottom:14px}}
+.vz{{text-align:center;padding:32px;color:var(--ci);font-style:italic}}
+footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;padding:14px;font-size:.74rem;margin-top:14px}}
+@media(max-width:768px){{.hdr,.cards,.tabs-wrap,.pan{{padding-left:14px;padding-right:14px}}.g2,.g3{{grid-template-columns:1fr}}}}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-
-    <div class="titulo-area">
-
-        <img src="https://rodrigoarqferreira-a11y.github.io/monitor-contagem/dados/logo%20secretaria%20sedecon.png"
-             class="logo-sedecon">
-
-        <div>
-
-            <h1 class="titulo-monitor">
-                MONITOR DE INVESTIMENTOS PRIVADOS
-            </h1>
-
-            <p>
-                SEDECON · Prefeitura de Contagem MG
-            </p>
-
-            <p class="subtitulo-monitor">
-                Superintendência de Inovação e Informações Estratégicas
-            </p>
-
-        </div>
-
-    </div>
-</div>
-
-<div class="cards">
-  <div class="card"><div class="card-val">{r['investimentos_detectados']}</div><div class="card-lbl">Investimentos</div></div>
-  <div class="card"><div class="card-val">{r['empresas_monitoradas']}</div><div class="card-lbl">Empresas</div></div>
-  <div class="card ouro"><div class="card-val">{r['novos_empregos']:,}</div><div class="card-lbl">Empregos gerados</div></div>
-  <div class="card ouro"><div class="card-val">R$ {vm:.0f}M</div><div class="card-lbl">Valor total</div></div>
-  <div class="card verde"><div class="card-val">{r['confianca_media']}%</div><div class="card-lbl">Confiança média</div></div>
-  <div class="card"><div class="card-val">{r['noticias_relevantes']}</div><div class="card-lbl">Notícias relevantes</div></div>
-</div>
-
-<!-- ABA RESUMO -->
-<div id="resumo" class="painel on">
-
-    <div class="sec">
-
-        <div class="sec-title">
-            Sumário Executivo
-        </div>
-
-        <table>
-
-            <tr>
-                <th>Indicador</th>
-                <th>Valor</th>
-            </tr>
-
-            <tr>
-                <td>Investimentos detectados</td>
-                <td>{r["investimentos_detectados"]}</td>
-            </tr>
-
-            <tr>
-                <td>Empresas monitoradas</td>
-                <td>{r["empresas_monitoradas"]}</td>
-            </tr>
-
-            <tr>
-                <td>Empregos gerados</td>
-                <td>{r["novos_empregos"]}</td>
-            </tr>
-
-            <tr>
-                <td>Valor anunciado</td>
-                <td>R$ {vm:.1f} milhões</td>
-            </tr>
-
-            <tr>
-                <td>Confiança média</td>
-                <td>{r["confianca_media"]}%</td>
-            </tr>
-
-        </table>
-
-        </div>
-
-    <div class="sec">
-
-        <div class="sec-title">
-            Ranking das Empresas
-        </div>
-
-        <div class="tbl-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>#</th>
-                        <th>Empresa</th>
-                        <th>Investimentos</th>
-                        <th>Valor</th>
-                        <th>Empregos</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tb-rk">
-
-                </tbody>
-
-            </table>
-        </div>
-</div>
-
-
-    <!-- =============================== -->
-    <!-- GRÁFICOS -->
-    <!-- =============================== -->
-
-    <div class="sec">
-
-        <div class="sec-title">
-
-            Panorama Geral
-
-        </div>
-
-        <div class="grid2">
-
-            <div id="g-fases" class="graf"></div>
-
-            <div id="g-emp" class="graf"></div>
-
-        </div>
-
-    </div>
-
-    <!-- =============================== -->
-    <!-- EVOLUÇÃO -->
-    <!-- =============================== -->
-
-    <div class="sec">
-
-        <div class="sec-title">
-
-            Evolução dos Investimentos
-
-        </div>
-
-        <div id="g-evol" class="graf"></div>
-
-    </div>
-
-    <!-- =============================== -->
-    <!-- RANKING -->
-    <!-- =============================== -->
-
-    <div class="sec">
-
-        <div class="sec-title">
-
-            Ranking das Empresas
-
-        </div>
-
-        <div class="tbl-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>#</th>
-
-                        <th>Empresa</th>
-
-                        <th>Investimentos</th>
-
-                        <th>Valor</th>
-
-                        <th>Empregos</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tb-rk">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-    <!-- =============================== -->
-    <!-- QUASE RELEVANTES -->
-    <!-- =============================== -->
-
-    <div class="sec">
-
-        <div class="sec-title">
-
-            Notícias Quase Relevantes
-
-        </div>
-
-        <div id="lista-quase">
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- ABA HISTORICO -->
-<div id="historico" class="painel">
-    <h2>Histórico de Investimentos</h2>
-
-    <p>
-        Em breve serão exibidos os gráficos e ranking de empresas.
-    </p>
-</div>
-
-<!-- ABA NOTÍCIAS -->
-<div id="noticias" class="painel">
-    <h2>Notícias Monitoradas</h2>
-
-      <div class="sec">
-          <div class="sec-title">Desempenho por fonte</div>
-
-          <div class="tbl-wrap">
-              <table>
-                  <thead>
-                      <tr>
-                          <th>Fonte</th>
-                          <th>Total</th>
-                          <th>Relevantes</th>
-                          <th>Precisão</th>
-                          <th>Confiança</th>
-                      </tr>
-                  </thead>
-
-                  <tbody>
-                      {f_rows}
-                  </tbody>
-
-              </table>
-          </div>
-
-      </div>
-
+  <div class="hdr-l">
+    <h1>📊 Monitor de Investimentos Privados</h1>
+    <p>SEDECON · Superintendência de Inovação e Informações Estratégicas · {self.data_geracao.strftime('%d/%m/%Y %H:%M')}</p>
   </div>
+  <div class="hdr-r">
+    <img src="../dados/logo secretaria sedecon.png" alt="SEDECON">
+  </div>
+</div>
 
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab on"  onclick="aba('recente',this)">🔔 Monitoramento Recente</button>
+    <button class="tab"     onclick="aba('historico',this)">📋 Histórico 2021–2026</button>
+    <button class="tab"     onclick="aba('graficos',this)">📈 Gráficos</button>
+    <button class="tab"     onclick="aba('todas',this)">🗂 Todas as Notícias</button>
+    <button class="tab"     onclick="aba('fontes',this)">📰 Fontes</button>
+    <button class="tab"     onclick="aba('quase',this)">🔍 Quase Relevantes</button>
+  </div>
+</div>
+
+<!-- RECENTE -->
+<div id="p-recente" class="pan on">
+  <div class="g3" style="margin-bottom:20px">
+    <div class="sbox"><div class="sval">{r['noticias_relevantes']}</div><div class="slbl">Notícias relevantes</div></div>
+    <div class="sbox"><div class="sval">{r['novos_empregos']:,}</div><div class="slbl">Empregos detectados</div></div>
+    <div class="sbox"><div class="sval">R$ {vm:.0f}M</div><div class="slbl">Valor monitorado</div></div>
+  </div>
+  <div class="flt">
+    <label>Empresa</label><select id="r-emp" onchange="renderRec()"><option value="">Todas</option></select>
+    <label>Fase</label><select id="r-fas" onchange="renderRec()"><option value="">Todas</option></select>
+    <label>Buscar</label><input id="r-txt" placeholder="Palavra no título..." oninput="renderRec()">
+    <button class="btnx" onclick="limpRec()">✕ Limpar</button>
+  </div>
+  <div id="lst-rec"></div>
+</div>
+
+<!-- HISTÓRICO -->
+<div id="p-historico" class="pan">
+  <div class="g3" style="margin-bottom:20px">
+    <div class="sbox"><div class="sval">{rh['total_investimentos']}</div><div class="slbl">Investimentos registrados</div></div>
+    <div class="sbox"><div class="sval">R$ {vhb:.1f}bi</div><div class="slbl">Valor total 2021–2026</div></div>
+    <div class="sbox"><div class="sval">{rh['empresas_unicas']}</div><div class="slbl">Empresas únicas</div></div>
+  </div>
+  <div class="g2">
+    <div class="sec">
+      <div class="stit">🏆 Ranking por valor investido</div>
+      <div class="twrap"><table>
+        <thead><tr><th>#</th><th>Empresa</th><th>Invest.</th><th>Valor total</th></tr></thead>
+        <tbody id="tb-rk"></tbody>
+      </table></div>
+    </div>
+    <div class="sec">
+      <div class="stit">📅 Por ano</div>
+      <div class="twrap"><table>
+        <thead><tr><th>Ano</th><th>Qtd.</th><th>Valor total</th></tr></thead>
+        <tbody id="tb-ano"></tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="stit">📄 Lista completa de investimentos</div>
+    <div class="flt">
+      <label>Empresa</label><select id="h-emp" onchange="renderHist()"><option value="">Todas</option></select>
+      <label>Ano</label><select id="h-ano" onchange="renderHist()"><option value="">Todos</option></select>
+      <label>Buscar</label><input id="h-txt" placeholder="Empresa ou descrição..." oninput="renderHist()">
+      <button class="btnx" onclick="limpHist()">✕ Limpar</button>
+    </div>
+    <div class="twrap"><table>
+      <thead><tr><th>Ano</th><th>Empresa</th><th>Valor</th><th>Empregos</th><th>Fase</th><th>Fonte</th></tr></thead>
+      <tbody id="tb-hist"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- GRÁFICOS -->
+<div id="p-graficos" class="pan">
+  <div class="g2">
+    <div class="sec"><div class="stit">🏆 Top empresas por valor (histórico)</div><div class="graf" id="g-rk"></div></div>
+    <div class="sec"><div class="stit">📅 Investimentos por ano</div><div class="graf" id="g-ano"></div></div>
+  </div>
+  <div class="g2">
+    <div class="sec"><div class="stit">🔔 Notícias recentes por fase</div><div class="graf" id="g-fas"></div></div>
+    <div class="sec"><div class="stit">✅ Confiança dos dados recentes</div><div class="graf" id="g-cf"></div></div>
+  </div>
+</div>
+
+<!-- TODAS -->
+<div id="p-todas" class="pan">
+  <div class="flt">
+    <label>Empresa</label><select id="a-emp" onchange="renderTodas()"><option value="">Todas</option></select>
+    <label>Fase</label><select id="a-fas" onchange="renderTodas()"><option value="">Todas</option></select>
+    <label>Relevância</label>
+    <select id="a-rel" onchange="renderTodas()">
+      <option value="">Todas</option><option value="s">Relevantes</option><option value="n">Descartadas</option>
+    </select>
+    <label>Buscar</label><input id="a-txt" placeholder="Palavra no título..." oninput="renderTodas()">
+    <button class="btnx" onclick="limpTodas()">✕ Limpar</button>
+  </div>
+  <div id="lst-todas"></div>
+</div>
+
+<!-- FONTES -->
+<div id="p-fontes" class="pan">
+  <div class="sec">
+    <div class="stit">📰 Desempenho por fonte</div>
+    <div class="twrap"><table>
+      <thead><tr><th>Fonte</th><th>Total</th><th>Relevantes</th><th>Precisão</th><th>Confiança</th></tr></thead>
+      <tbody>{f_rows}</tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- QUASE -->
+<div id="p-quase" class="pan">
+  <div class="sec">
+    <div class="stit">🔍 Boa pontuação, mas fora de Contagem</div>
+    <p style="color:var(--ci);font-size:.82rem;margin-bottom:14px">Pontuação ≥ 30, empresa monitorada identificada, mas sem menção explícita a Contagem.</p>
+    <div id="lst-quase"></div>
+  </div>
 </div>
 
 <footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · {self.data_geracao.strftime('%d/%m/%Y %H:%M')}</footer>
 
 <script>
-// ── dados ──────────────────────────────────────────────────
-const NOTICIAS = {njs};
-const TODAS    = {ajs};
-const FASES_D  = {fjs};
-const EMPS_D   = {ejs};
-const EVOL_D   = {vjs};
-const QUASE_D  = {qjs};
-const CONF_D   = {{alta:{cf['alta']},media:{cf['media']},baixa:{cf['baixa']},mg:{cf['media_geral']}}};
-const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
+const NR={njs};
+const ALL={ajs};
+const HIST={hjs};
+const RK={rkjs};
+const PA={pajs};
+const FS={fsjs};
+const QR={qjs};
+const CF={cfjs};
+const AZUL='#1a3a5c',OURO='#e8a020',VERDE='#16a34a';
 
-// ── abas ───────────────────────────────────────────────────
-function aba(id, btn){{
-
-    document.querySelectorAll(".painel")
-        .forEach(p => p.classList.remove("on"));
-
-    document.querySelectorAll(".tab")
-        .forEach(t => t.classList.remove("on"));
-
-    document.getElementById(id)
-        .classList.add("on");
-
-    btn.classList.add("on");
-
-    if(id==="resumo"){{
-
-        renderGraf();
-
-        renderRanking();
-
-    }}
-
+let grafOk=false;
+function aba(id,btn){{
+  document.querySelectorAll('.pan').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='graficos'&&!grafOk){{grafOk=true;renderGraf();}}
 }}
 
-// ── badge fase ─────────────────────────────────────────────
-function bdgFase(f){{
-  const m={{'Anunciado':'bdg-a','Construção':'bdg-o','Operação':'bdg-v','Expansão':'bdg-v'}};
-  return `<span class="bdg ${{m[f]||'bdg-c'}}">${{f||'—'}}</span>`;
+function bdg(f){{
+  const m={{'Anunciado':'ba','Construção':'bo2','Operação':'bv','Expansão':'bv','Licenciamento':'bc','Contratação':'bc','Negociação':'bc'}};
+  return '<span class="bdg '+(m[f]||'bc')+'">'+(f||'—')+'</span>';
 }}
 
-// ── card notícia ───────────────────────────────────────────
-function cardN(n, extra){{
-  const emps=(n.empresas||[]).join(', ')||'—';
-  const vals=(n.valores ||[]).join(', ')||'—';
-  const empr=(n.empregos||[]).join(', ')||'—';
-  return `<div class="ncard${{extra?' quase':''}}">
-    <div class="ncard-title">${{n.titulo||'—'}}</div>
-    <div class="ncard-meta">
-      <span>📍 ${{n.fonte||'—'}}</span><span>📅 ${{n.data||'—'}}</span>
-      <span>🎯 ${{n.pontuacao||0}} pts</span>${{bdgFase(n.fase)}}
-      ${{n.relevante?'<span class="bdg bdg-v">✓ Relevante</span>':''}}
-    </div>
-    <div class="ncard-meta">🏢 ${{emps}} &nbsp;|&nbsp; 💰 ${{vals}} &nbsp;|&nbsp; 👥 ${{empr}}</div>
-    <a class="ncard-url" href="${{n.url}}" target="_blank">${{n.url}}</a>
-  </div>`;
+function cardN(n,extra){{
+  const e=(n.empresas||[]).join(', ')||'—';
+  const v=(n.valores||[]).join(', ')||'—';
+  const em=(n.empregos||[]).join(', ')||'—';
+  return '<div class="nc'+(extra?' q':'')+'"><div class="nt">'+(n.titulo||'—')+'</div>'
+    +'<div class="nm"><span>📍 '+(n.fonte||'—')+'</span><span>📅 '+(n.data||'—')+'</span>'
+    +'<span>🎯 '+(n.pontuacao||0)+' pts</span>'+bdg(n.fase)
+    +(n.relevante?'<span class="bdg bv">✓ Relevante</span>':'')+'</div>'
+    +'<div class="nm">🏢 '+e+' | 💰 '+v+' | 👥 '+em+'</div>'
+    +'<a class="nu" href="'+(n.url||'#')+'" target="_blank">'+(n.url||'')+'</a></div>';
 }}
 
-// ── popular selects ────────────────────────────────────────
-function popSelect(selId, arr){{
-  const s=document.getElementById(selId);
-  [...new Set(arr)].sort().forEach(v=>s.add(new Option(v,v)));
-}}
-function limpar(...ids){{
-  ids.forEach(id=>{{const el=document.getElementById(id); if(el)el.value=''}});
-  renderRecentes(); renderHist();
+function popSel(id,arr){{
+  const s=document.getElementById(id);if(!s)return;
+  [...new Set(arr.filter(Boolean))].sort().forEach(v=>s.add(new Option(v,v)));
 }}
 
-// ── RECENTES ───────────────────────────────────────────────
-function renderRecentes(){{
+function renderRec(){{
   const e=document.getElementById('r-emp').value.toLowerCase();
-  const f=document.getElementById('r-fase').value.toLowerCase();
+  const f=document.getElementById('r-fas').value.toLowerCase();
   const t=document.getElementById('r-txt').value.toLowerCase();
-  const lista=NOTICIAS.filter(n=>
+  const lista=NR.filter(n=>
     (!e||(n.empresas||[]).join(' ').toLowerCase().includes(e))&&
     (!f|(n.fase||'').toLowerCase()===f)&&
     (!t|(n.titulo||'').toLowerCase().includes(t))
   );
-  document.getElementById('lista-recentes').innerHTML=
-    lista.length ? lista.map(n=>cardN(n,false)).join('') : '<div class="vazio">Nenhuma notícia com esses filtros.</div>';
+  document.getElementById('lst-rec').innerHTML=
+    lista.length?lista.map(n=>cardN(n,false)).join(''):'<div class="vz">Nenhuma notícia relevante encontrada.</div>';
 }}
+function limpRec(){{['r-emp','r-fas','r-txt'].forEach(id=>{{const el=document.getElementById(id);if(el)el.value=''}});renderRec();}}
 
-// ── HISTÓRICO ──────────────────────────────────────────────
-function renderHist(){{
-  const e=document.getElementById('h-emp').value.toLowerCase();
-  const f=document.getElementById('h-fase').value.toLowerCase();
-  const r=document.getElementById('h-rel').value;
-  const t=document.getElementById('h-txt').value.toLowerCase();
-  const lista=TODAS.filter(n=>
+function renderTodas(){{
+  const e=document.getElementById('a-emp').value.toLowerCase();
+  const f=document.getElementById('a-fas').value.toLowerCase();
+  const r=document.getElementById('a-rel').value;
+  const t=document.getElementById('a-txt').value.toLowerCase();
+  const lista=ALL.filter(n=>
     (!e||(n.empresas||[]).join(' ').toLowerCase().includes(e))&&
     (!f|(n.fase||'').toLowerCase()===f)&&
     (!r||(r==='s'?n.relevante:!n.relevante))&&
     (!t|(n.titulo||'').toLowerCase().includes(t))
   );
-  document.getElementById('lista-hist').innerHTML=
-    lista.length ? lista.map(n=>cardN(n,false)).join('') : '<div class="vazio">Nenhuma notícia com esses filtros.</div>';
+  document.getElementById('lst-todas').innerHTML=
+    lista.length?lista.map(n=>cardN(n,false)).join(''):'<div class="vz">Nenhuma notícia com esses filtros.</div>';
 }}
+function limpTodas(){{['a-emp','a-fas','a-rel','a-txt'].forEach(id=>{{const el=document.getElementById(id);if(el)el.value=''}});renderTodas();}}
 
-// ── QUASE ──────────────────────────────────────────────────
-function renderQuase(){{
-  document.getElementById('lista-quase').innerHTML=
-    QUASE_D.length ? QUASE_D.map(n=>cardN(n,true)).join('') : '<div class="vazio">Nenhuma notícia quase relevante.</div>';
-}}
-
-// ── RANKING tabela ─────────────────────────────────────────
 function renderRanking(){{
-  document.getElementById('tb-rk').innerHTML=
-    EMPS_D.map((e,i)=>`<tr>
-      <td><b>${{i+1}}</b></td><td>${{e.empresa}}</td><td>${{e.investimentos}}</td>
-      <td>R$ ${{(e.valor_total/1e6).toFixed(1)}}M</td><td>${{e.empregos}}</td>
-    </tr>`).join('') || '<tr><td colspan="5" class="vazio">Sem dados.</td></tr>';
+  const tb=document.getElementById('tb-rk');if(!tb)return;
+  tb.innerHTML=RK.map((e,i)=>'<tr><td><b>'+(i+1)+'</b></td><td>'+e.empresa+'</td><td style="text-align:center">'+e.investimentos+'</td><td>R$ '+(e.valor_total/1e6).toFixed(1)+'M</td></tr>').join('')||'<tr><td colspan="4" class="vz">Sem dados.</td></tr>';
 }}
 
-// ── GRÁFICOS Plotly ────────────────────────────────────────
+function renderPorAno(){{
+  const tb=document.getElementById('tb-ano');if(!tb)return;
+  tb.innerHTML=Object.entries(PA).map(([a,d])=>'<tr><td><b>'+a+'</b></td><td style="text-align:center">'+d.investimentos+'</td><td>R$ '+(d.valor/1e9).toFixed(2)+'bi</td></tr>').join('')||'<tr><td colspan="3" class="vz">Sem dados.</td></tr>';
+}}
+
+function renderHist(){{
+  const e=document.getElementById('h-emp').value.toLowerCase();
+  const a=document.getElementById('h-ano').value;
+  const t=document.getElementById('h-txt').value.toLowerCase();
+  const lista=HIST.filter(i=>
+    (!e|(i.empresa||'').toLowerCase().includes(e))&&
+    (!a|String(i.ano)===a)&&
+    (!t|(i.empresa||'').toLowerCase().includes(t)||(i.descricao||'').toLowerCase().includes(t))
+  );
+  const tb=document.getElementById('tb-hist');if(!tb)return;
+  tb.innerHTML=lista.map(i=>'<tr><td>'+( i.ano||'—')+'</td><td><b>'+(i.empresa||'—')+'</b></td><td>'+(i.valor?('R$ '+(i.valor/1e6).toFixed(1)+'M'):'—')+'</td><td>'+(i.empregos||'—')+'</td><td>'+bdg(i.fase||i.status)+'</td><td><a class="nu" href="'+(i.url||'#')+'" target="_blank">'+(i.fonte||'—')+'</a></td></tr>').join('')||'<tr><td colspan="6" class="vz">Sem resultados.</td></tr>';
+}}
+function limpHist(){{['h-emp','h-ano','h-txt'].forEach(id=>{{const el=document.getElementById(id);if(el)el.value=''}});renderHist();}}
+
+function renderQuase(){{
+  document.getElementById('lst-quase').innerHTML=
+    QR.length?QR.map(n=>cardN(n,true)).join(''):'<div class="vz">Nenhuma notícia quase relevante.</div>';
+}}
+
 function renderGraf(){{
   const cfg={{responsive:true,displayModeBar:false}};
-  const base={{font:{{family:'Segoe UI,system-ui',size:12}},
-               paper_bgcolor:'#fff',plot_bgcolor:'#fff'}};
+  const base={{font:{{family:'Segoe UI,system-ui',size:11}},paper_bgcolor:'#fff',plot_bgcolor:'#fff'}};
 
-  // Fases — horizontal
-  Plotly.newPlot('g-fases',[{{
-    x:Object.values(FASES_D), y:Object.keys(FASES_D),
-    type:'bar', orientation:'h',
-    marker:{{color:AZUL}},
-    text:Object.values(FASES_D), textposition:'outside'
-  }}],{{...base,title:'Por Fase',margin:{{l:140,r:30,t:40,b:40}},
-       xaxis:{{title:'Quantidade'}}}},cfg);
+  Plotly.newPlot('g-rk',[{{
+    x:RK.map(e=>e.valor_total/1e6).reverse(),y:RK.map(e=>e.empresa).reverse(),
+    type:'bar',orientation:'h',marker:{{color:AZUL}},
+    text:RK.map(e=>'R$ '+(e.valor_total/1e6).toFixed(0)+'M').reverse(),textposition:'outside'
+  }}],{{...base,title:'Top Empresas por Valor (R$ M)',margin:{{l:180,r:70,t:40,b:40}},xaxis:{{title:'R$ Milhões'}}}},cfg);
 
-  // Empresas — horizontal
-  Plotly.newPlot('g-emp',[{{
-    x:EMPS_D.map(e=>e.investimentos), y:EMPS_D.map(e=>e.empresa),
-    type:'bar', orientation:'h',
-    marker:{{color:OURO}},
-    text:EMPS_D.map(e=>e.investimentos), textposition:'outside'
-  }}],{{...base,title:'Top Empresas',margin:{{l:160,r:30,t:40,b:40}},
-       xaxis:{{title:'Investimentos'}}}},cfg);
+  const anos=Object.keys(PA),aV=anos.map(a=>PA[a].valor/1e9),aQ=anos.map(a=>PA[a].investimentos);
+  Plotly.newPlot('g-ano',[
+    {{x:anos,y:aV,type:'bar',name:'Valor (R$ bi)',marker:{{color:OURO}},text:aV.map(v=>'R$ '+v.toFixed(1)+'bi'),textposition:'outside',yaxis:'y'}},
+    {{x:anos,y:aQ,type:'scatter',mode:'lines+markers',name:'Qtd.',line:{{color:AZUL,width:2}},marker:{{size:7,color:AZUL}},yaxis:'y2'}}
+  ],{{...base,title:'Investimentos por Ano',margin:{{l:60,r:60,t:40,b:40}},
+     yaxis:{{title:'R$ Bilhões'}},yaxis2:{{title:'Quantidade',overlaying:'y',side:'right'}},
+     legend:{{orientation:'h',y:-0.2}}}},cfg);
 
-  // Evolução — linha
-  const ps=Object.keys(EVOL_D), ivs=ps.map(p=>EVOL_D[p].investimentos);
-  Plotly.newPlot('g-evol',[{{
-    x:ps, y:ivs, type:'scatter', mode:'lines+markers',
-    line:{{color:AZUL,width:2.5}},
-    marker:{{size:8,color:OURO}},
-    fill:'tozeroy', fillcolor:'rgba(26,58,92,0.08)'
-  }}],{{...base,title:'Evolução Mensal',margin:{{l:60,r:20,t:40,b:60}},
-       xaxis:{{tickangle:-40}},yaxis:{{title:'Investimentos'}}}},cfg);
-
-  // Confiança — pizza
-  const cv=[CONF_D.alta,CONF_D.media,CONF_D.baixa];
-  if(cv.some(v=>v>0)){{
-    Plotly.newPlot('g-conf',[{{
-      values:cv,
-      labels:[`Alta ≥80% (${{CONF_D.alta}}%)`,`Média (${{CONF_D.media}}%)`,`Baixa (${{CONF_D.baixa}}%)`],
-      type:'pie', hole:0.4,
-      marker:{{colors:[VERDE,OURO,'#dc2626'],line:{{color:'white',width:2}}}},
-      textinfo:'percent'
-    }}],{{...base,title:`Confiança — Média ${{CONF_D.mg}}%`,
-         margin:{{l:20,r:20,t:50,b:20}},
-         showlegend:true,legend:{{orientation:'h',y:-0.15}}}},cfg);
+  const fN=Object.keys(FS),fV=Object.values(FS);
+  if(fN.length){{
+    Plotly.newPlot('g-fas',[{{x:fV,y:fN,type:'bar',orientation:'h',marker:{{color:AZUL}},text:fV,textposition:'outside'}}],
+      {{...base,title:'Notícias por Fase',margin:{{l:140,r:40,t:40,b:40}}}},cfg);
   }} else {{
-    document.getElementById('g-conf').innerHTML='<div class="vazio" style="padding-top:80px">Sem dados ainda.</div>';
+    document.getElementById('g-fas').innerHTML='<div class="vz" style="padding-top:80px">Sem notícias relevantes recentes.</div>';
+  }}
+
+  const cv=[CF.alta,CF.media,CF.baixa];
+  if(cv.some(v=>v>0)){{
+    Plotly.newPlot('g-cf',[{{
+      values:cv,labels:['Alta ≥80% ('+CF.alta+'%)','Média ('+CF.media+'%)','Baixa ('+CF.baixa+'%)'],
+      type:'pie',hole:0.4,
+      marker:{{colors:[VERDE,OURO,'#dc2626'],line:{{color:'white',width:2}}}},textinfo:'percent'
+    }}],{{...base,title:'Confiança — Média '+CF.mg+'%',margin:{{l:10,r:10,t:50,b:10}},
+         showlegend:true,legend:{{orientation:'h',y:-0.2}}}},cfg);
+  }} else {{
+    document.getElementById('g-cf').innerHTML='<div class="vz" style="padding-top:80px">Sem dados de confiança.</div>';
   }}
 }}
 
-// ── init ───────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{{
-
-    popSelect('r-emp', NOTICIAS.flatMap(n=>n.empresas||[]));
-    popSelect('r-fase', NOTICIAS.map(n=>n.fase).filter(Boolean));
-
-    popSelect('h-emp', TODAS.flatMap(n=>n.empresas||[]));
-    popSelect('h-fase', TODAS.map(n=>n.fase).filter(Boolean));
-
-    renderRanking();
-
-    renderGraf();
-
+  popSel('r-emp',NR.flatMap(n=>n.empresas||[]));
+  popSel('r-fas',NR.map(n=>n.fase).filter(Boolean));
+  popSel('a-emp',ALL.flatMap(n=>n.empresas||[]));
+  popSel('a-fas',ALL.map(n=>n.fase).filter(Boolean));
+  popSel('h-emp',HIST.map(i=>i.empresa).filter(Boolean));
+  popSel('h-ano',HIST.map(i=>String(i.ano)).filter(Boolean));
+  renderRec();renderTodas();renderRanking();renderPorAno();renderHist();renderQuase();
 }});
-
 </script>
 </body>
 </html>"""
 
-    # ── PDF ──────────────────────────────────────
+    # ── PDF ───────────────────────────────────────────
 
     def gerar_pdf(self):
         if not HAS_REPORTLAB:
-            print("⚠  ReportLab não instalado."); return None
+            print("  PDF: ReportLab não instalado."); return None
         try:
-            r  = self.calcular_resumo_executivo()
-            rk = self.ranking_empresas()
-            fs = self.investimentos_por_fase()
-            fn = self.analise_por_fonte()
-            cf = self.analise_confianca()
-            qr = self.noticias_quase_relevantes()
+            r  = self.resumo_recente()
+            rh = self.resumo_historico()
+            rk = self.ranking_historico()
+            fn = self.fontes_recentes()
+            cf = self.confianca_recente()
+            pa = self.por_ano_historico()
 
-            nome = self.pasta / f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.pdf"
-            doc  = SimpleDocTemplate(str(nome), pagesize=A4,
-                                     rightMargin=2*cm, leftMargin=2*cm,
-                                     topMargin=2*cm,  bottomMargin=2*cm)
+            nome = self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.pdf"
+            doc  = SimpleDocTemplate(str(nome),pagesize=A4,
+                                     rightMargin=2*cm,leftMargin=2*cm,
+                                     topMargin=2*cm,bottomMargin=2*cm)
 
-            styles = getSampleStyleSheet()
-            AZUL_  = colors.HexColor("#1a3a5c")
-            OURO_  = colors.HexColor("#e8a020")
-            CLARO_ = colors.HexColor("#f4f7fb")
-            CINZA_ = colors.HexColor("#6b7280")
+            styles=getSampleStyleSheet()
+            AZ_=colors.HexColor("#1a3a5c"); OU_=colors.HexColor("#e8a020")
+            CL_=colors.HexColor("#f4f7fb"); CI_=colors.HexColor("#6b7280")
 
-            t_tit = ParagraphStyle("tt", parent=styles["Heading1"],
-                fontSize=20, textColor=AZUL_, alignment=1, spaceAfter=4, fontName="Helvetica-Bold")
-            t_sub = ParagraphStyle("ts", parent=styles["Normal"],
-                fontSize=10, textColor=CINZA_, alignment=1, spaceAfter=2)
-            t_sec = ParagraphStyle("tc", parent=styles["Heading2"],
-                fontSize=12, textColor=AZUL_, spaceBefore=16, spaceAfter=8, fontName="Helvetica-Bold")
-            t_bdy = ParagraphStyle("tb", parent=styles["Normal"],
-                fontSize=9, textColor=colors.HexColor("#374151"), leading=14)
+            t_tit=ParagraphStyle("tt",parent=styles["Heading1"],fontSize=18,textColor=AZ_,alignment=1,spaceAfter=4,fontName="Helvetica-Bold")
+            t_sub=ParagraphStyle("ts",parent=styles["Normal"],fontSize=9,textColor=CI_,alignment=1,spaceAfter=2)
+            t_sec=ParagraphStyle("tc",parent=styles["Heading2"],fontSize=11,textColor=AZ_,spaceBefore=14,spaceAfter=8,fontName="Helvetica-Bold")
+            t_bdy=ParagraphStyle("tb",parent=styles["Normal"],fontSize=8,textColor=colors.HexColor("#374151"),leading=13)
 
-            def hr(): return HRFlowable(width="100%", thickness=1.5, color=OURO_, spaceAfter=10)
+            def hr(): return HRFlowable(width="100%",thickness=1.5,color=OU_,spaceAfter=8)
 
-            def tbl(data, ws=None):
-                t = Table(data, colWidths=ws, repeatRows=1)
+            def tbl(data,ws=None):
+                t=Table(data,colWidths=ws,repeatRows=1)
                 t.setStyle(TableStyle([
-                    ("BACKGROUND",  (0,0),(-1,0),  AZUL_),
-                    ("TEXTCOLOR",   (0,0),(-1,0),  colors.white),
-                    ("FONTNAME",    (0,0),(-1,0),  "Helvetica-Bold"),
-                    ("FONTSIZE",    (0,0),(-1,-1), 8),
-                    ("ALIGN",       (0,0),(-1,-1), "LEFT"),
-                    ("VALIGN",      (0,0),(-1,-1), "MIDDLE"),
-                    ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.white, CLARO_]),
-                    ("GRID",        (0,0),(-1,-1), 0.4, colors.HexColor("#dde3ec")),
-                    ("TOPPADDING",  (0,0),(-1,-1), 6),
-                    ("BOTTOMPADDING",(0,0),(-1,-1),6),
-                    ("LEFTPADDING", (0,0),(-1,-1), 8),
-                    ("RIGHTPADDING",(0,0),(-1,-1), 8),
+                    ("BACKGROUND",(0,0),(-1,0),AZ_),("TEXTCOLOR",(0,0),(-1,0),colors.white),
+                    ("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),("FONTSIZE",(0,0),(-1,-1),8),
+                    ("ALIGN",(0,0),(-1,-1),"LEFT"),("VALIGN",(0,0),(-1,-1),"MIDDLE"),
+                    ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.white,CL_]),
+                    ("GRID",(0,0),(-1,-1),0.4,colors.HexColor("#dde3ec")),
+                    ("TOPPADDING",(0,0),(-1,-1),5),("BOTTOMPADDING",(0,0),(-1,-1),5),
+                    ("LEFTPADDING",(0,0),(-1,-1),7),("RIGHTPADDING",(0,0),(-1,-1),7),
                 ]))
                 return t
 
-            story = []
-            story += [Spacer(1,1.5*cm),
-                      Paragraph("Monitor de Investimentos Privados", t_tit),
-                      Paragraph("SEDECON · Prefeitura de Contagem · MG", t_sub),
-                      Paragraph(f"Gerado em {self.data_geracao.strftime('%d/%m/%Y %H:%M')} · Período: {r['periodo']}", t_sub),
-                      Spacer(1,.5*cm), hr(),
-                      Paragraph("Sumário Executivo", t_sec)]
+            story=[]
+            story+=[Spacer(1,1*cm),
+                    Paragraph("Monitor de Investimentos Privados",t_tit),
+                    Paragraph("SEDECON · Prefeitura de Contagem MG",t_sub),
+                    Paragraph(f"Gerado em {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",t_sub),
+                    Spacer(1,.4*cm),hr(),
+                    Paragraph("Sumário Executivo",t_sec)]
 
             story.append(tbl([
                 ["Indicador","Valor"],
-                ["Investimentos detectados",  str(r["investimentos_detectados"])],
-                ["Empresas monitoradas",      str(r["empresas_monitoradas"])],
-                ["Novos empregos",            f"{r['novos_empregos']:,}"],
-                ["Valor total anunciado",     f"R$ {r['valor_total']/1e6:.1f} milhões"],
-                ["Notícias relevantes",       str(r["noticias_relevantes"])],
-                ["Confiança média",           f"{r['confianca_media']}%"],
-            ], ws=[11*cm,5*cm]))
+                ["Notícias relevantes (recente)", str(r["noticias_relevantes"])],
+                ["Empregos detectados",           f"{r['novos_empregos']:,}"],
+                ["Valor monitorado",              f"R$ {r['valor_total']/1e6:.1f} M"],
+                ["Confiança média",               f"{r['confianca_media']}%"],
+                ["Investimentos histórico",        str(rh["total_investimentos"])],
+                ["Valor total histórico",          f"R$ {rh['total_valor']/1e9:.2f} bi"],
+                ["Empresas únicas",                str(rh["empresas_unicas"])],
+                ["Período histórico",              rh["periodo"]],
+            ],ws=[11*cm,5*cm]))
 
-            story += [Spacer(1,.4*cm), Paragraph("Fases", t_sec)]
-            fase_rows = [["Fase","Qtd."]]
-            for f,ns in sorted(fs.items()): fase_rows.append([f, str(len(ns))])
-            story.append(tbl(fase_rows, ws=[11*cm,5*cm]) if len(fase_rows)>1
-                         else Paragraph("Sem dados.", t_bdy))
-
-            story += [Spacer(1,.4*cm), Paragraph("Top Empresas", t_sec)]
-            rk_rows = [["#","Empresa","Invest.","R$ M","Empregos"]]
+            story+=[Spacer(1,.4*cm),Paragraph("Ranking de Empresas — Histórico",t_sec)]
+            rk_rows=[["#","Empresa","Invest.","Valor R$M"]]
             for i,e in enumerate(rk,1):
-                rk_rows.append([str(i), e["empresa"][:28],
-                                 str(e["investimentos"]),
-                                 f"{e['valor_total']/1e6:.1f}",
-                                 str(e["empregos"])])
-            story.append(tbl(rk_rows, ws=[1*cm,7.5*cm,2*cm,2.5*cm,2.5*cm]) if len(rk_rows)>1
-                         else Paragraph("Sem empresas.", t_bdy))
+                rk_rows.append([str(i),e["empresa"][:30],str(e["investimentos"]),f"{e['valor_total']/1e6:.1f}"])
+            story.append(tbl(rk_rows,ws=[1*cm,9*cm,2.5*cm,3*cm]) if len(rk_rows)>1 else Paragraph("Sem dados.",t_bdy))
 
-            story += [Spacer(1,.4*cm), Paragraph("Fontes", t_sec)]
+            story+=[Spacer(1,.4*cm),Paragraph("Investimentos por Ano",t_sec)]
+            pa_rows=[["Ano","Qtd.","Valor total"]]
+            for a,d in pa.items():
+                pa_rows.append([a,str(d["investimentos"]),f"R$ {d['valor']/1e9:.2f} bi"])
+            story.append(tbl(pa_rows,ws=[3*cm,4*cm,8.5*cm]) if len(pa_rows)>1 else Paragraph("Sem dados.",t_bdy))
+
+            story+=[Spacer(1,.4*cm),Paragraph("Fontes",t_sec)]
             tg=rg=0
             fn_rows=[["Fonte","Total","Relev.","Precisão","Confiança"]]
             for f in sorted(fn):
                 d=fn[f]; tg+=d["total"]; rg+=d["relevantes"]
-                fn_rows.append([f[:22], str(d["total"]), str(d["relevantes"]),
-                                 f"{d['taxa_precisao']}%", f"{d['confianca_media']}%"])
-            taxa=round(rg/tg*100 if tg else 0,1)
-            fn_rows.append(["TOTAL",str(tg),str(rg),f"{taxa}%","—"])
-            story.append(tbl(fn_rows, ws=[5.5*cm,2*cm,2*cm,2.5*cm,3.5*cm]))
+                fn_rows.append([f[:20],str(d["total"]),str(d["relevantes"]),f"{d['taxa']}%",f"{d['confianca']}%"])
+            fn_rows.append(["TOTAL",str(tg),str(rg),f"{round(rg/tg*100 if tg else 0,1)}%","—"])
+            story.append(tbl(fn_rows,ws=[5*cm,2*cm,2*cm,2.5*cm,4*cm]))
 
-            story += [Spacer(1,.4*cm), Paragraph("Confiança", t_sec)]
+            story+=[Spacer(1,.4*cm),Paragraph("Confiança dos Dados",t_sec)]
             story.append(tbl([
                 ["Nível","Percentual"],
                 ["Alta (≥ 80%)",   f"{cf['alta']}%"],
                 ["Média (50–80%)", f"{cf['media']}%"],
                 ["Baixa (< 50%)",  f"{cf['baixa']}%"],
-                ["Média geral",    f"{cf['media_geral']}%"],
-            ], ws=[11*cm,5*cm]))
+                ["Média geral",    f"{cf['mg']}%"],
+            ],ws=[11*cm,5*cm]))
 
-            if qr:
-                story += [PageBreak(), Paragraph("Quase Relevantes", t_sec),
-                          Paragraph("Pontuação ≥ 30 mas sem menção explícita a Contagem.", t_bdy),
-                          Spacer(1,.3*cm)]
-                for n in qr[:8]:
-                    story += [Paragraph(f"<b>• {n['titulo']}</b>", t_bdy),
-                              Paragraph(f"&nbsp;&nbsp;Empresa(s): {', '.join(n['empresas']) or '—'} | Fase: {n['fase']} | Pontos: {n['pontuacao']}", t_bdy),
-                              Paragraph(f"&nbsp;&nbsp;URL: {n['url']}", t_bdy),
-                              Spacer(1,.15*cm)]
-
-            story += [hr(), Paragraph("Critérios de relevância", t_sec),
-                      Paragraph("Pontuação mínima de 30 pontos · menção explícita a Contagem · empresa identificada na lista monitorada.", t_bdy)]
+            story+=[hr(),Paragraph("Critérios de relevância",t_sec),
+                    Paragraph("Pontuação mínima de 30 pontos · menção explícita a Contagem · empresa identificada na lista monitorada.",t_bdy)]
 
             doc.build(story)
             return nome
         except Exception as e:
             import traceback; traceback.print_exc()
-            print(f"  ❌ PDF: {e}"); return None
+            print(f"  PDF erro: {e}"); return None
 
-    # ── salvar ───────────────────────────────────
+    # ── SALVAR ────────────────────────────────────────
 
     def salvar_txt(self):
-        p = self.pasta / f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.txt"
-        p.write_text(self.gerar_relatorio_texto(), encoding="utf-8"); return p
+        p=self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.txt"
+        p.write_text(self.gerar_relatorio_texto(),encoding="utf-8"); return p
 
     def salvar_json(self):
-        dados = {
-            "data_geracao":      self.data_geracao.isoformat(),
-            "resumo_executivo":  self.calcular_resumo_executivo(),
-            "investimentos_por_fase": {k:len(v) for k,v in self.investimentos_por_fase().items()},
-            "ranking_empresas":  self.ranking_empresas(),
-            "evolucao_mensal":   self.evolucao_mensal(),
-            "analise_por_fonte": self.analise_por_fonte(),
-            "quase_relevantes":  self.noticias_quase_relevantes(),
-            "analise_confianca": self.analise_confianca(),
+        dados={
+            "data_geracao":       self.data_geracao.isoformat(),
+            "resumo_recente":     self.resumo_recente(),
+            "resumo_historico":   self.resumo_historico(),
+            "ranking_historico":  self.ranking_historico(),
+            "por_ano_historico":  self.por_ano_historico(),
+            "fases_recentes":     self.fases_recentes(),
+            "fontes_recentes":    self.fontes_recentes(),
+            "quase_relevantes":   self.quase_relevantes(),
+            "confianca_recente":  self.confianca_recente(),
         }
-        p = self.pasta / f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.json"
-        p.write_text(json.dumps(dados, indent=4, ensure_ascii=False), encoding="utf-8"); return p
+        p=self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.json"
+        p.write_text(json.dumps(dados,indent=4,ensure_ascii=False),encoding="utf-8"); return p
 
     def salvar_html(self):
-        p = self.pasta / f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.html"
-        p.write_text(html, encoding="utf-8")
-        return p
+        p=self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.html"
+        p.write_text(self.gerar_html(),encoding="utf-8"); return p
 
-    # ── gerar tudo ───────────────────────────────
+    # ── GERAR TODOS ───────────────────────────────────
 
     def gerar_todos(self):
         print("\n"+"="*60+"\n  GERANDO RELATÓRIOS\n"+"="*60)
-        gerados = []
-        for nome, fn in [("TXT",self.salvar_txt),("JSON",self.salvar_json),
-                         ("HTML",self.salvar_html),("PDF",self.gerar_pdf)]:
+        gerados=[]
+        for nome,fn in [("TXT",self.salvar_txt),("JSON",self.salvar_json),
+                        ("HTML",self.salvar_html),("PDF",self.gerar_pdf)]:
             try:
-                p = fn()
+                p=fn()
                 if p: print(f"  ✓ {nome}: {p}"); gerados.append(p)
-            except Exception as e:
-                print(f"  ❌ {nome}: {e}")
-        try:
-            gerados += self.gerar_graficos()
-        except Exception as e:
-            print(f"  ❌ Gráficos: {e}")
+            except Exception as e: print(f"  ✗ {nome}: {e}")
+        try: gerados+=self.gerar_graficos()
+        except Exception as e: print(f"  ✗ Gráficos: {e}")
         print("="*60+f"\n  {len(gerados)} arquivo(s) gerado(s).\n"+"="*60+"\n")
         return gerados
 
@@ -1076,6 +790,8 @@ document.addEventListener('DOMContentLoaded',()=>{{
         print(self.gerar_relatorio_texto())
 
 
-# ─────────────────────────────────────────────────
 if __name__ == "__main__":
     GeradorRelatorio().gerar_todos()
+
+
+ 
