@@ -467,49 +467,45 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 <!-- ABA RESUMO -->
 <div id="resumo" class="painel on">
 
-    <!-- =============================== -->
-    <!-- RESUMO EXECUTIVO -->
-    <!-- =============================== -->
-
     <div class="sec">
 
         <div class="sec-title">
-            Resumo Executivo
+            Sumário Executivo
         </div>
 
-        <div class="ncard">
+        <table>
 
-            <p style="line-height:1.8">
+            <tr>
+                <th>Indicador</th>
+                <th>Valor</th>
+            </tr>
 
-                O Monitor identificou
+            <tr>
+                <td>Investimentos detectados</td>
+                <td>{r["investimentos_detectados"]}</td>
+            </tr>
 
-                <b>{r['investimentos_detectados']}</b>
-                investimentos privados envolvendo
+            <tr>
+                <td>Empresas monitoradas</td>
+                <td>{r["empresas_monitoradas"]}</td>
+            </tr>
 
-                <b>{r['empresas_monitoradas']}</b>
-                empresas.
+            <tr>
+                <td>Empregos gerados</td>
+                <td>{r["novos_empregos"]}</td>
+            </tr>
 
-                <br><br>
+            <tr>
+                <td>Valor anunciado</td>
+                <td>R$ {vm:.1f} milhões</td>
+            </tr>
 
-                O volume financeiro identificado
-                ultrapassa
+            <tr>
+                <td>Confiança média</td>
+                <td>{r["confianca_media"]}%</td>
+            </tr>
 
-                <b>R$ {vm:.0f} milhões</b>
-
-                com potencial de geração de
-
-                <b>{r['novos_empregos']:,}</b>
-                empregos.
-
-                <br><br>
-
-                A confiança média dos dados é de
-
-                <b>{r['confianca_media']}%</b>.
-
-            </p>
-
-        </div>
+        </table>
 
     </div>
 
