@@ -1060,13 +1060,11 @@ document.addEventListener('DOMContentLoaded',()=>{{
 
         html = self.gerar_html()
 
-        print("=" * 60)
-        print("TESTE DO HTML")
-        print("=" * 60)
-        print("Contém 'Superintendência'? ", "Superintendência" in html)
-        print("=" * 60)
+        print("===== TESTE HTML =====")
+        print(html[:500])
+        print("======================")
 
-        p.write_text(html, encoding="utf-8")
+p.write_text(html, encoding="utf-8")
         return p
 
     # ── gerar tudo ───────────────────────────────
