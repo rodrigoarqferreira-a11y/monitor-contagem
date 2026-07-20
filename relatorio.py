@@ -720,7 +720,7 @@ function aba(id, btn){{
 
     }}
 
-}]
+}}
 
 // ── badge fase ─────────────────────────────────────────────
 function bdgFase(f){{
