@@ -466,7 +466,7 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 
     <div class="titulo-area">
 
-        <img src="dados/logo secretaria sedecon.png"
+        <img src="https://rodrigoarqferreira-a11y.github.io/monitor-contagem/dados/logo%20secretaria%20sedecon.png"
              class="logo-sedecon">
 
         <div>
