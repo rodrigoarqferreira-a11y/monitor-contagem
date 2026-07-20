@@ -12,6 +12,10 @@ from relatorio import GeradorRelatorio
 from banco import Banco
 from datetime import datetime
 
+import relatorio
+
+print("RELATORIO:", relatorio.__file__)
+
 
 def main():
 
