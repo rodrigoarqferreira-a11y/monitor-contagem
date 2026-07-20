@@ -11,7 +11,7 @@ import statistics
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
-print("########## RELATORIO.PY ALTERADO ##########")
+
 from banco import Banco
 
 # ─────────────────────────────────────────────────
