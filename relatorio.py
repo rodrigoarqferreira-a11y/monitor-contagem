@@ -507,6 +507,38 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 
         </table>
 
+    <div class="sec">
+
+        <div class="sec-title">
+            Ranking das Empresas
+        </div>
+
+        <div class="tbl-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+                        <th>Empresa</th>
+                        <th>Investimentos</th>
+                        <th>Valor</th>
+                        <th>Empregos</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tb-rk">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
     </div>
 
     <!-- =============================== -->
