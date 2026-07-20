@@ -507,6 +507,8 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
 
         </table>
 
+        </div>
+
     <div class="sec">
 
         <div class="sec-title">
@@ -536,10 +538,9 @@ footer{{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
                 </tbody>
 
             </table>
-
         </div>
+</div>
 
-    </div>
 
     <!-- =============================== -->
     <!-- GRÁFICOS -->
