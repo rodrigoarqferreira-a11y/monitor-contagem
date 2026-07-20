@@ -699,7 +699,7 @@ const CONF_D   = {{alta:{cf['alta']},media:{cf['media']},baixa:{cf['baixa']},mg:
 const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
 
 // ── abas ───────────────────────────────────────────────────
-function aba(id, btn){{
+function aba(id, btn){
 
     document.querySelectorAll(".painel")
         .forEach(p => p.classList.remove("on"));
@@ -711,6 +711,15 @@ function aba(id, btn){{
         .classList.add("on");
 
     btn.classList.add("on");
+
+    if(id==="resumo"){
+
+        renderGraf();
+
+        renderRanking();
+
+    }
+
 }}
 
 // ── badge fase ─────────────────────────────────────────────
@@ -843,13 +852,19 @@ function renderGraf(){{
 }}
 
 // ── init ───────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded',()=>{{
-  popSelect('r-emp', NOTICIAS.flatMap(n=>n.empresas||[]));
-  popSelect('r-fase', NOTICIAS.map(n=>n.fase).filter(Boolean));
-  popSelect('h-emp', TODAS.flatMap(n=>n.empresas||[]));
-  popSelect('h-fase', TODAS.map(n=>n.fase).filter(Boolean));
-  renderRecentes(); renderHist(); renderQuase(); renderRanking();
-}});
+document.addEventListener('DOMContentLoaded',()=>{
+
+    popSelect('r-emp', NOTICIAS.flatMap(n=>n.empresas||[]));
+    popSelect('r-fase', NOTICIAS.map(n=>n.fase).filter(Boolean));
+
+    popSelect('h-emp', TODAS.flatMap(n=>n.empresas||[]));
+    popSelect('h-fase', TODAS.map(n=>n.fase).filter(Boolean));
+
+    renderRanking();
+
+    renderGraf();
+
+});
 
 </script>
 </body>
