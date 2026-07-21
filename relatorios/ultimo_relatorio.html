@@ -6,573 +6,334 @@
 <title>Monitor de Investimentos — Contagem MG</title>
 <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 <style>
-:root{
-  --azul:#1a3a5c;--ouro:#e8a020;--bg:#f0f4fa;--branco:#fff;
-  --cinza:#6b7280;--borda:#dde3ec;--verde:#16a34a;--text:#1f2937;
-}
+:root{--az:#1a3a5c;--ou:#e8a020;--bg:#f0f4fa;--br:#fff;--ci:#6b7280;--bo:#dde3ec;--vd:#16a34a;--tx:#1f2937}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
-
-/* HEADER */
-.hdr {
-    background: #037482; /* Corrigido: removido o 'var()' inválido */
-    color: white;
-    padding: 35px 40px;
-    text-align: center;
-    position: relative; /* Mantido: essencial para fixar a logo aqui dentro */
-}
-
-.titulo-area{
-    display:block;
-    align-items:center;
-    justify-content:center;
-    gap:25px;
-}
-
-.logo-sedecon {
-    height: 100px;
-    width: auto;
-    position: absolute; /* Tira a logo do fluxo para não empurrar o título */
-    left: 40px;         /* Alinha com o padding lateral do seu .hdr */
-    top: 50%;           /* Move até a metade da altura */
-    transform: translateY(-50%); /* Centraliza verticalmente de forma perfeita */
-}
-
-.titulo-monitor{
-    margin:0;
-    font-size:3rem;
-    font-weight:900;
-    letter-spacing:1px;
-}
-
-.subtitulo-monitor{
-    margin-top:6px;
-    font-size:1rem;
-    color:rgba(255,255,255,0.85);
-}
-
-/* CARDS */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-        gap:14px;padding:24px 36px 0}
-.card{background:var(--branco);border:1px solid var(--borda);border-radius:10px;
-       padding:18px;text-align:center;position:relative;overflow:hidden}
-.card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--azul)}
-.card.ouro::before{background:var(--ouro)}
-.card.verde::before{background:var(--verde)}
-.card-val{font-size:1.9rem;font-weight:800;color:var(--azul);line-height:1;margin-bottom:5px}
-.card-lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.6px;color:var(--cinza);font-weight:600}
-
-/* ABAS */
-.tabs-wrap{padding:24px 36px 0}
-.tabs{display:flex;gap:3px;border-bottom:2px solid var(--borda)}
-.tab{padding:9px 20px;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;
-      background:none;font-size:.88rem;font-weight:600;color:var(--cinza);cursor:pointer;
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:15px}
+.hdr{background:var(--az);color:#fff;padding:22px 36px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.hdr-l h1{font-size:1.35rem;font-weight:700}.hdr-l p{font-size:.8rem;opacity:.7;margin-top:3px}
+.hdr-r img{height:60px;object-fit:contain}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;padding:22px 36px 0}
+.card{background:var(--br);border:1px solid var(--bo);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--az)}
+.card.ou::before{background:var(--ou)}.card.vd::before{background:var(--vd)}
+.cval{font-size:1.7rem;font-weight:800;color:var(--az);line-height:1;margin-bottom:4px}
+.clbl{font-size:.67rem;text-transform:uppercase;letter-spacing:.6px;color:var(--ci);font-weight:600}
+.tabs-wrap{padding:22px 36px 0}
+.tabs{display:flex;gap:3px;border-bottom:2px solid var(--bo);flex-wrap:wrap}
+.tab{padding:9px 18px;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;
+      background:none;font-size:.85rem;font-weight:600;color:var(--ci);cursor:pointer;
       position:relative;bottom:-2px;transition:all .15s}
-.tab:hover{background:var(--bg);color:var(--azul)}
-.tab.on{background:var(--branco);color:var(--azul);border-color:var(--borda);border-bottom-color:var(--branco)}
-
-/* PAINÉIS */
-.painel{
-    display:none;
-    padding:24px 36px;
-}
-
-.painel.on{
-    display:block;
-}
-
-/* SEÇÃO */
-.sec{margin-bottom:28px}
-.sec-title{font-size:.95rem;font-weight:700;color:var(--azul);padding-bottom:8px;
-            border-bottom:2px solid var(--ouro);margin-bottom:14px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-
-/* FILTROS */
-.filtros{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
-.filtros label{font-size:.8rem;font-weight:600;color:var(--cinza)}
-.filtros select,.filtros input{padding:6px 11px;border:1px solid var(--borda);border-radius:6px;
-  font-size:.83rem;background:var(--branco);color:var(--text);min-width:150px}
-.btn-x{padding:6px 13px;background:var(--azul);color:#fff;border:none;border-radius:6px;
-         font-size:.8rem;font-weight:600;cursor:pointer;transition:opacity .15s}
-.btn-x:hover{opacity:.85}
-
-/* TABELA */
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:.86rem}
-th{background:var(--azul);color:#fff;padding:10px 13px;text-align:left;font-size:.78rem;
-    text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
-td{padding:9px 13px;border-bottom:1px solid var(--borda);vertical-align:top}
+.tab:hover{background:var(--bg);color:var(--az)}
+.tab.on{background:var(--br);color:var(--az);border-color:var(--bo);border-bottom-color:var(--br)}
+.pan{display:none;padding:22px 36px}.pan.on{display:block}
+.sec{margin-bottom:26px}
+.stit{font-size:.93rem;font-weight:700;color:var(--az);padding-bottom:8px;border-bottom:2px solid var(--ou);margin-bottom:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.sbox{background:var(--br);border:1px solid var(--bo);border-radius:10px;padding:18px;text-align:center}
+.sval{font-size:1.9rem;font-weight:800;color:var(--az);line-height:1}
+.slbl{font-size:.7rem;color:var(--ci);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.flt{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.flt label{font-size:.78rem;font-weight:600;color:var(--ci)}
+.flt select,.flt input{padding:6px 10px;border:1px solid var(--bo);border-radius:6px;font-size:.82rem;background:var(--br);color:var(--tx);min-width:140px}
+.btnx{padding:6px 12px;background:var(--az);color:#fff;border:none;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer}
+.btnx:hover{opacity:.85}
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{background:var(--az);color:#fff;padding:9px 12px;text-align:left;font-size:.76rem;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--bo);vertical-align:top}
 tr:hover td{background:#eef2fa}
-.tr-total td{background:var(--bg);font-weight:600}
-
-/* CARD NOTICIA */
-.ncard{background:var(--branco);border:1px solid var(--borda);border-radius:8px;
-        padding:14px;margin-bottom:10px;border-left:4px solid var(--azul)}
-.ncard.quase{border-left-color:var(--ouro)}
-.ncard-title{font-weight:700;font-size:.93rem;color:var(--azul);margin-bottom:5px;line-height:1.4}
-.ncard-meta{font-size:.76rem;color:var(--cinza);display:flex;gap:10px;flex-wrap:wrap;margin-bottom:5px}
-.ncard-url{font-size:.76rem;color:var(--azul);text-decoration:none;word-break:break-all}
-.ncard-url:hover{text-decoration:underline}
-
-/* BADGE */
-.bdg{display:inline-block;padding:2px 7px;border-radius:11px;font-size:.7rem;font-weight:700;text-transform:uppercase}
-.bdg-v{background:#dcfce7;color:#15803d}.bdg-o{background:#fef9c3;color:#a16207}
-.bdg-c{background:#f1f5f9;color:#475569}.bdg-a{background:#dbeafe;color:#1d4ed8}
-
-/* GRÁFICO */
-.graf{height:300px;background:var(--branco);border:1px solid var(--borda);border-radius:8px;margin-bottom:16px}
-
-/* VAZIO */
-.vazio{text-align:center;padding:36px;color:var(--cinza);font-style:italic}
-
-footer{background:var(--azul);color:rgba(255,255,255,.55);text-align:center;
-        padding:16px;font-size:.76rem;margin-top:16px}
-
-@media(max-width:768px){
-  .hdr,.cards,.tabs-wrap,.aba{padding-left:14px;padding-right:14px}
-  .grid2{grid-template-columns:1fr}
-}
+.tr-tot td{background:var(--bg);font-weight:600}
+.nc{background:var(--br);border:1px solid var(--bo);border-radius:8px;padding:13px;margin-bottom:9px;border-left:4px solid var(--az)}
+.nc.q{border-left-color:var(--ou)}
+.nt{font-weight:700;font-size:.9rem;color:var(--az);margin-bottom:4px;line-height:1.4}
+.nm{font-size:.74rem;color:var(--ci);display:flex;gap:9px;flex-wrap:wrap;margin-bottom:4px}
+.nu{font-size:.74rem;color:var(--az);text-decoration:none;word-break:break-all}
+.nu:hover{text-decoration:underline}
+.bdg{display:inline-block;padding:2px 7px;border-radius:11px;font-size:.68rem;font-weight:700;text-transform:uppercase}
+.bv{background:#dcfce7;color:#15803d}.bo2{background:#fef9c3;color:#a16207}
+.bc{background:#f1f5f9;color:#475569}.ba{background:#dbeafe;color:#1d4ed8}
+.graf{height:300px;background:var(--br);border:1px solid var(--bo);border-radius:8px;margin-bottom:14px}
+.vz{text-align:center;padding:32px;color:var(--ci);font-style:italic}
+footer{background:var(--az);color:rgba(255,255,255,.5);text-align:center;padding:14px;font-size:.74rem;margin-top:14px}
+@media(max-width:768px){.hdr,.cards,.tabs-wrap,.pan{padding-left:14px;padding-right:14px}.g2,.g3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-
-    <div class="titulo-area">
-
-        <img src="https://rodrigoarqferreira-a11y.github.io/monitor-contagem/dados/logo%20secretaria%20sedecon.png"
-             class="logo-sedecon">
-
-        <div>
-
-            <h1 class="titulo-monitor">
-                MONITOR DE INVESTIMENTOS PRIVADOS
-            </h1>
-
-            <p>
-                SEDECON · Prefeitura de Contagem MG
-            </p>
-
-            <p class="subtitulo-monitor">
-                Superintendência de Inovação e Informações Estratégicas
-            </p>
-
-        </div>
-
-    </div>
-</div>
-
-<div class="cards">
-  <div class="card"><div class="card-val">60</div><div class="card-lbl">Investimentos</div></div>
-  <div class="card"><div class="card-val">60</div><div class="card-lbl">Empresas</div></div>
-  <div class="card ouro"><div class="card-val">0</div><div class="card-lbl">Empregos gerados</div></div>
-  <div class="card ouro"><div class="card-val">R$ 0M</div><div class="card-lbl">Valor total</div></div>
-  <div class="card verde"><div class="card-val">80%</div><div class="card-lbl">Confiança média</div></div>
-  <div class="card"><div class="card-val">1</div><div class="card-lbl">Notícias relevantes</div></div>
-</div>
-
-<!-- ABA RESUMO -->
-<div id="resumo" class="painel on">
-
-    <div class="sec">
-
-        <div class="sec-title">
-            Sumário Executivo
-        </div>
-
-        <table>
-
-            <tr>
-                <th>Indicador</th>
-                <th>Valor</th>
-            </tr>
-
-            <tr>
-                <td>Investimentos detectados</td>
-                <td>60</td>
-            </tr>
-
-            <tr>
-                <td>Empresas monitoradas</td>
-                <td>60</td>
-            </tr>
-
-            <tr>
-                <td>Empregos gerados</td>
-                <td>0</td>
-            </tr>
-
-            <tr>
-                <td>Valor anunciado</td>
-                <td>R$ 0.0 milhões</td>
-            </tr>
-
-            <tr>
-                <td>Confiança média</td>
-                <td>80%</td>
-            </tr>
-
-        </table>
-
-        </div>
-
-    <div class="sec">
-
-        <div class="sec-title">
-            Ranking das Empresas
-        </div>
-
-        <div class="tbl-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>#</th>
-                        <th>Empresa</th>
-                        <th>Investimentos</th>
-                        <th>Valor</th>
-                        <th>Empregos</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tb-rk">
-
-                </tbody>
-
-            </table>
-        </div>
-</div>
-
-
-    <!-- =============================== -->
-    <!-- GRÁFICOS -->
-    <!-- =============================== -->
-
-    <div class="sec">
-
-        <div class="sec-title">
-
-            Panorama Geral
-
-        </div>
-
-        <div class="grid2">
-
-            <div id="g-fases" class="graf"></div>
-
-            <div id="g-emp" class="graf"></div>
-
-        </div>
-
-    </div>
-
-    <!-- =============================== -->
-    <!-- EVOLUÇÃO -->
-    <!-- =============================== -->
-
-    <div class="sec">
-
-        <div class="sec-title">
-
-            Evolução dos Investimentos
-
-        </div>
-
-        <div id="g-evol" class="graf"></div>
-
-    </div>
-
-    <!-- =============================== -->
-    <!-- RANKING -->
-    <!-- =============================== -->
-
-    <div class="sec">
-
-        <div class="sec-title">
-
-            Ranking das Empresas
-
-        </div>
-
-        <div class="tbl-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>#</th>
-
-                        <th>Empresa</th>
-
-                        <th>Investimentos</th>
-
-                        <th>Valor</th>
-
-                        <th>Empregos</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tb-rk">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-    <!-- =============================== -->
-    <!-- QUASE RELEVANTES -->
-    <!-- =============================== -->
-
-    <div class="sec">
-
-        <div class="sec-title">
-
-            Notícias Quase Relevantes
-
-        </div>
-
-        <div id="lista-quase">
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- ABA HISTORICO -->
-<div id="historico" class="painel">
-    <h2>Histórico de Investimentos</h2>
-
-    <p>
-        Em breve serão exibidos os gráficos e ranking de empresas.
-    </p>
-</div>
-
-<!-- ABA NOTÍCIAS -->
-<div id="noticias" class="painel">
-    <h2>Notícias Monitoradas</h2>
-
-      <div class="sec">
-          <div class="sec-title">Desempenho por fonte</div>
-
-          <div class="tbl-wrap">
-              <table>
-                  <thead>
-                      <tr>
-                          <th>Fonte</th>
-                          <th>Total</th>
-                          <th>Relevantes</th>
-                          <th>Precisão</th>
-                          <th>Confiança</th>
-                      </tr>
-                  </thead>
-
-                  <tbody>
-                      <tr><td>Portal Contagem</td><td>1</td><td>1</td><td>100.0%</td><td>80%</td></tr><tr class="tr-total"><td><b>TOTAL</b></td><td><b>1</b></td><td><b>1</b></td><td><b>100.0%</b></td><td>—</td></tr>
-                  </tbody>
-
-              </table>
-          </div>
-
-      </div>
-
+  <div class="hdr-l">
+    <h1>📊 Monitor de Investimentos Privados</h1>
+    <p>SEDECON · Superintendência de Inovação e Informações Estratégicas · 21/07/2026 11:49</p>
   </div>
-
+  <div class="hdr-r">
+    <img src="../dados/logo secretaria sedecon.png" alt="SEDECON">
+  </div>
 </div>
 
-<footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · 20/07/2026 17:36</footer>
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab on"  onclick="aba('recente',this)">🔔 Monitoramento Recente</button>
+    <button class="tab"     onclick="aba('historico',this)">📋 Histórico 2021–2026</button>
+    <button class="tab"     onclick="aba('graficos',this)">📈 Gráficos</button>
+    <button class="tab"     onclick="aba('todas',this)">🗂 Todas as Notícias</button>
+    <button class="tab"     onclick="aba('fontes',this)">📰 Fontes</button>
+    <button class="tab"     onclick="aba('quase',this)">🔍 Quase Relevantes</button>
+  </div>
+</div>
+
+<!-- RECENTE -->
+<div id="p-recente" class="pan on">
+  <div class="g3" style="margin-bottom:20px">
+    <div class="sbox"><div class="sval">1</div><div class="slbl">Notícias relevantes</div></div>
+    <div class="sbox"><div class="sval">0</div><div class="slbl">Empregos detectados</div></div>
+    <div class="sbox"><div class="sval">R$ 0M</div><div class="slbl">Valor monitorado</div></div>
+  </div>
+  <div class="flt">
+    <label>Empresa</label><select id="r-emp" onchange="renderRec()"><option value="">Todas</option></select>
+    <label>Fase</label><select id="r-fas" onchange="renderRec()"><option value="">Todas</option></select>
+    <label>Buscar</label><input id="r-txt" placeholder="Palavra no título..." oninput="renderRec()">
+    <button class="btnx" onclick="limpRec()">✕ Limpar</button>
+  </div>
+  <div id="lst-rec"></div>
+</div>
+
+<!-- HISTÓRICO -->
+<div id="p-historico" class="pan">
+  <div class="g3" style="margin-bottom:20px">
+    <div class="sbox"><div class="sval">59</div><div class="slbl">Investimentos registrados</div></div>
+    <div class="sbox"><div class="sval">R$ 10.3bi</div><div class="slbl">Valor total 2021–2026</div></div>
+    <div class="sbox"><div class="sval">59</div><div class="slbl">Empresas únicas</div></div>
+  </div>
+  <div class="g2">
+    <div class="sec">
+      <div class="stit">🏆 Ranking por valor investido</div>
+      <div class="twrap"><table>
+        <thead><tr><th>#</th><th>Empresa</th><th>Invest.</th><th>Valor total</th></tr></thead>
+        <tbody id="tb-rk"></tbody>
+      </table></div>
+    </div>
+    <div class="sec">
+      <div class="stit">📅 Por ano</div>
+      <div class="twrap"><table>
+        <thead><tr><th>Ano</th><th>Qtd.</th><th>Valor total</th></tr></thead>
+        <tbody id="tb-ano"></tbody>
+      </table></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="stit">📄 Lista completa de investimentos</div>
+    <div class="flt">
+      <label>Empresa</label><select id="h-emp" onchange="renderHist()"><option value="">Todas</option></select>
+      <label>Ano</label><select id="h-ano" onchange="renderHist()"><option value="">Todos</option></select>
+      <label>Buscar</label><input id="h-txt" placeholder="Empresa ou descrição..." oninput="renderHist()">
+      <button class="btnx" onclick="limpHist()">✕ Limpar</button>
+    </div>
+    <div class="twrap"><table>
+      <thead><tr><th>Ano</th><th>Empresa</th><th>Valor</th><th>Empregos</th><th>Fase</th><th>Fonte</th></tr></thead>
+      <tbody id="tb-hist"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- GRÁFICOS -->
+<div id="p-graficos" class="pan">
+  <div class="g2">
+    <div class="sec"><div class="stit">🏆 Top empresas por valor (histórico)</div><div class="graf" id="g-rk"></div></div>
+    <div class="sec"><div class="stit">📅 Investimentos por ano</div><div class="graf" id="g-ano"></div></div>
+  </div>
+  <div class="g2">
+    <div class="sec"><div class="stit">🔔 Notícias recentes por fase</div><div class="graf" id="g-fas"></div></div>
+    <div class="sec"><div class="stit">✅ Confiança dos dados recentes</div><div class="graf" id="g-cf"></div></div>
+  </div>
+</div>
+
+<!-- TODAS -->
+<div id="p-todas" class="pan">
+  <div class="flt">
+    <label>Empresa</label><select id="a-emp" onchange="renderTodas()"><option value="">Todas</option></select>
+    <label>Fase</label><select id="a-fas" onchange="renderTodas()"><option value="">Todas</option></select>
+    <label>Relevância</label>
+    <select id="a-rel" onchange="renderTodas()">
+      <option value="">Todas</option><option value="s">Relevantes</option><option value="n">Descartadas</option>
+    </select>
+    <label>Buscar</label><input id="a-txt" placeholder="Palavra no título..." oninput="renderTodas()">
+    <button class="btnx" onclick="limpTodas()">✕ Limpar</button>
+  </div>
+  <div id="lst-todas"></div>
+</div>
+
+<!-- FONTES -->
+<div id="p-fontes" class="pan">
+  <div class="sec">
+    <div class="stit">📰 Desempenho por fonte</div>
+    <div class="twrap"><table>
+      <thead><tr><th>Fonte</th><th>Total</th><th>Relevantes</th><th>Precisão</th><th>Confiança</th></tr></thead>
+      <tbody><tr><td>Portal Contagem</td><td>1</td><td>1</td><td>100.0%</td><td>80%</td></tr><tr class="tr-tot"><td><b>TOTAL</b></td><td><b>1</b></td><td><b>1</b></td><td><b>100.0%</b></td><td>—</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- QUASE -->
+<div id="p-quase" class="pan">
+  <div class="sec">
+    <div class="stit">🔍 Boa pontuação, mas fora de Contagem</div>
+    <p style="color:var(--ci);font-size:.82rem;margin-bottom:14px">Pontuação ≥ 30, empresa monitorada identificada, mas sem menção explícita a Contagem.</p>
+    <div id="lst-quase"></div>
+  </div>
+</div>
+
+<footer>Monitor de Investimentos Privados · SEDECON · Prefeitura de Contagem MG · 21/07/2026 11:49</footer>
 
 <script>
-// ── dados ──────────────────────────────────────────────────
-const NOTICIAS = [{"titulo": "Unidade do Cefet em Contagem será a...", "texto": "O município de Contagem receberá seu primeiro campus de uma universidade federal com a transformação do Centro Federal de Educação Tecnológica de Minas Gerais (Cefet MG) em Universidade Federal Tecnológica. A conquista foi possível com a aprovação pelo Senado Federal do PL nº 5.102/2023.\n\nNa manhã desta sexta-feira (17/7), o prefeito Ricardo Faria fez uma visita ao Cefet Contagem para fortalecer parcerias e aproximar as instituições. Ricardo foi recebido pela diretora-geral do Cefet Minas, Carla Simone Chamon, e destacou a conquista da universidade para a cidade.\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\nRicardo reforçou a parceria para auxiliar na construção do ginásio poliesportivo, em andamento, e outras ações que possam melhorar o acesso de estudantes e trabalhadores à unidade.\n\nDurante a visita, o prefeito conheceu os projetos de expansão da unidade e reiterou a parceria para construção do ginásio do Campus Contagem - Fotos: Luci Sallum/PMC\n\nA professora Carla Chamon agradeceu o apoio da Prefeitura de Contagem nas ações da unidade, que atende cerca de 500 estudantes com cursos técnicos e de graduação. “Agradecemos porque, na verdade, o que fazemos aqui é para a cidade. É para formar a nossa juventude, para termos um país melhor. É nisso que a gente acredita”.\n\nO Cefet Contagem possui os cursos técnicos de Controle Ambiental, Informática e Eletroeletrônica, em tempo integral. Também possui o curso de graduação em Engenharia Química.\n\nOutro ponto destacado pela diretora foi o apoio da Prefeitura ao projeto que transforma o Cefet Minas em universidade federal. “Construímos uma carta de apoio com os prefeitos que possuem unidades do Cefet em suas cidades e Contagem sempre se colocou ao nosso lado”.\n\nEstiveram presentes na visita o secretário de Educação, Lindomar Diamantino; a presidenta da Fundação de Ensino de Contagem (Funec), Renata Laureano; o administrador da Regional Ressaca, José Carlos (Zezé); representantes da Secretaria de Meio Ambiente e Desenvolvimento Sustentável (Semad); e servidores do Cefet Contagem.\n\nO Projeto de Lei nº 5.102/2023, de autoria do deputado federal Patrus Ananias, transformou os Cefets de Minas Gerais e do Rio de Janeiro em Universidades Federais Tecnológicas. Aprovado no Congresso Nacional, o PL segue para sanção do presidente Lula, o que deve ocorrer até o dia 30 deste mês.\n\nMinas Gerais possui dez unidades do Cefet espalhadas pelo estado, todas elas serão transformadas em Universidade Federal Tecnológica.\n\nClique aqui e acesse a galeria de fotos.", "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84305/unidade-do-cefet-em-contagem-sera-a-primeira-universidade-federal-da-cidade", "fonte": "Portal Contagem", "data": "2026-07-19", "empresas": ["patrus transportes"], "valores": [], "empregos": [], "pontuacao": 45, "relevante": true, "mencionou_contagem": true, "fase": "Licenciamento", "status": "Em construção", "confianca": 80}];
-const TODAS    = [{"titulo": "Unidade do Cefet em Contagem será a...", "texto": "O município de Contagem receberá seu primeiro campus de uma universidade federal com a transformação do Centro Federal de Educação Tecnológica de Minas Gerais (Cefet MG) em Universidade Federal Tecnológica. A conquista foi possível com a aprovação pelo Senado Federal do PL nº 5.102/2023.\n\nNa manhã desta sexta-feira (17/7), o prefeito Ricardo Faria fez uma visita ao Cefet Contagem para fortalecer parcerias e aproximar as instituições. Ricardo foi recebido pela diretora-geral do Cefet Minas, Carla Simone Chamon, e destacou a conquista da universidade para a cidade.\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\nRicardo reforçou a parceria para auxiliar na construção do ginásio poliesportivo, em andamento, e outras ações que possam melhorar o acesso de estudantes e trabalhadores à unidade.\n\nDurante a visita, o prefeito conheceu os projetos de expansão da unidade e reiterou a parceria para construção do ginásio do Campus Contagem - Fotos: Luci Sallum/PMC\n\nA professora Carla Chamon agradeceu o apoio da Prefeitura de Contagem nas ações da unidade, que atende cerca de 500 estudantes com cursos técnicos e de graduação. “Agradecemos porque, na verdade, o que fazemos aqui é para a cidade. É para formar a nossa juventude, para termos um país melhor. É nisso que a gente acredita”.\n\nO Cefet Contagem possui os cursos técnicos de Controle Ambiental, Informática e Eletroeletrônica, em tempo integral. Também possui o curso de graduação em Engenharia Química.\n\nOutro ponto destacado pela diretora foi o apoio da Prefeitura ao projeto que transforma o Cefet Minas em universidade federal. “Construímos uma carta de apoio com os prefeitos que possuem unidades do Cefet em suas cidades e Contagem sempre se colocou ao nosso lado”.\n\nEstiveram presentes na visita o secretário de Educação, Lindomar Diamantino; a presidenta da Fundação de Ensino de Contagem (Funec), Renata Laureano; o administrador da Regional Ressaca, José Carlos (Zezé); representantes da Secretaria de Meio Ambiente e Desenvolvimento Sustentável (Semad); e servidores do Cefet Contagem.\n\nO Projeto de Lei nº 5.102/2023, de autoria do deputado federal Patrus Ananias, transformou os Cefets de Minas Gerais e do Rio de Janeiro em Universidades Federais Tecnológicas. Aprovado no Congresso Nacional, o PL segue para sanção do presidente Lula, o que deve ocorrer até o dia 30 deste mês.\n\nMinas Gerais possui dez unidades do Cefet espalhadas pelo estado, todas elas serão transformadas em Universidade Federal Tecnológica.\n\nClique aqui e acesse a galeria de fotos.", "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84305/unidade-do-cefet-em-contagem-sera-a-primeira-universidade-federal-da-cidade", "fonte": "Portal Contagem", "data": "2026-07-19", "empresas": ["patrus transportes"], "valores": [], "empregos": [], "pontuacao": 45, "relevante": true, "mencionou_contagem": true, "fase": "Licenciamento", "status": "Em construção", "confianca": 80}];
-const FASES_D  = {"Licenciamento": 1};
-const EMPS_D   = [{"empresa": "patrus transportes", "investimentos": 1, "valor_total": 0.0, "empregos": 0}];
-const EVOL_D   = {"2026-07": {"investimentos": 1, "empregos": 0, "valor": 0}};
-const QUASE_D  = [];
-const CONF_D   = {alta:100.0,media:0.0,baixa:0.0,mg:80};
-const AZUL='#1a3a5c', OURO='#e8a020', VERDE='#16a34a';
+const NR=[{"titulo": "Unidade do Cefet em Contagem será a...", "texto": "O município de Contagem receberá seu primeiro campus de uma universidade federal com a transformação do Centro Federal de Educação Tecnológica de Minas Gerais (Cefet MG) em Universidade Federal Tecnológica. A conquista foi possível com a aprovação pelo Senado Federal do PL nº 5.102/2023.\n\nNa manhã desta sexta-feira (17/7), o prefeito Ricardo Faria fez uma visita ao Cefet Contagem para fortalecer parcerias e aproximar as instituições. Ricardo foi recebido pela diretora-geral do Cefet Minas, Carla Simone Chamon, e destacou a conquista da universidade para a cidade.\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\nRicardo reforçou a parceria para auxiliar na construção do ginásio poliesportivo, em andamento, e outras ações que possam melhorar o acesso de estudantes e trabalhadores à unidade.\n\nDurante a visita, o prefeito conheceu os projetos de expansão da unidade e reiterou a parceria para construção do ginásio do Campus Contagem - Fotos: Luci Sallum/PMC\n\nA professora Carla Chamon agradeceu o apoio da Prefeitura de Contagem nas ações da unidade, que atende cerca de 500 estudantes com cursos técnicos e de graduação. “Agradecemos porque, na verdade, o que fazemos aqui é para a cidade. É para formar a nossa juventude, para termos um país melhor. É nisso que a gente acredita”.\n\nO Cefet Contagem possui os cursos técnicos de Controle Ambiental, Informática e Eletroeletrônica, em tempo integral. Também possui o curso de graduação em Engenharia Química.\n\nOutro ponto destacado pela diretora foi o apoio da Prefeitura ao projeto que transforma o Cefet Minas em universidade federal. “Construímos uma carta de apoio com os prefeitos que possuem unidades do Cefet em suas cidades e Contagem sempre se colocou ao nosso lado”.\n\nEstiveram presentes na visita o secretário de Educação, Lindomar Diamantino; a presidenta da Fundação de Ensino de Contagem (Funec), Renata Laureano; o administrador da Regional Ressaca, José Carlos (Zezé); representantes da Secretaria de Meio Ambiente e Desenvolvimento Sustentável (Semad); e servidores do Cefet Contagem.\n\nO Projeto de Lei nº 5.102/2023, de autoria do deputado federal Patrus Ananias, transformou os Cefets de Minas Gerais e do Rio de Janeiro em Universidades Federais Tecnológicas. Aprovado no Congresso Nacional, o PL segue para sanção do presidente Lula, o que deve ocorrer até o dia 30 deste mês.\n\nMinas Gerais possui dez unidades do Cefet espalhadas pelo estado, todas elas serão transformadas em Universidade Federal Tecnológica.\n\nClique aqui e acesse a galeria de fotos.", "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84305/unidade-do-cefet-em-contagem-sera-a-primeira-universidade-federal-da-cidade", "fonte": "Portal Contagem", "data": "2026-07-19", "empresas": ["patrus transportes"], "valores": [], "empregos": [], "pontuacao": 45, "relevante": true, "mencionou_contagem": true, "fase": "Licenciamento", "status": "Em construção", "confianca": 80}];
+const ALL=[{"titulo": "Unidade do Cefet em Contagem será a...", "texto": "O município de Contagem receberá seu primeiro campus de uma universidade federal com a transformação do Centro Federal de Educação Tecnológica de Minas Gerais (Cefet MG) em Universidade Federal Tecnológica. A conquista foi possível com a aprovação pelo Senado Federal do PL nº 5.102/2023.\n\nNa manhã desta sexta-feira (17/7), o prefeito Ricardo Faria fez uma visita ao Cefet Contagem para fortalecer parcerias e aproximar as instituições. Ricardo foi recebido pela diretora-geral do Cefet Minas, Carla Simone Chamon, e destacou a conquista da universidade para a cidade.\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\nRicardo reforçou a parceria para auxiliar na construção do ginásio poliesportivo, em andamento, e outras ações que possam melhorar o acesso de estudantes e trabalhadores à unidade.\n\nDurante a visita, o prefeito conheceu os projetos de expansão da unidade e reiterou a parceria para construção do ginásio do Campus Contagem - Fotos: Luci Sallum/PMC\n\nA professora Carla Chamon agradeceu o apoio da Prefeitura de Contagem nas ações da unidade, que atende cerca de 500 estudantes com cursos técnicos e de graduação. “Agradecemos porque, na verdade, o que fazemos aqui é para a cidade. É para formar a nossa juventude, para termos um país melhor. É nisso que a gente acredita”.\n\nO Cefet Contagem possui os cursos técnicos de Controle Ambiental, Informática e Eletroeletrônica, em tempo integral. Também possui o curso de graduação em Engenharia Química.\n\nOutro ponto destacado pela diretora foi o apoio da Prefeitura ao projeto que transforma o Cefet Minas em universidade federal. “Construímos uma carta de apoio com os prefeitos que possuem unidades do Cefet em suas cidades e Contagem sempre se colocou ao nosso lado”.\n\nEstiveram presentes na visita o secretário de Educação, Lindomar Diamantino; a presidenta da Fundação de Ensino de Contagem (Funec), Renata Laureano; o administrador da Regional Ressaca, José Carlos (Zezé); representantes da Secretaria de Meio Ambiente e Desenvolvimento Sustentável (Semad); e servidores do Cefet Contagem.\n\nO Projeto de Lei nº 5.102/2023, de autoria do deputado federal Patrus Ananias, transformou os Cefets de Minas Gerais e do Rio de Janeiro em Universidades Federais Tecnológicas. Aprovado no Congresso Nacional, o PL segue para sanção do presidente Lula, o que deve ocorrer até o dia 30 deste mês.\n\nMinas Gerais possui dez unidades do Cefet espalhadas pelo estado, todas elas serão transformadas em Universidade Federal Tecnológica.\n\nClique aqui e acesse a galeria de fotos.", "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84305/unidade-do-cefet-em-contagem-sera-a-primeira-universidade-federal-da-cidade", "fonte": "Portal Contagem", "data": "2026-07-19", "empresas": ["patrus transportes"], "valores": [], "empregos": [], "pontuacao": 45, "relevante": true, "mencionou_contagem": true, "fase": "Licenciamento", "status": "Em construção", "confianca": 80}];
+const HIST=[{"id": 2, "empresa": "Complexo logístico Empresarial Contendas", "ano": 2021, "valor": 1500000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/complexo-logistico-sera-instalado-em-contagem/", "url": "https://diariodocomercio.com.br/economia/complexo-logistico-sera-instalado-em-contagem/", "origem": "historico"}, {"id": 1, "empresa": "Inova Parque", "ano": 2021, "valor": 1300000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/inova-parque-sera-construido-na-rmbh-com-aportes-de-r-13-bi/", "url": "https://diariodocomercio.com.br/economia/inova-parque-sera-construido-na-rmbh-com-aportes-de-r-13-bi/", "origem": "historico"}, {"id": 3, "empresa": "Bresco", "ano": 2021, "valor": 700000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/bresco-lancara-2o-condominio-logistico-em-contagem/", "url": "https://diariodocomercio.com.br/economia/bresco-lancara-2o-condominio-logistico-em-contagem/", "origem": "historico"}, {"id": 14, "empresa": "RHI Magnesita", "ano": 2021, "valor": 420000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://valor.globo.com/empresas/noticia/2021/03/11/rhi-magnesita-eleva-para-r-420-milhoes-investimento-na-fabrica-de-contagem.ghtml", "url": "https://valor.globo.com/empresas/noticia/2021/03/11/rhi-magnesita-eleva-para-r-420-milhoes-investimento-na-fabrica-de-contagem.ghtml", "origem": "historico"}, {"id": 5, "empresa": "Emccamp", "ano": 2021, "valor": 250000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://valor.globo.com/empresas/noticia/2022/08/09/emccamp-residencial-preve-investir-r-45-bilhoes-em-dois-anos-no-sudeste.ghtml", "url": "https://valor.globo.com/empresas/noticia/2022/08/09/emccamp-residencial-preve-investir-r-45-bilhoes-em-dois-anos-no-sudeste.ghtml", "origem": "historico"}, {"id": 6, "empresa": "ELL Morais empreendimentos", "ano": 2021, "valor": 250000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 11, "empresa": "Komatsu", "ano": 2021, "valor": 120000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/komatsu-investimentos-2024-sede-contagem/", "url": "https://diariodocomercio.com.br/economia/komatsu-investimentos-2024-sede-contagem/", "origem": "historico"}, {"id": 17, "empresa": "Belgo Bekaert", "ano": 2021, "valor": 120000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 4, "empresa": "GNDI", "ano": 2021, "valor": 110000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/gndi-adquire-hospital-em-contagem-para-elevar-atuacao-em-mg/", "url": "https://diariodocomercio.com.br/economia/gndi-adquire-hospital-em-contagem-para-elevar-atuacao-em-mg/", "origem": "historico"}, {"id": 9, "empresa": "Obra MAX", "ano": 2021, "valor": 72000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 8, "empresa": "BII Par", "ano": 2021, "valor": 50000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 10, "empresa": "Grupo EPO/Contemporâneo Mall", "ano": 2021, "valor": 50000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 13, "empresa": "Centro de Treinamento e Desenvolvimento para a Indústria 4.0", "ano": 2021, "valor": 40000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 15, "empresa": "Maxion Structural Components", "ano": 2021, "valor": 35000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 7, "empresa": "Eco Global c", "ano": 2021, "valor": 30000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 12, "empresa": "Escola Bilíngue de Base Tecnológica do Sesi", "ano": 2021, "valor": 30000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 18, "empresa": "Petronas Lubrificantes Internacionais", "ano": 2021, "valor": 27000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 19, "empresa": "Oriente Farma", "ano": 2021, "valor": 15000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 16, "empresa": "Patrus", "ano": 2021, "valor": 6000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "url": "https://diariodocomercio.com.br/economia/contagem-estima-aportes-de-r-45-bilhoes-em-2022/", "origem": "historico"}, {"id": 20, "empresa": "Gatti Flex 2", "ano": 2022, "valor": 60000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/gatti-engenharia-investe-condominios-logisticos-industriais/", "url": "https://diariodocomercio.com.br/economia/gatti-engenharia-investe-condominios-logisticos-industriais/", "origem": "historico"}, {"id": 25, "empresa": "Tambasa", "ano": 2023, "valor": 1600000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/tambasa-e-pentasul-fecham-acordo-em-contagem/", "url": "https://diariodocomercio.com.br/economia/tambasa-e-pentasul-fecham-acordo-em-contagem/", "origem": "historico"}, {"id": 24, "empresa": "UNIMED", "ano": 2023, "valor": 350000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/unimed-bh-iniciara-obras-em-contagem/", "url": "https://diariodocomercio.com.br/negocios/unimed-bh-iniciara-obras-em-contagem/", "origem": "historico"}, {"id": 30, "empresa": "Laboratório Osório de Moraes", "ano": 2023, "valor": 300000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/laboratorio-osorio-de-moraes-vai-investir-r-300-mi-em-5-anos/", "url": "https://diariodocomercio.com.br/negocios/laboratorio-osorio-de-moraes-vai-investir-r-300-mi-em-5-anos/", "origem": "historico"}, {"id": 26, "empresa": "Sensia Solarium", "ano": 2023, "valor": 200000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/sensia-solarium-mrv-contagem-bairro-cabral/", "url": "https://diariodocomercio.com.br/negocios/sensia-solarium-mrv-contagem-bairro-cabral/", "origem": "historico"}, {"id": 22, "empresa": "Business Park", "ano": 2023, "valor": 173000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-tera-empreendimento-estimado-em-174-milhoes-de-reais/", "url": "https://diariodocomercio.com.br/economia/contagem-tera-empreendimento-estimado-em-174-milhoes-de-reais/", "origem": "historico"}, {"id": 21, "empresa": "Grupo Pachá", "ano": 2023, "valor": 110000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-rmbh-investimentos/", "url": "https://diariodocomercio.com.br/economia/contagem-rmbh-investimentos/", "origem": "historico"}, {"id": 32, "empresa": "Via VAI", "ano": 2023, "valor": 32000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://valor.globo.com/empresas/noticia/2022/04/12/via-vai-construir-novo-centro-logistico-diz-governo-de-mg.ghtml?utm_source=pocket_saves", "url": "https://valor.globo.com/empresas/noticia/2022/04/12/via-vai-construir-novo-centro-logistico-diz-governo-de-mg.ghtml?utm_source=pocket_saves", "origem": "historico"}, {"id": 27, "empresa": "Foper Máquinas", "ano": 2023, "valor": 30000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/foper-maquinas-investe-r-30-mi-unidade-mg/", "url": "https://diariodocomercio.com.br/negocios/foper-maquinas-investe-r-30-mi-unidade-mg/", "origem": "historico"}, {"id": 29, "empresa": "Farmax", "ano": 2023, "valor": 25000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/farmax-investe-em-hub-logistico-na-rmbh/", "url": "https://diariodocomercio.com.br/negocios/farmax-investe-em-hub-logistico-na-rmbh/", "origem": "historico"}, {"id": 23, "empresa": "Gasmig", "ano": 2023, "valor": 15000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/gasmig-contagem-ampliacao-gasodutos/", "url": "https://diariodocomercio.com.br/economia/gasmig-contagem-ampliacao-gasodutos/", "origem": "historico"}, {"id": 28, "empresa": "Multotec", "ano": 2023, "valor": 10000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/multotec-vai-inaugurar-fabrica-em-contagem/", "url": "https://diariodocomercio.com.br/economia/multotec-vai-inaugurar-fabrica-em-contagem/", "origem": "historico"}, {"id": 31, "empresa": "Grupo Zelo", "ano": 2023, "valor": 3000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/grupo-zelo-amplia-capilaridade-no-brasil/", "url": "https://diariodocomercio.com.br/negocios/grupo-zelo-amplia-capilaridade-no-brasil/", "origem": "historico"}, {"id": 40, "empresa": "Log 5", "ano": 2024, "valor": 140000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/log-investe-em-juiz-de-fora-contagem-e-belo-horizonte/", "url": "https://diariodocomercio.com.br/economia/log-investe-em-juiz-de-fora-contagem-e-belo-horizonte/", "origem": "historico"}, {"id": 44, "empresa": "Boston Scientific", "ano": 2024, "valor": 120000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://desenvolvimento.mg.gov.br/inicio/noticias/noticia/2420/companhia-internacional-anuncia-r$-120-milhoes-em-expansao-em-minas-gerais", "url": "https://desenvolvimento.mg.gov.br/inicio/noticias/noticia/2420/companhia-internacional-anuncia-r$-120-milhoes-em-expansao-em-minas-gerais", "origem": "historico"}, {"id": 42, "empresa": "Direcional e My Mall", "ano": 2024, "valor": 100000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://www.otempo.com.br/economia/2024/7/4/com-investimento-de-r--100-mi--contagem-lanca-shopping-que-prome", "url": "https://www.otempo.com.br/economia/2024/7/4/com-investimento-de-r--100-mi--contagem-lanca-shopping-que-prome", "origem": "historico"}, {"id": 47, "empresa": "Tecnogera", "ano": 2024, "valor": 100000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/tecnogera-investira-solucoes-energia-minas-gerais/", "url": "https://diariodocomercio.com.br/economia/tecnogera-investira-solucoes-energia-minas-gerais/", "origem": "historico"}, {"id": 39, "empresa": "Log 4", "ano": 2024, "valor": 85000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/log-investe-em-juiz-de-fora-contagem-e-belo-horizonte/", "url": "https://diariodocomercio.com.br/economia/log-investe-em-juiz-de-fora-contagem-e-belo-horizonte/", "origem": "historico"}, {"id": 33, "empresa": "Grupo Lamane", "ano": 2024, "valor": 60000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/grupo-lamane-inaugura-hub-de-distribuicao-em-contagem/", "url": "https://diariodocomercio.com.br/economia/grupo-lamane-inaugura-hub-de-distribuicao-em-contagem/", "origem": "historico"}, {"id": 38, "empresa": "Case Construction Equipment", "ano": 2024, "valor": 50000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/fabrica-contagem-case-polo-global-tratores/", "url": "https://diariodocomercio.com.br/negocios/fabrica-contagem-case-polo-global-tratores/", "origem": "historico"}, {"id": 45, "empresa": "Plena Alimentos", "ano": 2024, "valor": 24000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/agronegocio/plena-alimentos-investe-24-milhoes-em-expansao/", "url": "https://diariodocomercio.com.br/agronegocio/plena-alimentos-investe-24-milhoes-em-expansao/", "origem": "historico"}, {"id": 34, "empresa": "Castelo Alimentos", "ano": 2024, "valor": 20000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/castelo-alimentos-inaugura-fabrica-em-contagem/", "url": "https://diariodocomercio.com.br/economia/castelo-alimentos-inaugura-fabrica-em-contagem/", "origem": "historico"}, {"id": 35, "empresa": "Belgo Arames", "ano": 2024, "valor": 20000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/belgo-arames-investe-r-20-mi-na-fabrica-de-telas-em-contagem/", "url": "https://diariodocomercio.com.br/negocios/belgo-arames-investe-r-20-mi-na-fabrica-de-telas-em-contagem/", "origem": "historico"}, {"id": 43, "empresa": "Metta Soluções", "ano": 2024, "valor": 20000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/empresa-solucoes-eletricas-planeja-investimento-contagem/", "url": "https://diariodocomercio.com.br/economia/empresa-solucoes-eletricas-planeja-investimento-contagem/", "origem": "historico"}, {"id": 36, "empresa": "Grupo Supernosso-Decminas Distribuição e Logística", "ano": 2024, "valor": 12000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/centro-distribuicao-supernosso-contagem-inauguracao-novembro/", "url": "https://diariodocomercio.com.br/negocios/centro-distribuicao-supernosso-contagem-inauguracao-novembro/", "origem": "historico"}, {"id": 46, "empresa": "Estacio", "ano": 2024, "valor": 2500000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/estacio-investe-polo-cursos-semipresenciais-contagem/", "url": "https://diariodocomercio.com.br/negocios/estacio-investe-polo-cursos-semipresenciais-contagem/", "origem": "historico"}, {"id": 41, "empresa": "3TC Isolamento", "ano": 2024, "valor": 1000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/3tc-isolamento-abre-fabrica-contagem-planeja-mais-quatro/", "url": "https://diariodocomercio.com.br/negocios/3tc-isolamento-abre-fabrica-contagem-planeja-mais-quatro/", "origem": "historico"}, {"id": 37, "empresa": "Friboi", "ano": 2024, "valor": 320000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/contagem-recebe-centro-distribuicao-friboi/", "url": "https://diariodocomercio.com.br/economia/contagem-recebe-centro-distribuicao-friboi/", "origem": "historico"}, {"id": 53, "empresa": "Direcional Engenharia /Viva Residence", "ano": 2025, "valor": 190000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/direcional-lanca-residencial-em-contagem-com-tres-torres-e-605-unidades/", "url": "https://diariodocomercio.com.br/negocios/direcional-lanca-residencial-em-contagem-com-tres-torres-e-605-unidades/", "origem": "historico"}, {"id": 48, "empresa": "Magotteux", "ano": 2025, "valor": 100000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/magotteaux-investe-cem-milhoes-em-fabrica-de-contagem/", "url": "https://diariodocomercio.com.br/economia/magotteaux-investe-cem-milhoes-em-fabrica-de-contagem/", "origem": "historico"}, {"id": 55, "empresa": "Big Shopping", "ano": 2025, "valor": 39000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/big-shopping-fara-sua-primeira-expansao-com-investimento-de-r-39-milhoes/?utm_source=Instachannel&utm_campaign=distribution#", "url": "https://diariodocomercio.com.br/economia/big-shopping-fara-sua-primeira-expansao-com-investimento-de-r-39-milhoes/?utm_source=Instachannel&utm_campaign=distribution#", "origem": "historico"}, {"id": 52, "empresa": "Só Marcas Outlet Contagem", "ano": 2025, "valor": 35000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/so-marcas-outlet-investe-r-35-milhoes-e-cria-vila-resende-costa/", "url": "https://diariodocomercio.com.br/negocios/so-marcas-outlet-investe-r-35-milhoes-e-cria-vila-resende-costa/", "origem": "historico"}, {"id": 49, "empresa": "Wabtec Brasil", "ano": 2025, "valor": 25000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/economia/wabtec-vai-iniciar-obras-de-centro-de-engenharia-em-contagem/", "url": "https://diariodocomercio.com.br/economia/wabtec-vai-iniciar-obras-de-centro-de-engenharia-em-contagem/", "origem": "historico"}, {"id": 51, "empresa": "Tropeira Alimentos", "ano": 2025, "valor": 15000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://www.otempo.com.br/minas-sa/2025/4/7/tropeira-alimentos-planeja-uma-expansao-fabril-prevista-para-ser-concluida-em-2026", "url": "https://www.otempo.com.br/minas-sa/2025/4/7/tropeira-alimentos-planeja-uma-expansao-fabril-prevista-para-ser-concluida-em-2026", "origem": "historico"}, {"id": 50, "empresa": "Tópico", "ano": 2025, "valor": 6000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://diariodocomercio.com.br/negocios/topico-investimentos-minas-gerais-final-2025/", "url": "https://diariodocomercio.com.br/negocios/topico-investimentos-minas-gerais-final-2025/", "origem": "historico"}, {"id": 54, "empresa": "ABB", "ano": 2025, "valor": 5900000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://www.otempo.com.br/minas-sa/2025/4/9/abb-eletrificacao-completa-50-anos-da-fabrica-em-contagem-mg-com-investimentos", "url": "https://www.otempo.com.br/minas-sa/2025/4/9/abb-eletrificacao-completa-50-anos-da-fabrica-em-contagem-mg-com-investimentos", "origem": "historico"}, {"id": 57, "empresa": "TSEA Energia – Projeto de expansão", "ano": 2026, "valor": 700000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "https://www.instagram.com/p/DPt-2-cguYK/", "url": "https://www.instagram.com/p/DPt-2-cguYK/", "origem": "historico"}, {"id": 56, "empresa": "Shopee – Centro de Distribuição em Contagem", "ano": 2026, "valor": 350000000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "Multinacional do e-commerce inaugura centro de distribuição em Minas Gerais", "url": "Multinacional do e-commerce inaugura centro de distribuição em Minas Gerais", "origem": "historico"}, {"id": 59, "empresa": "Fortlub", "ano": 2026, "valor": 13500000.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "Governador participa de inauguração de empresa do setor de óleos lubrificantes em Contagem", "url": "Governador participa de inauguração de empresa do setor de óleos lubrificantes em Contagem", "origem": "historico"}, {"id": 58, "empresa": "Wabtec – Centro Global de Engenharia", "ano": 2026, "valor": 20.0, "empregos": "", "bairro": "", "status": "Anunciado", "ultima_atualizacao": "2026-07-15", "eventos": [], "fase": "Anunciado", "fonte": "Centro Global de Engenharia reafirma Contagem como polo de inovação", "url": "Centro Global de Engenharia reafirma Contagem como polo de inovação", "origem": "historico"}];
+const RK=[{"empresa": "Inova Parque", "investimentos": 1, "valor_total": 1300000000.0}, {"empresa": "Complexo logístico Empresarial Contendas", "investimentos": 1, "valor_total": 1500000000.0}, {"empresa": "Bresco", "investimentos": 1, "valor_total": 700000000.0}, {"empresa": "GNDI", "investimentos": 1, "valor_total": 110000000.0}, {"empresa": "Emccamp", "investimentos": 1, "valor_total": 250000000.0}, {"empresa": "ELL Morais empreendimentos", "investimentos": 1, "valor_total": 250000000.0}, {"empresa": "Eco Global c", "investimentos": 1, "valor_total": 30000000.0}, {"empresa": "BII Par", "investimentos": 1, "valor_total": 50000000.0}, {"empresa": "Obra MAX", "investimentos": 1, "valor_total": 72000000.0}, {"empresa": "Grupo EPO/Contemporâneo Mall", "investimentos": 1, "valor_total": 50000000.0}, {"empresa": "Komatsu", "investimentos": 1, "valor_total": 120000000.0}, {"empresa": "Escola Bilíngue de Base Tecnológica do Sesi", "investimentos": 1, "valor_total": 30000000.0}, {"empresa": "Centro de Treinamento e Desenvolvimento para a Indústria 4.0", "investimentos": 1, "valor_total": 40000000.0}, {"empresa": "RHI Magnesita", "investimentos": 1, "valor_total": 420000000.0}, {"empresa": "Maxion Structural Components", "investimentos": 1, "valor_total": 35000000.0}];
+const PA={"2021": {"investimentos": 19, "valor": 5125000000.0}, "2022": {"investimentos": 1, "valor": 60000000.0}, "2023": {"investimentos": 12, "valor": 2848000000.0}, "2024": {"investimentos": 15, "valor": 754820000.0}, "2025": {"investimentos": 8, "valor": 415900000.0}, "2026": {"investimentos": 4, "valor": 1063500020.0}};
+const FS={"Licenciamento": 1};
+const QR=[];
+const CF={"alta": 100.0, "media": 0.0, "baixa": 0.0, "mg": 80};
+const AZUL='#1a3a5c',OURO='#e8a020',VERDE='#16a34a';
 
-// ── abas ───────────────────────────────────────────────────
-function aba(id, btn){
-
-    document.querySelectorAll(".painel")
-        .forEach(p => p.classList.remove("on"));
-
-    document.querySelectorAll(".tab")
-        .forEach(t => t.classList.remove("on"));
-
-    document.getElementById(id)
-        .classList.add("on");
-
-    btn.classList.add("on");
-
-    if(id==="resumo"){
-
-        renderGraf();
-
-        renderRanking();
-
-    }
-
+let grafOk=false;
+function aba(id,btn){
+  document.querySelectorAll('.pan').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='graficos'&&!grafOk){grafOk=true;renderGraf();}
 }
 
-// ── badge fase ─────────────────────────────────────────────
-function bdgFase(f){
-  const m={'Anunciado':'bdg-a','Construção':'bdg-o','Operação':'bdg-v','Expansão':'bdg-v'};
-  return `<span class="bdg ${m[f]||'bdg-c'}">${f||'—'}</span>`;
+function bdg(f){
+  const m={'Anunciado':'ba','Construção':'bo2','Operação':'bv','Expansão':'bv','Licenciamento':'bc','Contratação':'bc','Negociação':'bc'};
+  return '<span class="bdg '+(m[f]||'bc')+'">'+(f||'—')+'</span>';
 }
 
-// ── card notícia ───────────────────────────────────────────
-function cardN(n, extra){
-  const emps=(n.empresas||[]).join(', ')||'—';
-  const vals=(n.valores ||[]).join(', ')||'—';
-  const empr=(n.empregos||[]).join(', ')||'—';
-  return `<div class="ncard${extra?' quase':''}">
-    <div class="ncard-title">${n.titulo||'—'}</div>
-    <div class="ncard-meta">
-      <span>📍 ${n.fonte||'—'}</span><span>📅 ${n.data||'—'}</span>
-      <span>🎯 ${n.pontuacao||0} pts</span>${bdgFase(n.fase)}
-      ${n.relevante?'<span class="bdg bdg-v">✓ Relevante</span>':''}
-    </div>
-    <div class="ncard-meta">🏢 ${emps} &nbsp;|&nbsp; 💰 ${vals} &nbsp;|&nbsp; 👥 ${empr}</div>
-    <a class="ncard-url" href="${n.url}" target="_blank">${n.url}</a>
-  </div>`;
+function cardN(n,extra){
+  const e=(n.empresas||[]).join(', ')||'—';
+  const v=(n.valores||[]).join(', ')||'—';
+  const em=(n.empregos||[]).join(', ')||'—';
+  return '<div class="nc'+(extra?' q':'')+'"><div class="nt">'+(n.titulo||'—')+'</div>'
+    +'<div class="nm"><span>📍 '+(n.fonte||'—')+'</span><span>📅 '+(n.data||'—')+'</span>'
+    +'<span>🎯 '+(n.pontuacao||0)+' pts</span>'+bdg(n.fase)
+    +(n.relevante?'<span class="bdg bv">✓ Relevante</span>':'')+'</div>'
+    +'<div class="nm">🏢 '+e+' | 💰 '+v+' | 👥 '+em+'</div>'
+    +'<a class="nu" href="'+(n.url||'#')+'" target="_blank">'+(n.url||'')+'</a></div>';
 }
 
-// ── popular selects ────────────────────────────────────────
-function popSelect(selId, arr){
-  const s=document.getElementById(selId);
-  [...new Set(arr)].sort().forEach(v=>s.add(new Option(v,v)));
-}
-function limpar(...ids){
-  ids.forEach(id=>{const el=document.getElementById(id); if(el)el.value=''});
-  renderRecentes(); renderHist();
+function popSel(id,arr){
+  const s=document.getElementById(id);if(!s)return;
+  [...new Set(arr.filter(Boolean))].sort().forEach(v=>s.add(new Option(v,v)));
 }
 
-// ── RECENTES ───────────────────────────────────────────────
-function renderRecentes(){
+function renderRec(){
   const e=document.getElementById('r-emp').value.toLowerCase();
-  const f=document.getElementById('r-fase').value.toLowerCase();
+  const f=document.getElementById('r-fas').value.toLowerCase();
   const t=document.getElementById('r-txt').value.toLowerCase();
-  const lista=NOTICIAS.filter(n=>
+  const lista=NR.filter(n=>
     (!e||(n.empresas||[]).join(' ').toLowerCase().includes(e))&&
     (!f|(n.fase||'').toLowerCase()===f)&&
     (!t|(n.titulo||'').toLowerCase().includes(t))
   );
-  document.getElementById('lista-recentes').innerHTML=
-    lista.length ? lista.map(n=>cardN(n,false)).join('') : '<div class="vazio">Nenhuma notícia com esses filtros.</div>';
+  document.getElementById('lst-rec').innerHTML=
+    lista.length?lista.map(n=>cardN(n,false)).join(''):'<div class="vz">Nenhuma notícia relevante encontrada.</div>';
 }
+function limpRec(){['r-emp','r-fas','r-txt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});renderRec();}
 
-// ── HISTÓRICO ──────────────────────────────────────────────
-function renderHist(){
-  const e=document.getElementById('h-emp').value.toLowerCase();
-  const f=document.getElementById('h-fase').value.toLowerCase();
-  const r=document.getElementById('h-rel').value;
-  const t=document.getElementById('h-txt').value.toLowerCase();
-  const lista=TODAS.filter(n=>
+function renderTodas(){
+  const e=document.getElementById('a-emp').value.toLowerCase();
+  const f=document.getElementById('a-fas').value.toLowerCase();
+  const r=document.getElementById('a-rel').value;
+  const t=document.getElementById('a-txt').value.toLowerCase();
+  const lista=ALL.filter(n=>
     (!e||(n.empresas||[]).join(' ').toLowerCase().includes(e))&&
     (!f|(n.fase||'').toLowerCase()===f)&&
     (!r||(r==='s'?n.relevante:!n.relevante))&&
     (!t|(n.titulo||'').toLowerCase().includes(t))
   );
-  document.getElementById('lista-hist').innerHTML=
-    lista.length ? lista.map(n=>cardN(n,false)).join('') : '<div class="vazio">Nenhuma notícia com esses filtros.</div>';
+  document.getElementById('lst-todas').innerHTML=
+    lista.length?lista.map(n=>cardN(n,false)).join(''):'<div class="vz">Nenhuma notícia com esses filtros.</div>';
 }
+function limpTodas(){['a-emp','a-fas','a-rel','a-txt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});renderTodas();}
 
-// ── QUASE ──────────────────────────────────────────────────
-function renderQuase(){
-  document.getElementById('lista-quase').innerHTML=
-    QUASE_D.length ? QUASE_D.map(n=>cardN(n,true)).join('') : '<div class="vazio">Nenhuma notícia quase relevante.</div>';
-}
-
-// ── RANKING tabela ─────────────────────────────────────────
 function renderRanking(){
-  document.getElementById('tb-rk').innerHTML=
-    EMPS_D.map((e,i)=>`<tr>
-      <td><b>${i+1}</b></td><td>${e.empresa}</td><td>${e.investimentos}</td>
-      <td>R$ ${(e.valor_total/1e6).toFixed(1)}M</td><td>${e.empregos}</td>
-    </tr>`).join('') || '<tr><td colspan="5" class="vazio">Sem dados.</td></tr>';
+  const tb=document.getElementById('tb-rk');if(!tb)return;
+  tb.innerHTML=RK.map((e,i)=>'<tr><td><b>'+(i+1)+'</b></td><td>'+e.empresa+'</td><td style="text-align:center">'+e.investimentos+'</td><td>R$ '+(e.valor_total/1e6).toFixed(1)+'M</td></tr>').join('')||'<tr><td colspan="4" class="vz">Sem dados.</td></tr>';
 }
 
-// ── GRÁFICOS Plotly ────────────────────────────────────────
+function renderPorAno(){
+  const tb=document.getElementById('tb-ano');if(!tb)return;
+  tb.innerHTML=Object.entries(PA).map(([a,d])=>'<tr><td><b>'+a+'</b></td><td style="text-align:center">'+d.investimentos+'</td><td>R$ '+(d.valor/1e9).toFixed(2)+'bi</td></tr>').join('')||'<tr><td colspan="3" class="vz">Sem dados.</td></tr>';
+}
+
+function renderHist(){
+  const e=document.getElementById('h-emp').value.toLowerCase();
+  const a=document.getElementById('h-ano').value;
+  const t=document.getElementById('h-txt').value.toLowerCase();
+  const lista=HIST.filter(i=>
+    (!e|(i.empresa||'').toLowerCase().includes(e))&&
+    (!a|String(i.ano)===a)&&
+    (!t|(i.empresa||'').toLowerCase().includes(t)||(i.descricao||'').toLowerCase().includes(t))
+  );
+  const tb=document.getElementById('tb-hist');if(!tb)return;
+  tb.innerHTML=lista.map(i=>'<tr><td>'+( i.ano||'—')+'</td><td><b>'+(i.empresa||'—')+'</b></td><td>'+(i.valor?('R$ '+(i.valor/1e6).toFixed(1)+'M'):'—')+'</td><td>'+(i.empregos||'—')+'</td><td>'+bdg(i.fase||i.status)+'</td><td><a class="nu" href="'+(i.url||'#')+'" target="_blank">'+(i.fonte||'—')+'</a></td></tr>').join('')||'<tr><td colspan="6" class="vz">Sem resultados.</td></tr>';
+}
+function limpHist(){['h-emp','h-ano','h-txt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});renderHist();}
+
+function renderQuase(){
+  document.getElementById('lst-quase').innerHTML=
+    QR.length?QR.map(n=>cardN(n,true)).join(''):'<div class="vz">Nenhuma notícia quase relevante.</div>';
+}
+
 function renderGraf(){
   const cfg={responsive:true,displayModeBar:false};
-  const base={font:{family:'Segoe UI,system-ui',size:12},
-               paper_bgcolor:'#fff',plot_bgcolor:'#fff'};
+  const base={font:{family:'Segoe UI,system-ui',size:11},paper_bgcolor:'#fff',plot_bgcolor:'#fff'};
 
-  // Fases — horizontal
-  Plotly.newPlot('g-fases',[{
-    x:Object.values(FASES_D), y:Object.keys(FASES_D),
-    type:'bar', orientation:'h',
-    marker:{color:AZUL},
-    text:Object.values(FASES_D), textposition:'outside'
-  }],{...base,title:'Por Fase',margin:{l:140,r:30,t:40,b:40},
-       xaxis:{title:'Quantidade'}},cfg);
+  Plotly.newPlot('g-rk',[{
+    x:RK.map(e=>e.valor_total/1e6).reverse(),y:RK.map(e=>e.empresa).reverse(),
+    type:'bar',orientation:'h',marker:{color:AZUL},
+    text:RK.map(e=>'R$ '+(e.valor_total/1e6).toFixed(0)+'M').reverse(),textposition:'outside'
+  }],{...base,title:'Top Empresas por Valor (R$ M)',margin:{l:180,r:70,t:40,b:40},xaxis:{title:'R$ Milhões'}},cfg);
 
-  // Empresas — horizontal
-  Plotly.newPlot('g-emp',[{
-    x:EMPS_D.map(e=>e.investimentos), y:EMPS_D.map(e=>e.empresa),
-    type:'bar', orientation:'h',
-    marker:{color:OURO},
-    text:EMPS_D.map(e=>e.investimentos), textposition:'outside'
-  }],{...base,title:'Top Empresas',margin:{l:160,r:30,t:40,b:40},
-       xaxis:{title:'Investimentos'}},cfg);
+  const anos=Object.keys(PA),aV=anos.map(a=>PA[a].valor/1e9),aQ=anos.map(a=>PA[a].investimentos);
+  Plotly.newPlot('g-ano',[
+    {x:anos,y:aV,type:'bar',name:'Valor (R$ bi)',marker:{color:OURO},text:aV.map(v=>'R$ '+v.toFixed(1)+'bi'),textposition:'outside',yaxis:'y'},
+    {x:anos,y:aQ,type:'scatter',mode:'lines+markers',name:'Qtd.',line:{color:AZUL,width:2},marker:{size:7,color:AZUL},yaxis:'y2'}
+  ],{...base,title:'Investimentos por Ano',margin:{l:60,r:60,t:40,b:40},
+     yaxis:{title:'R$ Bilhões'},yaxis2:{title:'Quantidade',overlaying:'y',side:'right'},
+     legend:{orientation:'h',y:-0.2}},cfg);
 
-  // Evolução — linha
-  const ps=Object.keys(EVOL_D), ivs=ps.map(p=>EVOL_D[p].investimentos);
-  Plotly.newPlot('g-evol',[{
-    x:ps, y:ivs, type:'scatter', mode:'lines+markers',
-    line:{color:AZUL,width:2.5},
-    marker:{size:8,color:OURO},
-    fill:'tozeroy', fillcolor:'rgba(26,58,92,0.08)'
-  }],{...base,title:'Evolução Mensal',margin:{l:60,r:20,t:40,b:60},
-       xaxis:{tickangle:-40},yaxis:{title:'Investimentos'}},cfg);
-
-  // Confiança — pizza
-  const cv=[CONF_D.alta,CONF_D.media,CONF_D.baixa];
-  if(cv.some(v=>v>0)){
-    Plotly.newPlot('g-conf',[{
-      values:cv,
-      labels:[`Alta ≥80% (${CONF_D.alta}%)`,`Média (${CONF_D.media}%)`,`Baixa (${CONF_D.baixa}%)`],
-      type:'pie', hole:0.4,
-      marker:{colors:[VERDE,OURO,'#dc2626'],line:{color:'white',width:2}},
-      textinfo:'percent'
-    }],{...base,title:`Confiança — Média ${CONF_D.mg}%`,
-         margin:{l:20,r:20,t:50,b:20},
-         showlegend:true,legend:{orientation:'h',y:-0.15}},cfg);
+  const fN=Object.keys(FS),fV=Object.values(FS);
+  if(fN.length){
+    Plotly.newPlot('g-fas',[{x:fV,y:fN,type:'bar',orientation:'h',marker:{color:AZUL},text:fV,textposition:'outside'}],
+      {...base,title:'Notícias por Fase',margin:{l:140,r:40,t:40,b:40}},cfg);
   } else {
-    document.getElementById('g-conf').innerHTML='<div class="vazio" style="padding-top:80px">Sem dados ainda.</div>';
+    document.getElementById('g-fas').innerHTML='<div class="vz" style="padding-top:80px">Sem notícias relevantes recentes.</div>';
+  }
+
+  const cv=[CF.alta,CF.media,CF.baixa];
+  if(cv.some(v=>v>0)){
+    Plotly.newPlot('g-cf',[{
+      values:cv,labels:['Alta ≥80% ('+CF.alta+'%)','Média ('+CF.media+'%)','Baixa ('+CF.baixa+'%)'],
+      type:'pie',hole:0.4,
+      marker:{colors:[VERDE,OURO,'#dc2626'],line:{color:'white',width:2}},textinfo:'percent'
+    }],{...base,title:'Confiança — Média '+CF.mg+'%',margin:{l:10,r:10,t:50,b:10},
+         showlegend:true,legend:{orientation:'h',y:-0.2}},cfg);
+  } else {
+    document.getElementById('g-cf').innerHTML='<div class="vz" style="padding-top:80px">Sem dados de confiança.</div>';
   }
 }
 
-// ── init ───────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
-
-    popSelect('r-emp', NOTICIAS.flatMap(n=>n.empresas||[]));
-    popSelect('r-fase', NOTICIAS.map(n=>n.fase).filter(Boolean));
-
-    popSelect('h-emp', TODAS.flatMap(n=>n.empresas||[]));
-    popSelect('h-fase', TODAS.map(n=>n.fase).filter(Boolean));
-
-    renderRanking();
-
-    renderGraf();
-
+  popSel('r-emp',NR.flatMap(n=>n.empresas||[]));
+  popSel('r-fas',NR.map(n=>n.fase).filter(Boolean));
+  popSel('a-emp',ALL.flatMap(n=>n.empresas||[]));
+  popSel('a-fas',ALL.map(n=>n.fase).filter(Boolean));
+  popSel('h-emp',HIST.map(i=>i.empresa).filter(Boolean));
+  popSel('h-ano',HIST.map(i=>String(i.ano)).filter(Boolean));
+  renderRec();renderTodas();renderRanking();renderPorAno();renderHist();renderQuase();
 });
-
 </script>
 </body>
 </html>
