@@ -330,7 +330,7 @@ class GeradorRelatorio:
        for f in sorted(fn):
            d=fn[f]; tg+=d["total"]; rg+=d["relevantes"]
            f_rows+=(f'<tr><td>{f}</td><td>{d["total"]}</td>'
-                    f'<td>{d["relevantes"]}</td><td>{d["taxa"]}%</td>'
+                    f'<td>{d["relevantes"]}</td><td>{d["taxa_precisao"]}%</td>'
                     f'<td>{d["confianca"]}%</td></tr>')
        taxa=round(rg/tg*100 if tg else 0,1)
        f_rows+=(f'<tr class="tr-tot"><td><b>TOTAL</b></td><td><b>{tg}</b></td>'
@@ -847,7 +847,7 @@ document.addEventListener('DOMContentLoaded',()=>{{
             r  = self.resumo_recente()
             rh = self.resumo_historico()
             rk = self.ranking_historico()
-            fn = self.fontes_recentes()
+            fn = self.analise_por_fonte()
             cf = self.analise_confianca()
             pa = self.por_ano_historico()
 
@@ -959,7 +959,7 @@ document.addEventListener('DOMContentLoaded',()=>{{
             "ranking_historico":  self.ranking_historico(),
             "por_ano_historico":  self.por_ano_historico(),
             "fases_recentes":     self.investimentos_por_fase(),
-            "fontes_recentes":    self.fontes_recentes(),
+            "fontes_recentes":    self.analise_por_fonte(),
             "quase_relevantes":   self.noticias_quase_relevantes(),
             "confianca_recente":  self.analise_confianca(),
         }
