@@ -377,8 +377,8 @@ class GeradorRelatorio:
     flex-shrink: 0;
   }}
   .hdr-logo-col img {{
-    max-width: 300px;
-    max-height: 100px;
+    max-width: 400px;
+    max-height: 600px;
     width: auto;
     height: auto;
     display: block;
@@ -388,8 +388,8 @@ class GeradorRelatorio:
     background: rgba(14, 185, 205, 0.15);
     border: 2px solid rgba(14, 185, 205, 0.4);
     border-radius: 20px;
-    width: 400px;
-    height: 200px;
+    width: 600px;
+    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
