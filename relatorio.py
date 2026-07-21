@@ -74,19 +74,21 @@ class GeradorRelatorio:
     # ── ANÁLISES RECENTES ─────────────────────────────
 
     def resumo_recente(self):
-        ns   = self._relevantes()
-        vals = [self._vnum(v) for n in ns for v in n.get("valores",[])]
-        emps = sum(self._enum(e) for n in ns for e in n.get("empregos",[]))
-        cfs  = [n.get("confianca",0) for n in ns if n.get("confianca",0)>0]
+        ns = self._relevantes()
+
+        vals = [self._vnum(v) for n in ns for v in n.get("valores", [])]
+        emps = sum(self._enum(e) for n in ns for e in n.get("empregos", []))
+        cfs = [n.get("confianca", 0) for n in ns if n.get("confianca", 0) > 0]
+
         return {
             "investimentos_detectados": len(self.banco.investimentos),
-            "empresas_monitoradas":     len(self.banco.empresas),
-            "novos_empregos":           empregos,
-            "valor_total":              sum(valores),
-            "confianca_media":          int(statistics.mean(confs)) if confs else 0,
-            "noticias_relevantes":      len(ns),
-            "periodo":                  self._periodo(),
-        }
+            "empresas_monitoradas": len(self.banco.empresas),
+            "novos_empregos": emps,
+            "valor_total": sum(vals),
+            "confianca_media": int(statistics.mean(cfs)) if cfs else 0,
+            "noticias_relevantes": len(ns),
+            "periodo": self._periodo(),
+         }
 
     def investimentos_por_fase(self):
         d = defaultdict(list)
@@ -99,8 +101,8 @@ class GeradorRelatorio:
         for n in self._relevantes():
             for e in n.get("empresas",[]):
                 cnt[e] += 1
-                for v in n.get("valores",[]): vals[e] += self._num_valor(v)
-                for em in n.get("empregos",[]): emps[e] += self._num_emprego(em)
+                for v in n.get("valores",[]): vals[e] += self._vnum(v)
+                for em in n.get("empregos",[]): emps[e] += self._enum(e)
         return [{"empresa":e,"investimentos":c,"valor_total":vals[e],"empregos":emps[e]}
                 for e,c in cnt.most_common(top)]
 
