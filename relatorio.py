@@ -324,21 +324,22 @@ class GeradorRelatorio:
        qjs  = json.dumps(qr,    ensure_ascii=False)
        cfjs = json.dumps(cf,    ensure_ascii=False)
 
-        f_rows=""
-        tg=rg=0
-        for f in sorted(fn):
-            d=fn[f]; tg+=d["total"]; rg+=d["relevantes"]
-            f_rows+=(f'<tr><td>{f}</td><td>{d["total"]}</td>'
-                     f'<td>{d["relevantes"]}</td><td>{d["taxa"]}%</td>'
-                     f'<td>{d["confianca"]}%</td></tr>')
-        taxa=round(rg/tg*100 if tg else 0,1)
-        f_rows+=(f'<tr class="tr-tot"><td><b>TOTAL</b></td><td><b>{tg}</b></td>'
-                 f'<td><b>{rg}</b></td><td><b>{taxa}%</b></td><td>—</td></tr>')
+       # fontes HTML
+       f_rows=""
+       tg=rg=0
+       for f in sorted(fn):
+           d=fn[f]; tg+=d["total"]; rg+=d["relevantes"]
+           f_rows+=(f'<tr><td>{f}</td><td>{d["total"]}</td>'
+                    f'<td>{d["relevantes"]}</td><td>{d["taxa"]}%</td>'
+                    f'<td>{d["confianca"]}%</td></tr>')
+       taxa=round(rg/tg*100 if tg else 0,1)
+       f_rows+=(f'<tr class="tr-tot"><td><b>TOTAL</b></td><td><b>{tg}</b></td>'
+                f'<td><b>{rg}</b></td><td><b>{taxa}%</b></td><td>—</td></tr>')
 
-        vm = r["valor_total"]/1e6
-        vhb= rh["total_valor"]/1e9
+       vm = r["valor_total"]/1e6
+       vhb= rh["total_valor"]/1e9
 
-        return f"""<!DOCTYPE html>
+       return f"""<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
