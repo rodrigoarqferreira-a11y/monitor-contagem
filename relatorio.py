@@ -47,12 +47,6 @@ class GeradorRelatorio:
         self.pasta.mkdir(exist_ok=True)
         # Dados consolidados
         self.resumo = self.resumo_recente()
-        self.fases_recentes = self.investimentos_por_fase()
-        self.fontes_recentes = self.analise_por_fonte()
-        self.ranking = self.ranking_empresas()
-        self.evolucao = self.evolucao_mensal()
-        self.confianca = self.analise_confianca()
-        self.quase_relevantes = self.noticias_quase_relevantes()
 
     # ── helpers ──────────────────────────────────
 
@@ -307,17 +301,19 @@ class GeradorRelatorio:
     # ── HTML ──────────────────────────────────────────
 
     def gerar_html(self):
-        r   = self.resumo_recente()
-        rh  = self.resumo_historico()
-        rk  = self.ranking_historico()
-        pa  = self.por_ano_historico()
-        fs  = self.fases_recentes = self.investimentos_por_fase()
-        fn  = self.fontes_recentes = self.analise_por_fonte()
-        cf  = self.confianca_recente()
-        qr  = self.quase_relevantes()
-        nrs = self._relevantes()
-        all_n = self._todas()
-        hist  = self.lista_historico()
+       r   = self.resumo_recente()
+       rh  = self.resumo_historico()
+       rk  = self.ranking_historico()
+       pa  = self.por_ano_historico()
+
+       fs  = self.fases_recentes
+       fn  = self.fontes_recentes
+       cf  = self.confianca
+       qr  = self.quase_relevantes
+
+       nrs = self._relevantes()
+       all_n = self._todas()
+       hist = self.lista_historico()
 
         njs  = json.dumps(nrs,    ensure_ascii=False)
         ajs  = json.dumps(all_n,  ensure_ascii=False)
