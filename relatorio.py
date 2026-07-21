@@ -331,7 +331,7 @@ class GeradorRelatorio:
            d=fn[f]; tg+=d["total"]; rg+=d["relevantes"]
            f_rows+=(f'<tr><td>{f}</td><td>{d["total"]}</td>'
                     f'<td>{d["relevantes"]}</td><td>{d["taxa_precisao"]}%</td>'
-                    f'<td>{d["confianca"]}%</td></tr>')
+                    f'<td>{d["confianca_media"]}%</td></tr>')
        taxa=round(rg/tg*100 if tg else 0,1)
        f_rows+=(f'<tr class="tr-tot"><td><b>TOTAL</b></td><td><b>{tg}</b></td>'
                 f'<td><b>{rg}</b></td><td><b>{taxa}%</b></td><td>—</td></tr>')
