@@ -34,6 +34,9 @@ try:
 except ImportError:
     HAS_MATPLOTLIB = False
 
+# ─────────────────────────────────────────────────
+# GERADOR PRINCIPAL
+# ─────────────────────────────────────────────────
 
 class GeradorRelatorio:
 
@@ -42,6 +45,8 @@ class GeradorRelatorio:
         self.data_geracao = datetime.now()
         self.pasta        = Path("relatorios")
         self.pasta.mkdir(exist_ok=True)
+
+    # ── helpers ──────────────────────────────────
 
     def _relevantes(self):
         return [n for n in self.banco.noticias if n.get("relevante")]
@@ -74,56 +79,79 @@ class GeradorRelatorio:
         emps = sum(self._enum(e) for n in ns for e in n.get("empregos",[]))
         cfs  = [n.get("confianca",0) for n in ns if n.get("confianca",0)>0]
         return {
-            "noticias_relevantes": len(ns),
-            "novos_empregos":      emps,
-            "valor_total":         sum(vals),
-            "confianca_media":     int(statistics.mean(cfs)) if cfs else 0,
-            "periodo":             self._periodo(),
+            "investimentos_detectados": len(self.banco.investimentos),
+            "empresas_monitoradas":     len(self.banco.empresas),
+            "novos_empregos":           empregos,
+            "valor_total":              sum(valores),
+            "confianca_media":          int(statistics.mean(confs)) if confs else 0,
+            "noticias_relevantes":      len(ns),
+            "periodo":                  self._periodo(),
         }
 
-    def fases_recentes(self):
-        d = defaultdict(int)
+    def investimentos_por_fase(self):
+        d = defaultdict(list)
         for n in self._relevantes():
-            d[n.get("fase","Não identificada")] += 1
+            d[n.get("fase","Não identificada")].append(n)
         return dict(d)
 
-    def fontes_recentes(self):
-        d = defaultdict(lambda:{"total":0,"relevantes":0,"cfs":[]})
+    def ranking_empresas(self, top=10):
+        cnt = Counter(); vals = defaultdict(float); emps = defaultdict(int)
+        for n in self._relevantes():
+            for e in n.get("empresas",[]):
+                cnt[e] += 1
+                for v in n.get("valores",[]): vals[e] += self._num_valor(v)
+                for em in n.get("empregos",[]): emps[e] += self._num_emprego(em)
+        return [{"empresa":e,"investimentos":c,"valor_total":vals[e],"empregos":emps[e]}
+                for e,c in cnt.most_common(top)]
+
+    def evolucao_mensal(self):
+        d = defaultdict(lambda:{"investimentos":0,"empregos":0,"valor":0})
+        for n in self._relevantes():
+            dt = n.get("data","")
+            mes = dt[:7] if dt and "-" in dt else (dt[-4:] if dt else "?")
+            d[mes]["investimentos"] += 1
+            for em in n.get("empregos",[]): d[mes]["empregos"] += self._num_emprego(em)
+            for v  in n.get("valores", []): d[mes]["valor"]    += self._num_valor(v)
+        return dict(sorted(d.items()))
+
+    def analise_por_fonte(self):
+        d = defaultdict(lambda:{"total":0,"relevantes":0,"confs":[]})
         for n in self.banco.noticias:
             f = n.get("fonte","Desconhecida")
             d[f]["total"] += 1
             if n.get("relevante"): d[f]["relevantes"] += 1
             c = n.get("confianca",0)
-            if c>0: d[f]["cfs"].append(c)
+            if c > 0: d[f]["confs"].append(c)
         return {
             f: {
-                "total":      v["total"],
-                "relevantes": v["relevantes"],
-                "taxa":       round(v["relevantes"]/v["total"]*100 if v["total"] else 0,1),
-                "confianca":  round(statistics.mean(v["cfs"]) if v["cfs"] else 0,1),
-            } for f,v in d.items()
+                "total":        v["total"],
+                "relevantes":   v["relevantes"],
+                "taxa_precisao": round(v["relevantes"]/v["total"]*100 if v["total"] else 0, 1),
+                "confianca_media": round(statistics.mean(v["confs"]) if v["confs"] else 0, 1),
+            } for f, v in d.items()
         }
 
-    def quase_relevantes(self):
-        return sorted([
-            {"titulo":n.get("titulo",""), "empresas":n.get("empresas",[]),
-             "pontuacao":n.get("pontuacao",0), "fase":n.get("fase",""),
-             "fonte":n.get("fonte",""), "url":n.get("url","")}
+    def noticias_quase_relevantes(self):
+        quase = [
+            {"titulo": n.get("titulo",""), "empresas": n.get("empresas",[]),
+             "pontuacao": n.get("pontuacao",0), "fase": n.get("fase",""),
+             "fonte": n.get("fonte",""), "url": n.get("url","")}
             for n in self.banco.noticias
-            if n.get("pontuacao",0)>=30
-            and not n.get("mencionou_contagem",False)
+            if n.get("pontuacao",0) >= 30
+            and not n.get("mencionou_contagem", False)
             and not n.get("relevante")
-        ], key=lambda x: x["pontuacao"], reverse=True)
+        ]
+        return sorted(quase, key=lambda x: x["pontuacao"], reverse=True)
 
-    def confianca_recente(self):
+    def analise_confianca(self):
         cs = [n.get("confianca",0) for n in self._relevantes()]
-        if not cs: return {"alta":0,"media":0,"baixa":0,"mg":0}
+        if not cs: return {"alta":0,"media":0,"baixa":0,"media_geral":0}
         t = len(cs)
         return {
-            "alta":  round(len([c for c in cs if c>=80])/t*100,1),
-            "media": round(len([c for c in cs if 50<=c<80])/t*100,1),
-            "baixa": round(len([c for c in cs if c<50])/t*100,1),
-            "mg":    round(statistics.mean(cs),1),
+            "alta":        round(len([c for c in cs if c>=80])/t*100,1),
+            "media":       round(len([c for c in cs if 50<=c<80])/t*100,1),
+            "baixa":       round(len([c for c in cs if c<50])/t*100,1),
+            "media_geral": round(statistics.mean(cs),1),
         }
 
     # ── ANÁLISES HISTÓRICO ────────────────────────────
