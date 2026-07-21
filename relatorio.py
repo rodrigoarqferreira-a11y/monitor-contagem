@@ -314,23 +314,183 @@ class GeradorRelatorio:
 <style>
 :root{{--az:#1a3a5c;--ou:#e8a020;--bg:#f0f4fa;--br:#fff;--ci:#6b7280;--bo:#dde3ec;--vd:#16a34a;--tx:#1f2937}}
 *{{box-sizing:border-box;margin:0;padding:0}}
-body{{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:15px}}
-.hdr{{background:var(--az);color:#fff;padding:22px 36px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}}
-.hdr-l h1{{font-size:1.35rem;font-weight:700}}.hdr-l p{{font-size:.8rem;opacity:.7;margin-top:3px}}
-.hdr-r img{{height:60px;object-fit:contain}}
+  body {{
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #f0f4fa;
+  }}
+  /* HEADER PRINCIPAL */
+  .hdr {{
+    background: #037482;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }}
+
+  .hdr-inner {{
+    display: flex;
+    align-items: stretch;
+    min-height: 130px;
+  }}
+  /* Faixa lateral esquerda com cor mais escura */
+  .hdr-logo-col {{
+    background: #035863;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 160px;
+    flex-shrink: 0;
+  }}
+  .hdr-logo-col img {{
+    max-width: 110px;
+    max-height: 70px;
+    width: auto;
+    height: auto;
+    display: block;
+}}
+
+   .logo-placeholder {{
+    background: rgba(14, 185, 205, 0.15);
+    border: 2px solid rgba(14, 185, 205, 0.4);
+    border-radius: 10px;
+    width: 110px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #0EB9CD;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }}
+
+    /* Conteúdo central */
+  .hdr-content {{
+    flex: 1;
+    padding: 24px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }}
+
+    .hdr-supertitle {{
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #0EB9CD;
+    margin-bottom: 6px;
+  }}
+
+  .hdr-title {{
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }}
+
+  .hdr-subtitle {{
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 400;
+  }}
+
+  /* Linha decorativa accent */
+  .hdr-accent-line {{
+    height: 3px;
+    background: linear-gradient(90deg, #035863 0%, #0EB9CD 40%, #D2DD68 75%, #FF7A01 100%);
+  }}
+
+   /* CARDS DE MÉTRICAS */
+  .cards {{
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    background: #035863;
+  }}
+
+  .metric-card {{
+    padding: 16px 20px;
+    text-align: center;
+    border-right: 1px solid rgba(14, 185, 205, 0.2);
+    position: relative;
+  }}
+
+  .metric-card:last-child { border-right: none; }
+
+  .metric-card::before {{
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: transparent;
+  }}
+
+  .metric-card.destaque::before {{ background: #D2DD68; }}
+  .metric-card.alerta::before   {{ background: #FF7A01; }}
+  .metric-card.info::before     {{ background: #0EB9CD; }}
+
+  .metric-val {{
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 4px;
+  }}
+
+  .metric-val.ouro  {{ color: #D2DD68; }}
+  .metric-val.ciano {{ color: #0EB9CD; }}
+  .metric-val.laranja {{ color: #FF7A01; }}
+
+  .metric-lbl {{
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 600;
+  }}
+
+    /* ABAS */
+  .tabs-wrap {{
+    background: #024f5a;
+    padding: 0 0 0 0;
+    border-bottom: 2px solid #035863;
+  }}
+
+  .tabs {{
+    display: flex;
+    padding: 0 24px;
+  }}
+
+  .tab {{
+    padding: 12px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }}
+
+  .tab:hover {{ color: rgba(255,255,255,0.8); }}
+
+  .tab.on {{
+    color: #D2DD68;
+    border-bottom-color: #D2DD68;
+  }}
+  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
 .cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;padding:22px 36px 0}}
 .card{{background:var(--br);border:1px solid var(--bo);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden}}
 .card::before{{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--az)}}
 .card.ou::before{{background:var(--ou)}}.card.vd::before{{background:var(--vd)}}
 .cval{{font-size:1.7rem;font-weight:800;color:var(--az);line-height:1;margin-bottom:4px}}
 .clbl{{font-size:.67rem;text-transform:uppercase;letter-spacing:.6px;color:var(--ci);font-weight:600}}
-.tabs-wrap{{padding:22px 36px 0}}
-.tabs{{display:flex;gap:3px;border-bottom:2px solid var(--bo);flex-wrap:wrap}}
-.tab{{padding:9px 18px;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;
-      background:none;font-size:.85rem;font-weight:600;color:var(--ci);cursor:pointer;
-      position:relative;bottom:-2px;transition:all .15s}}
-.tab:hover{{background:var(--bg);color:var(--az)}}
-.tab.on{{background:var(--br);color:var(--az);border-color:var(--bo);border-bottom-color:var(--br)}}
 .pan{{display:none;padding:22px 36px}}.pan.on{{display:block}}
 .sec{{margin-bottom:26px}}
 .stit{{font-size:.93rem;font-weight:700;color:var(--az);padding-bottom:8px;border-bottom:2px solid var(--ou);margin-bottom:14px}}
@@ -366,16 +526,18 @@ footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;paddin
 </style>
 </head>
 <body>
-
 <div class="hdr">
-  <div class="hdr-l">
-    <h1>📊 Monitor de Investimentos Privados</h1>
-    <p>SEDECON · Superintendência de Inovação e Informações Estratégicas · {self.data_geracao.strftime('%d/%m/%Y %H:%M')}</p>
-  </div>
-  <div class="hdr-r">
-    <img src="../dados/logo secretaria sedecon.png" alt="SEDECON">
-  </div>
+  <div class="hdr-inner">
+    <div class="hdr-logo-col">
+      <img src="../dados/logo_sedecon_2.png" alt="SEDECON">
+        </div>
+    </div>
 </div>
+    <div class="hdr-content">
+      <div class="hdr-supertitle">Prefeitura de Contagem · MG</div>
+      <div class="hdr-title">Monitor de Investimentos Privados</div>
+      <div class="hdr-subtitle">SEDECON · Superintendência de Inovação e Informações Estratégicas</div>
+    </div>
 
 <div class="tabs-wrap">
   <div class="tabs">
