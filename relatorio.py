@@ -484,7 +484,7 @@ class GeradorRelatorio:
     border-bottom-color: #D2DD68;
   }}
 footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;padding:14px;font-size:.74rem;margin-top:14px}}
-@media(max-width:768px){{.hdr,.cards,.tabs-wrap,.pan{padding-left:14px;padding-right:14px}}.g2,.g3{{grid-template-columns:1fr}}
+@media(max-width:768px){{.hdr,.cards,.tabs-wrap,.pan{{padding-left:14px;padding-right:14px}}.g2,.g3{{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
