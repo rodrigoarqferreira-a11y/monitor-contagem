@@ -368,7 +368,7 @@ class GeradorRelatorio:
   }}
   /* Faixa lateral esquerda com cor mais escura */
   .hdr-logo-col {{
-    background: #035863;
+    background: #037482;
     padding: 34px 38px;
     display: flex;
     align-items: center;
