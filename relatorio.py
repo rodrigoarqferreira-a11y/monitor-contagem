@@ -224,7 +224,7 @@ class GeradorRelatorio:
         for i,e in enumerate(rk,1):
             L.append(f"  {i:>2}. {e['empresa'][:35]:<36} R$ {e['valor_total']/1e6:>8.1f}M  ({e['investimentos']} inv.)")
         L.append(f"\n=== POR ANO ===")
-        for a,d in pa.items():self.investimentos_por_fase()
+        for a,d in pa.items():
             L.append(f"  {a}: {d['investimentos']} invest. — R$ {d['valor']/1e9:.2f} bi")
         return "\n".join(L)
 
