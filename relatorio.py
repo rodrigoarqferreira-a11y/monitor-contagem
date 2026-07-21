@@ -45,6 +45,14 @@ class GeradorRelatorio:
         self.data_geracao = datetime.now()
         self.pasta        = Path("relatorios")
         self.pasta.mkdir(exist_ok=True)
+        # Dados consolidados
+        self.resumo = self.resumo_recente()
+        self.fases_recentes = self.investimentos_por_fase()
+        self.fontes_recentes = self.analise_por_fonte()
+        self.ranking = self.ranking_empresas()
+        self.evolucao = self.evolucao_mensal()
+        self.confianca = self.analise_confianca()
+        self.quase_relevantes = self.noticias_quase_relevantes()
 
     # ── helpers ──────────────────────────────────
 
@@ -303,8 +311,8 @@ class GeradorRelatorio:
         rh  = self.resumo_historico()
         rk  = self.ranking_historico()
         pa  = self.por_ano_historico()
-        fs  = self.fases_recentes()
-        fn  = self.fontes_recentes()
+        fs  = self.fases_recentes = self.investimentos_por_fase()
+        fn  = self.fontes_recentes = self.analise_por_fonte()
         cf  = self.confianca_recente()
         qr  = self.quase_relevantes()
         nrs = self._relevantes()
@@ -912,7 +920,13 @@ document.addEventListener('DOMContentLoaded',()=>{{
             fn_rows=[["Fonte","Total","Relev.","Precisão","Confiança"]]
             for f in sorted(fn):
                 d=fn[f]; tg+=d["total"]; rg+=d["relevantes"]
-                fn_rows.append([f[:20],str(d["total"]),str(d["relevantes"]),f"{d['taxa']}%",f"{d['confianca']}%"])
+                fn_rows.append([
+                    f[:20],
+                    str(d["total"]),
+                    str(d["relevantes"]),
+                    f"{d['taxa_precisao']}%",
+                    f"{d['confianca_media']}%"
+                ])
             fn_rows.append(["TOTAL",str(tg),str(rg),f"{round(rg/tg*100 if tg else 0,1)}%","—"])
             story.append(tbl(fn_rows,ws=[5*cm,2*cm,2*cm,2.5*cm,4*cm]))
 
@@ -922,7 +936,7 @@ document.addEventListener('DOMContentLoaded',()=>{{
                 ["Alta (≥ 80%)",   f"{cf['alta']}%"],
                 ["Média (50–80%)", f"{cf['media']}%"],
                 ["Baixa (< 50%)",  f"{cf['baixa']}%"],
-                ["Média geral",    f"{cf['mg']}%"],
+                ["Média geral", f"{cf['media_geral']}%"],
             ],ws=[11*cm,5*cm]))
 
             story+=[hr(),Paragraph("Critérios de relevância",t_sec),
