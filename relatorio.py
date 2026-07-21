@@ -334,11 +334,11 @@ class GeradorRelatorio:
   /* Faixa lateral esquerda com cor mais escura */
   .hdr-logo-col {{
     background: #035863;
-    padding: 24px 28px;
+    padding: 34px 38px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 160px;
+    min-width: 300px;
     flex-shrink: 0;
   }}
   .hdr-logo-col img {{
@@ -349,10 +349,10 @@ class GeradorRelatorio:
     display: block;
 }}
 
-  .logo-placeholder {{
+   .logo-placeholder {{
     background: rgba(14, 185, 205, 0.15);
     border: 2px solid rgba(14, 185, 205, 0.4);
-    border-radius: 10px;
+    border-radius: 20px;
     width: 110px;
     height: 70px;
     display: flex;
@@ -365,7 +365,7 @@ class GeradorRelatorio:
     letter-spacing: 0.5px;
   }}
 
-   /* Conteúdo central */
+    /* Conteúdo central */
   .hdr-content {{
     flex: 1;
     padding: 24px 32px;
@@ -374,7 +374,7 @@ class GeradorRelatorio:
     justify-content: center;
   }}
 
-  .hdr-supertitle {{
+    .hdr-supertitle {{
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
@@ -483,62 +483,58 @@ class GeradorRelatorio:
     color: #D2DD68;
     border-bottom-color: #D2DD68;
   }}
-  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  
-.cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;padding:22px 36px 0}}
-.card{{background:var(--br);border:1px solid var(--bo);border-radius:10px;padding:16px;text-align:center;position:relative;overflow:hidden}}
-.card::before{{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--az)}}
-.card.ou::before{{background:var(--ou)}}.card.vd::before{{background:var(--vd)}}
-.cval{{font-size:1.7rem;font-weight:800;color:var(--az);line-height:1;margin-bottom:4px}}
-.clbl{{font-size:.67rem;text-transform:uppercase;letter-spacing:.6px;color:var(--ci);font-weight:600}}
-.pan{{display:none;padding:22px 36px}}.pan.on{{display:block}}
-.sec{{margin-bottom:26px}}
-.stit{{font-size:.93rem;font-weight:700;color:var(--az);padding-bottom:8px;border-bottom:2px solid var(--ou);margin-bottom:14px}}
-.g2{{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
-.g3{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}}
-.sbox{{background:var(--br);border:1px solid var(--bo);border-radius:10px;padding:18px;text-align:center}}
-.sval{{font-size:1.9rem;font-weight:800;color:var(--az);line-height:1}}
-.slbl{{font-size:.7rem;color:var(--ci);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}}
-.flt{{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}}
-.flt label{{font-size:.78rem;font-weight:600;color:var(--ci)}}
-.flt select,.flt input{{padding:6px 10px;border:1px solid var(--bo);border-radius:6px;font-size:.82rem;background:var(--br);color:var(--tx);min-width:140px}}
-.btnx{{padding:6px 12px;background:var(--az);color:#fff;border:none;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer}}
-.btnx:hover{{opacity:.85}}
-.twrap{{overflow-x:auto}}
-table{{width:100%;border-collapse:collapse;font-size:.84rem}}
-th{{background:var(--az);color:#fff;padding:9px 12px;text-align:left;font-size:.76rem;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}}
-td{{padding:8px 12px;border-bottom:1px solid var(--bo);vertical-align:top}}
-tr:hover td{{background:#eef2fa}}
-.tr-tot td{{background:var(--bg);font-weight:600}}
-.nc{{background:var(--br);border:1px solid var(--bo);border-radius:8px;padding:13px;margin-bottom:9px;border-left:4px solid var(--az)}}
-.nc.q{{border-left-color:var(--ou)}}
-.nt{{font-weight:700;font-size:.9rem;color:var(--az);margin-bottom:4px;line-height:1.4}}
-.nm{{font-size:.74rem;color:var(--ci);display:flex;gap:9px;flex-wrap:wrap;margin-bottom:4px}}
-.nu{{font-size:.74rem;color:var(--az);text-decoration:none;word-break:break-all}}
-.nu:hover{{text-decoration:underline}}
-.bdg{{display:inline-block;padding:2px 7px;border-radius:11px;font-size:.68rem;font-weight:700;text-transform:uppercase}}
-.bv{{background:#dcfce7;color:#15803d}}.bo2{{background:#fef9c3;color:#a16207}}
-.bc{{background:#f1f5f9;color:#475569}}.ba{{background:#dbeafe;color:#1d4ed8}}
-.graf{{height:300px;background:var(--br);border:1px solid var(--bo);border-radius:8px;margin-bottom:14px}}
-.vz{{text-align:center;padding:32px;color:var(--ci);font-style:italic}}
 footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;padding:14px;font-size:.74rem;margin-top:14px}}
-@media(max-width:768px){{.hdr,.cards,.tabs-wrap,.pan{{padding-left:14px;padding-right:14px}}.g2,.g3{{grid-template-columns:1fr}}}}
+@media(max-width:768px){{.hdr,.cards,.tabs-wrap,.pan{padding-left:14px;padding-right:14px}}.g2,.g3{{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="hdr">
   <div class="hdr-inner">
     <div class="hdr-logo-col">
-      <img src="../dados/logo_sedecon_2.png" alt="SEDECON">
-        </div>
+      <div class="logo-placeholder">LOGO<br>SEDECON</div>
     </div>
-</div>
     <div class="hdr-content">
       <div class="hdr-supertitle">Prefeitura de Contagem · MG</div>
       <div class="hdr-title">Monitor de Investimentos Privados</div>
       <div class="hdr-subtitle">SEDECON · Superintendência de Inovação e Informações Estratégicas</div>
     </div>
-<div class="hdr-accent-line"></div>    
+  </div>
+  <div class="hdr-accent-line"></div>
+</div> 
+
+<div class="cards">
+
+    <div class="metric-card">
+        <div class="metric-val">{r['investimentos_detectados']}</div>
+        <div class="metric-lbl">Investimentos</div>
+    </div>
+
+    <div class="metric-card">
+        <div class="metric-val">{r['empresas_monitoradas']}</div>
+        <div class="metric-lbl">Empresas</div>
+    </div>
+
+    <div class="metric-card destaque">
+        <div class="metric-val ouro">{r['novos_empregos']:,}</div>
+        <div class="metric-lbl">Empregos gerados</div>
+    </div>
+
+    <div class="metric-card destaque">
+        <div class="metric-val ouro">R$ {vm:.0f}M</div>
+        <div class="metric-lbl">Valor total</div>
+    </div>
+
+    <div class="metric-card info">
+        <div class="metric-val ciano">{r['confianca_media']}%</div>
+        <div class="metric-lbl">Confiança média</div>
+    </div>
+
+    <div class="metric-card alerta">
+        <div class="metric-val laranja">{r['noticias_relevantes']}</div>
+        <div class="metric-lbl">Notícias relevantes</div>
+    </div>
+
+</div>
 
 <div class="tabs-wrap">
   <div class="tabs">
