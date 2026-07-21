@@ -349,7 +349,7 @@ class GeradorRelatorio:
     display: block;
 }}
 
-   .logo-placeholder {{
+  .logo-placeholder {{
     background: rgba(14, 185, 205, 0.15);
     border: 2px solid rgba(14, 185, 205, 0.4);
     border-radius: 10px;
@@ -365,7 +365,7 @@ class GeradorRelatorio:
     letter-spacing: 0.5px;
   }}
 
-    /* Conteúdo central */
+   /* Conteúdo central */
   .hdr-content {{
     flex: 1;
     padding: 24px 32px;
@@ -374,7 +374,7 @@ class GeradorRelatorio:
     justify-content: center;
   }}
 
-    .hdr-supertitle {{
+  .hdr-supertitle {{
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
@@ -538,6 +538,7 @@ footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;paddin
       <div class="hdr-title">Monitor de Investimentos Privados</div>
       <div class="hdr-subtitle">SEDECON · Superintendência de Inovação e Informações Estratégicas</div>
     </div>
+<div class="hdr-accent-line"></div>    
 
 <div class="tabs-wrap">
   <div class="tabs">
