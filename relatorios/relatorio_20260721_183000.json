@@ -1,0 +1,158 @@
+{
+    "data_geracao": "2026-07-21T18:30:00.081714",
+    "resumo_recente": {
+        "investimentos_detectados": 60,
+        "empresas_monitoradas": 60,
+        "novos_empregos": 0,
+        "valor_total": 0,
+        "confianca_media": 80,
+        "noticias_relevantes": 1,
+        "periodo": "2026-07-19 a 2026-07-19"
+    },
+    "resumo_historico": {
+        "total_investimentos": 59,
+        "total_valor": 10267220020.0,
+        "empresas_unicas": 59,
+        "periodo": "2021 – 2026"
+    },
+    "ranking_historico": [
+        {
+            "empresa": "Inova Parque",
+            "investimentos": 1,
+            "valor_total": 1300000000.0
+        },
+        {
+            "empresa": "Complexo logístico Empresarial Contendas",
+            "investimentos": 1,
+            "valor_total": 1500000000.0
+        },
+        {
+            "empresa": "Bresco",
+            "investimentos": 1,
+            "valor_total": 700000000.0
+        },
+        {
+            "empresa": "GNDI",
+            "investimentos": 1,
+            "valor_total": 110000000.0
+        },
+        {
+            "empresa": "Emccamp",
+            "investimentos": 1,
+            "valor_total": 250000000.0
+        },
+        {
+            "empresa": "ELL Morais empreendimentos",
+            "investimentos": 1,
+            "valor_total": 250000000.0
+        },
+        {
+            "empresa": "Eco Global c",
+            "investimentos": 1,
+            "valor_total": 30000000.0
+        },
+        {
+            "empresa": "BII Par",
+            "investimentos": 1,
+            "valor_total": 50000000.0
+        },
+        {
+            "empresa": "Obra MAX",
+            "investimentos": 1,
+            "valor_total": 72000000.0
+        },
+        {
+            "empresa": "Grupo EPO/Contemporâneo Mall",
+            "investimentos": 1,
+            "valor_total": 50000000.0
+        },
+        {
+            "empresa": "Komatsu",
+            "investimentos": 1,
+            "valor_total": 120000000.0
+        },
+        {
+            "empresa": "Escola Bilíngue de Base Tecnológica do Sesi",
+            "investimentos": 1,
+            "valor_total": 30000000.0
+        },
+        {
+            "empresa": "Centro de Treinamento e Desenvolvimento para a Indústria 4.0",
+            "investimentos": 1,
+            "valor_total": 40000000.0
+        },
+        {
+            "empresa": "RHI Magnesita",
+            "investimentos": 1,
+            "valor_total": 420000000.0
+        },
+        {
+            "empresa": "Maxion Structural Components",
+            "investimentos": 1,
+            "valor_total": 35000000.0
+        }
+    ],
+    "por_ano_historico": {
+        "2021": {
+            "investimentos": 19,
+            "valor": 5125000000.0
+        },
+        "2022": {
+            "investimentos": 1,
+            "valor": 60000000.0
+        },
+        "2023": {
+            "investimentos": 12,
+            "valor": 2848000000.0
+        },
+        "2024": {
+            "investimentos": 15,
+            "valor": 754820000.0
+        },
+        "2025": {
+            "investimentos": 8,
+            "valor": 415900000.0
+        },
+        "2026": {
+            "investimentos": 4,
+            "valor": 1063500020.0
+        }
+    },
+    "fases_recentes": {
+        "Licenciamento": [
+            {
+                "titulo": "Unidade do Cefet em Contagem será a...",
+                "texto": "O município de Contagem receberá seu primeiro campus de uma universidade federal com a transformação do Centro Federal de Educação Tecnológica de Minas Gerais (Cefet MG) em Universidade Federal Tecnológica. A conquista foi possível com a aprovação pelo Senado Federal do PL nº 5.102/2023.\n\nNa manhã desta sexta-feira (17/7), o prefeito Ricardo Faria fez uma visita ao Cefet Contagem para fortalecer parcerias e aproximar as instituições. Ricardo foi recebido pela diretora-geral do Cefet Minas, Carla Simone Chamon, e destacou a conquista da universidade para a cidade.\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\n“O objetivo é reforçar e estabelecer parcerias com o Cefet, que é uma referência na educação pública de qualidade no nosso país. E estamos ansiosos, porque a instituição vai virar universidade federal e vai ser a primeira aqui de Contagem.” Prefeito de Contagem- Ricardo Faria\n\nRicardo reforçou a parceria para auxiliar na construção do ginásio poliesportivo, em andamento, e outras ações que possam melhorar o acesso de estudantes e trabalhadores à unidade.\n\nDurante a visita, o prefeito conheceu os projetos de expansão da unidade e reiterou a parceria para construção do ginásio do Campus Contagem - Fotos: Luci Sallum/PMC\n\nA professora Carla Chamon agradeceu o apoio da Prefeitura de Contagem nas ações da unidade, que atende cerca de 500 estudantes com cursos técnicos e de graduação. “Agradecemos porque, na verdade, o que fazemos aqui é para a cidade. É para formar a nossa juventude, para termos um país melhor. É nisso que a gente acredita”.\n\nO Cefet Contagem possui os cursos técnicos de Controle Ambiental, Informática e Eletroeletrônica, em tempo integral. Também possui o curso de graduação em Engenharia Química.\n\nOutro ponto destacado pela diretora foi o apoio da Prefeitura ao projeto que transforma o Cefet Minas em universidade federal. “Construímos uma carta de apoio com os prefeitos que possuem unidades do Cefet em suas cidades e Contagem sempre se colocou ao nosso lado”.\n\nEstiveram presentes na visita o secretário de Educação, Lindomar Diamantino; a presidenta da Fundação de Ensino de Contagem (Funec), Renata Laureano; o administrador da Regional Ressaca, José Carlos (Zezé); representantes da Secretaria de Meio Ambiente e Desenvolvimento Sustentável (Semad); e servidores do Cefet Contagem.\n\nO Projeto de Lei nº 5.102/2023, de autoria do deputado federal Patrus Ananias, transformou os Cefets de Minas Gerais e do Rio de Janeiro em Universidades Federais Tecnológicas. Aprovado no Congresso Nacional, o PL segue para sanção do presidente Lula, o que deve ocorrer até o dia 30 deste mês.\n\nMinas Gerais possui dez unidades do Cefet espalhadas pelo estado, todas elas serão transformadas em Universidade Federal Tecnológica.\n\nClique aqui e acesse a galeria de fotos.",
+                "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84305/unidade-do-cefet-em-contagem-sera-a-primeira-universidade-federal-da-cidade",
+                "fonte": "Portal Contagem",
+                "data": "2026-07-19",
+                "empresas": [
+                    "patrus transportes"
+                ],
+                "valores": [],
+                "empregos": [],
+                "pontuacao": 45,
+                "relevante": true,
+                "mencionou_contagem": true,
+                "fase": "Licenciamento",
+                "status": "Em construção",
+                "confianca": 80
+            }
+        ]
+    },
+    "fontes_recentes": {
+        "Portal Contagem": {
+            "total": 1,
+            "relevantes": 1,
+            "taxa_precisao": 100.0,
+            "confianca_media": 80
+        }
+    },
+    "quase_relevantes": [],
+    "confianca_recente": {
+        "alta": 100.0,
+        "media": 0.0,
+        "baixa": 0.0,
+        "media_geral": 80
+    }
+}
