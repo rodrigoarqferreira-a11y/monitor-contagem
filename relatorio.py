@@ -307,22 +307,22 @@ class GeradorRelatorio:
        pa  = self.por_ano_historico()
 
        fs  = self.investimentos_por_fase()
-       fn  = self.fontes_recentes
-       cf  = self.confianca
-       qr  = self.quase_relevantes
+       fn = self.analise_por_fonte()
+       cf = self.analise_confianca()
+       qr = self.noticias_quase_relevantes()
 
        nrs = self._relevantes()
        all_n = self._todas()
        hist = self.lista_historico()
 
-        njs  = json.dumps(nrs,    ensure_ascii=False)
-        ajs  = json.dumps(all_n,  ensure_ascii=False)
-        hjs  = json.dumps(hist,   ensure_ascii=False)
-        rkjs = json.dumps(rk,     ensure_ascii=False)
-        pajs = json.dumps(pa,     ensure_ascii=False)
-        fsjs = json.dumps(fs,     ensure_ascii=False)
-        qjs  = json.dumps(qr,     ensure_ascii=False)
-        cfjs = json.dumps(cf,     ensure_ascii=False)
+       njs  = json.dumps(nrs,   ensure_ascii=False)
+       ajs  = json.dumps(all_n, ensure_ascii=False)
+       hjs  = json.dumps(hist,  ensure_ascii=False)
+       rkjs = json.dumps(rk,    ensure_ascii=False)
+       pajs = json.dumps(pa,    ensure_ascii=False)
+       fsjs = json.dumps(fs,    ensure_ascii=False)
+       qjs  = json.dumps(qr,    ensure_ascii=False)
+       cfjs = json.dumps(cf,    ensure_ascii=False)
 
         f_rows=""
         tg=rg=0
