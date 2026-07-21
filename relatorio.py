@@ -418,7 +418,7 @@ class GeradorRelatorio:
     position: relative;
   }}
 
-  .metric-card:last-child { border-right: none; }
+  .metric-card:last-child {{ border-right: none; }}
 
   .metric-card::before {{
     content: "";
