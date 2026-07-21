@@ -224,7 +224,7 @@ class GeradorRelatorio:
         for i,e in enumerate(rk,1):
             L.append(f"  {i:>2}. {e['empresa'][:35]:<36} R$ {e['valor_total']/1e6:>8.1f}M  ({e['investimentos']} inv.)")
         L.append(f"\n=== POR ANO ===")
-        for a,d in pa.items():
+        for a,d in pa.items():self.investimentos_por_fase()
             L.append(f"  {a}: {d['investimentos']} invest. — R$ {d['valor']/1e9:.2f} bi")
         return "\n".join(L)
 
@@ -242,8 +242,8 @@ class GeradorRelatorio:
         try:
             rk = self.ranking_historico(10)
             pa = self.por_ano_historico()
-            fs = self.fases_recentes()
-            cf = self.confianca_recente()
+            fs = self.investimentos_por_fase()
+            cf = self.analise_confianca()
 
             if rk:
                 fig,ax=plt.subplots(figsize=(10,6))
@@ -306,7 +306,7 @@ class GeradorRelatorio:
        rk  = self.ranking_historico()
        pa  = self.por_ano_historico()
 
-       fs  = self.fases_recentes
+       fs  = self.investimentos_por_fase()
        fn  = self.fontes_recentes
        cf  = self.confianca
        qr  = self.quase_relevantes
@@ -847,7 +847,7 @@ document.addEventListener('DOMContentLoaded',()=>{{
             rh = self.resumo_historico()
             rk = self.ranking_historico()
             fn = self.fontes_recentes()
-            cf = self.confianca_recente()
+            cf = self.analise_confianca()
             pa = self.por_ano_historico()
 
             nome = self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.pdf"
@@ -957,10 +957,10 @@ document.addEventListener('DOMContentLoaded',()=>{{
             "resumo_historico":   self.resumo_historico(),
             "ranking_historico":  self.ranking_historico(),
             "por_ano_historico":  self.por_ano_historico(),
-            "fases_recentes":     self.fases_recentes(),
+            "fases_recentes":     self.investimentos_por_fase(),
             "fontes_recentes":    self.fontes_recentes(),
-            "quase_relevantes":   self.quase_relevantes(),
-            "confianca_recente":  self.confianca_recente(),
+            "quase_relevantes":   self.noticias_quase_relevantes(),
+            "confianca_recente":  self.analise_confianca(),
         }
         p=self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.json"
         p.write_text(json.dumps(dados,indent=4,ensure_ascii=False),encoding="utf-8"); return p
