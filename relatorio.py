@@ -364,7 +364,7 @@ class GeradorRelatorio:
   .hdr-inner {{
     display: flex;
     align-items: stretch;
-    min-height: 130px;
+    min-height: 250px;
   }}
   /* Faixa lateral esquerda com cor mais escura */
   .hdr-logo-col {{
@@ -373,12 +373,12 @@ class GeradorRelatorio:
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 300px;
+    min-width: 400px;
     flex-shrink: 0;
   }}
   .hdr-logo-col img {{
-    max-width: 110px;
-    max-height: 70px;
+    max-width: 300px;
+    max-height: 100px;
     width: auto;
     height: auto;
     display: block;
@@ -388,8 +388,8 @@ class GeradorRelatorio:
     background: rgba(14, 185, 205, 0.15);
     border: 2px solid rgba(14, 185, 205, 0.4);
     border-radius: 20px;
-    width: 110px;
-    height: 70px;
+    width: 400px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -410,16 +410,16 @@ class GeradorRelatorio:
   }}
 
     .hdr-supertitle {{
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 25px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
     color: #0EB9CD;
-    margin-bottom: 6px;
+    margin-bottom: 15px;
   }}
 
   .hdr-title {{
-    font-size: 22px;
+    font-size: 35px;
     font-weight: 800;
     color: #ffffff;
     line-height: 1.2;
@@ -427,14 +427,14 @@ class GeradorRelatorio:
   }}
 
   .hdr-subtitle {{
-    font-size: 12px;
+    font-size: 18px;
     color: rgba(255,255,255,0.65);
     font-weight: 400;
   }}
 
   /* Linha decorativa accent */
   .hdr-accent-line {{
-    height: 3px;
+    height: 6px;
     background: linear-gradient(90deg, #035863 0%, #0EB9CD 40%, #D2DD68 75%, #FF7A01 100%);
   }}
 
@@ -447,9 +447,9 @@ class GeradorRelatorio:
   }}
 
   .metric-card {{
-    padding: 16px 20px;
+    padding: 40px 20px;
     text-align: center;
-    border-right: 1px solid rgba(14, 185, 205, 0.2);
+    border-right: 3px solid rgba(14, 185, 205, 0.2);
     position: relative;
   }}
 
@@ -459,7 +459,7 @@ class GeradorRelatorio:
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 2px;
+    height: 5px;
     background: transparent;
   }}
 
@@ -472,7 +472,7 @@ class GeradorRelatorio:
     font-weight: 800;
     color: #ffffff;
     line-height: 1;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }}
 
   .metric-val.ouro  {{ color: #D2DD68; }}
@@ -480,7 +480,7 @@ class GeradorRelatorio:
   .metric-val.laranja {{ color: #FF7A01; }}
 
   .metric-lbl {{
-    font-size: 9px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: rgba(255,255,255,0.5);
@@ -491,32 +491,32 @@ class GeradorRelatorio:
   .tabs-wrap {{
     background: #024f5a;
     padding: 0 0 0 0;
-    border-bottom: 2px solid #035863;
+    border-bottom: 5px solid #FFA047;
   }}
 
   .tabs {{
     display: flex;
-    padding: 0 24px;
+    padding: 0 34px;
   }}
 
   .tab {{
-    padding: 12px 20px;
-    font-size: 12px;
+    padding: 15px 30px;
+    font-size: 14px;
     font-weight: 600;
-    color: rgba(255,255,255,0.5);
+    color: #555555;
     cursor: pointer;
     border-bottom: 3px solid transparent;
     margin-bottom: -2px;
-    transition: all 0.15s;
+    transition: all 0.05s;
     white-space: nowrap;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.8px;
   }}
 
   .tab:hover {{ color: rgba(255,255,255,0.8); }}
 
   .tab.on {{
-    color: #D2DD68;
-    border-bottom-color: #D2DD68;
+    color: #FF7A01;
+    border-bottom-color: #FF7A01;
   }}
 footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;padding:14px;font-size:.74rem;margin-top:14px}}
 @media(max-width:768px){{.hdr,.cards,.tabs-wrap,.pan{{padding-left:14px;padding-right:14px}}.g2,.g3{{grid-template-columns:1fr}}
@@ -526,7 +526,7 @@ footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;paddin
 <div class="hdr">
   <div class="hdr-inner">
     <div class="hdr-logo-col">
-      <div class="logo-placeholder">LOGO<br>SEDECON</div>
+      <img src="../dados/logo_sedecon_2.png" alt="Logo">
     </div>
     <div class="hdr-content">
       <div class="hdr-supertitle">Prefeitura de Contagem · MG</div>
