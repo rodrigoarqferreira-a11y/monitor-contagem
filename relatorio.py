@@ -468,8 +468,8 @@ class GeradorRelatorio:
   .metric-card.info::before     {{ background: #0EB9CD; }}
 
   .metric-val {{
-    font-size: 24px;
-    font-weight: 800;
+    font-size: 28px;
+    font-weight: 700;
     color: #ffffff;
     line-height: 1;
     margin-bottom: 6px;
@@ -480,7 +480,7 @@ class GeradorRelatorio:
   .metric-val.laranja {{ color: #FF7A01; }}
 
   .metric-lbl {{
-    font-size: 12px;
+    font-size: 18px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: rgba(255,255,255,0.5);
@@ -539,7 +539,6 @@ footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;paddin
       <img src="../dados/logo_sedecon_2.png" alt="Logo">
     </div>
     <div class="hdr-content">
-      <div class="hdr-supertitle">Prefeitura de Contagem · MG</div>
       <div class="hdr-title">Monitor de Investimentos Privados</div>
       <div class="hdr-subtitle">SEDECON · Superintendência de Inovação e Informações Estratégicas</div>
     </div>
