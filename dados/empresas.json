@@ -418,5 +418,12 @@
         "primeira_aparicao": "2026-07-19",
         "ultima_atualizacao": "2026-07-20",
         "investimentos": []
+    },
+    {
+        "id": 61,
+        "nome": "vale s.a.",
+        "primeira_aparicao": "2026-07-22",
+        "ultima_atualizacao": "2026-07-22",
+        "investimentos": []
     }
 ]

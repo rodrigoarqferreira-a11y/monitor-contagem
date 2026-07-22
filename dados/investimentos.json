@@ -897,5 +897,19 @@
         "fase": "Anunciado",
         "fonte": "",
         "url": ""
+    },
+    {
+        "id": 61,
+        "empresa": "vale s.a.",
+        "ano": "2026",
+        "valor": "R$ 63 milhões",
+        "empregos": "",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-07-22",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": ""
     }
 ]
