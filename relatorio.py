@@ -428,7 +428,7 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
 <div class="hdr">
   <div class="hdr-inner">
     <div class="hdr-logo">
-      <img src="../dados/logo secretaria sedecon.png" alt="SEDECON"
+      <img src="../dados/logo_sedecon_2.png" alt="SEDECON"
            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="logo-fb" style="display:none">LOGO<br>SEDECON</div>
     </div>
