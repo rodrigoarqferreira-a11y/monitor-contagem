@@ -491,32 +491,42 @@ class GeradorRelatorio:
   .tabs-wrap {{
     background: #024f5a;
     padding: 0 0 0 0;
-    border-bottom: 5px solid #FFA047;
+    border-bottom: 3px solid #035863;
   }}
 
   .tabs {{
     display: flex;
-    padding: 0 34px;
+    background: #024f5a;
+    padding: 0 24px;
   }}
 
   .tab {{
-    padding: 15px 30px;
+    background: #024f5a;
+    color: #ffffff;
+    border: none;
+    outline: none;
+    box-shadow: none;
+
+    padding: 15px 20px;
     font-size: 14px;
     font-weight: 600;
-    color: #555555;
     cursor: pointer;
     border-bottom: 3px solid transparent;
     margin-bottom: -2px;
     transition: all 0.05s;
     white-space: nowrap;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.5px;
   }}
 
-  .tab:hover {{ color: rgba(255,255,255,0.8); }}
+  .tab:hover {{ 
+    background: #035863;
+    color: #ffffff; 
+  }}
 
   .tab.on {{
+    background: #035863;
     color: #FF7A01;
-    border-bottom-color: #FF7A01;
+    border-bottom-color: #D2DD68;
   }}
 footer{{background:var(--az);color:rgba(255,255,255,.5);text-align:center;padding:14px;font-size:.74rem;margin-top:14px}}
 @media(max-width:768px){{.hdr,.cards,.tabs-wrap,.pan{{padding-left:14px;padding-right:14px}}.g2,.g3{{grid-template-columns:1fr}}
