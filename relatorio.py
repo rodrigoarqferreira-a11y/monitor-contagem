@@ -330,7 +330,7 @@ body{{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(-
 /* ── HEADER ── */
 .hdr{{background:var(--teal);position:relative;overflow:hidden}}
 .hdr-inner{{display:flex;align-items:stretch;min-height:180px}}
-.hdr-logo{{background:var(--teal-dark);padding:34px 38px;display:flex;align-items:center;
+.hdr-logo{{background:#037482;padding:34px 38px;display:flex;align-items:center;
             justify-content:center;min-width:300px;flex-shrink:0}}
 .hdr-logo img{{max-height:300px;max-width:250px;object-fit:contain}}
 .hdr-logo .logo-fb{{background:rgba(14,185,205,.15);border:0.5px solid rgba(14,185,205,.4);
@@ -339,29 +339,29 @@ body{{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(-
 .hdr-body{{flex:1;padding:22px 28px;display:flex;flex-direction:column;justify-content:center}}
 .hdr-sup{{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;
            color:var(--teal-light);margin-bottom:5px}}
-.hdr-title{{font-size:20px;font-weight:800;color:var(--white);line-height:1.2;margin-bottom:5px}}
-.hdr-sub{{font-size:11px;color:rgba(255,255,255,.6);font-weight:400}}
+.hdr-title{{font-size:40px;font-weight:800;color:var(--white);line-height:1.2;margin-bottom:5px}}
+.hdr-sub{{font-size:18px;color:rgba(255,255,255,.6);font-weight:400}}
 .hdr-right{{padding:20px 24px;display:flex;flex-direction:column;align-items:flex-end;
              justify-content:center;gap:8px;flex-shrink:0}}
-.bdg-auto{{background:var(--lime);color:#1a3a00;font-size:9px;font-weight:800;
+.bdg-auto{{background:var(--lime);color:#1a3a00;font-size:12px;font-weight:800;
             padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}}
-.hdr-date{{font-size:10px;color:rgba(255,255,255,.5);font-weight:500}}
+.hdr-date{{font-size:12px;color:rgba(255,255,255,.5);font-weight:500}}
 .hdr-stripe{{height:3px;background:linear-gradient(90deg,var(--teal-dark) 0%,var(--teal-light) 40%,var(--lime) 72%,var(--orange) 100%)}}
 
 /* ── MÉTRICAS ── */
 .metrics{{display:grid;grid-template-columns:repeat(6,1fr);background:var(--teal-dark)}}
-.mcard{{padding:14px 16px;text-align:center;border-right:1px solid rgba(14,185,205,.2);position:relative}}
+.mcard{{padding:18px 16px;text-align:center;border-right:1px solid rgba(14,185,205,.2);position:relative}}
 .mcard:last-child{{border-right:none}}
 .mcard::before{{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:transparent}}
 .mcard.ml::before{{background:var(--lime)}}.mcard.mc::before{{background:var(--teal-light)}}.mcard.mo::before{{background:var(--orange)}}
-.mval{{font-size:22px;font-weight:800;color:var(--white);line-height:1;margin-bottom:3px}}
+.mval{{font-size:26px;font-weight:800;color:var(--white);line-height:1;margin-bottom:3px}}
 .mval.lime{{color:var(--lime)}}.mval.ciano{{color:var(--teal-light)}}.mval.oran{{color:var(--orange)}}
-.mlbl{{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.45);font-weight:600}}
+.mlbl{{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.45);font-weight:600}}
 
 /* ── ABAS ── */
 .tabs-w{{background:#024f5a;border-bottom:2px solid var(--teal-dark)}}
 .tabs{{display:flex;padding:0 24px;flex-wrap:wrap}}
-.tab{{padding:11px 18px;font-size:11px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;
+.tab{{padding:16px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;
        border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;letter-spacing:.3px}}
 .tab:hover{{color:rgba(255,255,255,.8)}}
 .tab.on{{color:var(--lime);border-bottom-color:var(--lime)}}
