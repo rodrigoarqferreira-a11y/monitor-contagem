@@ -329,12 +329,12 @@ body{{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(-
 
 /* ── HEADER ── */
 .hdr{{background:var(--teal);position:relative;overflow:hidden}}
-.hdr-inner{{display:flex;align-items:stretch;min-height:120px}}
-.hdr-logo{{background:var(--teal-dark);padding:20px 24px;display:flex;align-items:center;
-            justify-content:center;min-width:150px;flex-shrink:0}}
-.hdr-logo img{{max-height:72px;max-width:120px;object-fit:contain}}
-.hdr-logo .logo-fb{{background:rgba(14,185,205,.15);border:1.5px solid rgba(14,185,205,.4);
-  border-radius:8px;width:110px;height:68px;display:flex;align-items:center;justify-content:center;
+.hdr-inner{{display:flex;align-items:stretch;min-height:180px}}
+.hdr-logo{{background:var(--teal-dark);padding:34px 38px;display:flex;align-items:center;
+            justify-content:center;min-width:300px;flex-shrink:0}}
+.hdr-logo img{{max-height:300px;max-width:250px;object-fit:contain}}
+.hdr-logo .logo-fb{{background:rgba(14,185,205,.15);border:0.5px solid rgba(14,185,205,.4);
+  border-radius:4px;width:100px;height:200px;display:flex;align-items:center;justify-content:center;
   font-size:10px;color:var(--teal-light);text-align:center;font-weight:700;letter-spacing:.5px}}
 .hdr-body{{flex:1;padding:22px 28px;display:flex;flex-direction:column;justify-content:center}}
 .hdr-sup{{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;
@@ -433,8 +433,7 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
       <div class="logo-fb" style="display:none">LOGO<br>SEDECON</div>
     </div>
     <div class="hdr-body">
-    <div class="hdr-sup">Prefeitura de Contagem · MG</div>
-      <div class="hdr-title">Monitor de Investimentos Privados</div>
+    <div class="hdr-title">Monitor de Investimentos Privados</div>
       <div class="hdr-sub">SEDECON · Superintendência de Inovação e Informações Estratégicas</div>
     </div>
     <div class="hdr-right">
