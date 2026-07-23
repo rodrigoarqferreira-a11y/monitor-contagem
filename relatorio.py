@@ -9,6 +9,7 @@ import json
 import statistics
 from collections import Counter, defaultdict
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 from banco import Banco
@@ -38,9 +39,11 @@ except ImportError:
 class GeradorRelatorio:
 
     def __init__(self, banco: Banco = None):
-        self.banco        = banco or Banco()
-        self.data_geracao = datetime.now()
-        self.pasta        = Path("relatorios")
+        self.banco = banco or Banco()
+        self.data_geracao = datetime.now(
+            ZoneInfo("America/Sao_Paulo")
+        )
+        self.pasta = Path("relatorios")
         self.pasta.mkdir(exist_ok=True)
 
     def _relevantes(self):
