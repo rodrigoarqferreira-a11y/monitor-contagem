@@ -1,0 +1,138 @@
+{
+    "data_geracao": "2026-07-23T11:52:47.525632",
+    "resumo_recente": {
+        "noticias_relevantes": 2,
+        "novos_empregos": 0,
+        "valor_total": 144.0,
+        "confianca_media": 85,
+        "periodo": "2026-07-19 a 2026-07-22"
+    },
+    "resumo_historico": {
+        "total_investimentos": 59,
+        "total_valor": 10267220020.0,
+        "empresas_unicas": 59,
+        "periodo": "2021 – 2026"
+    },
+    "ranking_historico": [
+        {
+            "empresa": "Inova Parque",
+            "investimentos": 1,
+            "valor_total": 1300000000.0
+        },
+        {
+            "empresa": "Complexo logístico Empresarial Contendas",
+            "investimentos": 1,
+            "valor_total": 1500000000.0
+        },
+        {
+            "empresa": "Bresco",
+            "investimentos": 1,
+            "valor_total": 700000000.0
+        },
+        {
+            "empresa": "GNDI",
+            "investimentos": 1,
+            "valor_total": 110000000.0
+        },
+        {
+            "empresa": "Emccamp",
+            "investimentos": 1,
+            "valor_total": 250000000.0
+        },
+        {
+            "empresa": "ELL Morais empreendimentos",
+            "investimentos": 1,
+            "valor_total": 250000000.0
+        },
+        {
+            "empresa": "Eco Global c",
+            "investimentos": 1,
+            "valor_total": 30000000.0
+        },
+        {
+            "empresa": "BII Par",
+            "investimentos": 1,
+            "valor_total": 50000000.0
+        },
+        {
+            "empresa": "Obra MAX",
+            "investimentos": 1,
+            "valor_total": 72000000.0
+        },
+        {
+            "empresa": "Grupo EPO/Contemporâneo Mall",
+            "investimentos": 1,
+            "valor_total": 50000000.0
+        },
+        {
+            "empresa": "Komatsu",
+            "investimentos": 1,
+            "valor_total": 120000000.0
+        },
+        {
+            "empresa": "Escola Bilíngue de Base Tecnológica do Sesi",
+            "investimentos": 1,
+            "valor_total": 30000000.0
+        },
+        {
+            "empresa": "Centro de Treinamento e Desenvolvimento para a Indústria 4.0",
+            "investimentos": 1,
+            "valor_total": 40000000.0
+        },
+        {
+            "empresa": "RHI Magnesita",
+            "investimentos": 1,
+            "valor_total": 420000000.0
+        },
+        {
+            "empresa": "Maxion Structural Components",
+            "investimentos": 1,
+            "valor_total": 35000000.0
+        }
+    ],
+    "por_ano_historico": {
+        "2021": {
+            "investimentos": 19,
+            "valor": 5125000000.0
+        },
+        "2022": {
+            "investimentos": 1,
+            "valor": 60000000.0
+        },
+        "2023": {
+            "investimentos": 12,
+            "valor": 2848000000.0
+        },
+        "2024": {
+            "investimentos": 15,
+            "valor": 754820000.0
+        },
+        "2025": {
+            "investimentos": 8,
+            "valor": 415900000.0
+        },
+        "2026": {
+            "investimentos": 4,
+            "valor": 1063500020.0
+        }
+    },
+    "fases_recentes": {
+        "Licenciamento": 1,
+        "Construção": 1
+    },
+    "fontes_recentes": {
+        "Portal Contagem": {
+            "total": 2,
+            "relevantes": 2,
+            "taxa": 100.0,
+            "confianca": 85
+        }
+    },
+    "quase_relevantes": [],
+    "confianca_recente": {
+        "alta": 100.0,
+        "media": 0.0,
+        "baixa": 0.0,
+        "mg": 85
+    }
+}

@@ -28,5 +28,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84331/obras-avancam-e-bacia-b4-na-cidade-industrial-deve-ser-entregue-este-ano",
         "data": "2026-07-22",
         "pontuacao": 110
+    },
+    {
+        "id": 4,
+        "investimento": 61,
+        "fase": "Construção",
+        "titulo": "Obras avançam e Bacia B4 na Cidade...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84331/obras-avancam-e-bacia-b4-na-cidade-industrial-deve-ser-entregue-este-ano",
+        "data": "2026-07-23",
+        "pontuacao": 110
     }
 ]
