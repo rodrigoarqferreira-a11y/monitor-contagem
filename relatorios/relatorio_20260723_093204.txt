@@ -1,0 +1,42 @@
+======================================================================
+RELATÓRIO DE INVESTIMENTOS PRIVADOS — CONTAGEM MG
+SEDECON
+======================================================================
+Gerado em: 23/07/2026 09:32
+
+=== MONITORAMENTO RECENTE ===
+  Notícias relevantes : 2
+  Novos empregos      : 0
+  Valor detectado     : R$ 0.0 M
+  Confiança média     : 85%
+
+=== HISTÓRICO 2021-2026 ===
+  Total investimentos : 59
+  Valor total         : R$ 10.27 bi
+  Empresas únicas     : 59
+  Período             : 2021 – 2026
+
+=== RANKING EMPRESAS ===
+   1. Inova Parque                         R$   1300.0M  (1 inv.)
+   2. Complexo logístico Empresarial Cont  R$   1500.0M  (1 inv.)
+   3. Bresco                               R$    700.0M  (1 inv.)
+   4. GNDI                                 R$    110.0M  (1 inv.)
+   5. Emccamp                              R$    250.0M  (1 inv.)
+   6. ELL Morais empreendimentos           R$    250.0M  (1 inv.)
+   7. Eco Global c                         R$     30.0M  (1 inv.)
+   8. BII Par                              R$     50.0M  (1 inv.)
+   9. Obra MAX                             R$     72.0M  (1 inv.)
+  10. Grupo EPO/Contemporâneo Mall         R$     50.0M  (1 inv.)
+  11. Komatsu                              R$    120.0M  (1 inv.)
+  12. Escola Bilíngue de Base Tecnológica  R$     30.0M  (1 inv.)
+  13. Centro de Treinamento e Desenvolvim  R$     40.0M  (1 inv.)
+  14. RHI Magnesita                        R$    420.0M  (1 inv.)
+  15. Maxion Structural Components         R$     35.0M  (1 inv.)
+
+=== POR ANO ===
+  2021: 19 invest. — R$ 5.12 bi
+  2022: 1 invest. — R$ 0.06 bi
+  2023: 12 invest. — R$ 2.85 bi
+  2024: 15 invest. — R$ 0.75 bi
+  2025: 8 invest. — R$ 0.42 bi
+  2026: 4 invest. — R$ 1.06 bi
