@@ -677,15 +677,59 @@ function renderGraf(){{
   const base={{font:{{family:'Inter,Segoe UI,sans-serif',size:11,color:'#ffffff'}},
                paper_bgcolor:DARK,plot_bgcolor:DARK}};
 
-  Plotly.newPlot('g-rk',[{{
+Plotly.newPlot('g-rk',[{
+
     x:RK.map(e=>e.valor_total/1e6).reverse(),
+
     y:RK.map(e=>e.empresa).reverse(),
-    type:'bar',orientation:'h',marker:{{color:CIANO}},
-    text:RK.map(e=>'R$ '+(e.valor_total/1e6).toFixed(0)+'M').reverse(),
-    textposition:'outside',textfont:{{color:LIME}}
-  }}],{{...base,margin:{{l:170,r:80,t:30,b:40}},
-       xaxis:{{title:'R$ Milhões',color:'white',gridcolor:'rgba(255,255,255,0.1)'}},
-       yaxis:{{color:'white'}}}},cfg);
+
+    type:'bar',
+
+    orientation:'h',
+
+    marker:{color:CIANO},
+
+    text:RK.map(e=>'R$ '+(e.valor_total/1e6).toFixed(1)+' M').reverse(),
+
+    textposition:'outside',
+
+    textfont:{
+        color:LIME,
+        size:16
+    }
+
+}],{
+
+    ...base,
+
+    margin:{
+        l:220,
+        r:120,
+        t:40,
+        b:45
+    },
+
+    title:{
+        text:'Top Empresas por Valor',
+        font:{
+            size:18
+        }
+    },
+
+    xaxis:{
+        title:'Milhões de Reais',
+        color:'white',
+        tickfont:{size:13},
+        titlefont:{size:14},
+        gridcolor:'rgba(255,255,255,0.10)'
+    },
+
+    yaxis:{
+        color:'white',
+        tickfont:{size:15}
+    }
+
+},cfg);
 
   const anos=Object.keys(PA),aV=anos.map(a=>PA[a].valor/1e9),aQ=anos.map(a=>PA[a].investimentos);
   Plotly.newPlot('g-ano',[
