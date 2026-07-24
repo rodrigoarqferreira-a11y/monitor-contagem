@@ -698,7 +698,7 @@ Plotly.newPlot('g-rk',[{{
         size:16
     }}
 
-}],{
+}}],{{
 
     ...base,
 
@@ -729,7 +729,7 @@ Plotly.newPlot('g-rk',[{{
         tickfont:{{size:15}}
     }}
 
-},cfg);
+}},cfg);
 
   const anos=Object.keys(PA),aV=anos.map(a=>PA[a].valor/1e9),aQ=anos.map(a=>PA[a].investimentos);
   Plotly.newPlot('g-ano',[
@@ -743,30 +743,6 @@ Plotly.newPlot('g-rk',[{{
      yaxis2:{{title:'Quantidade',overlaying:'y',side:'right',color:'white'}},
      legend:{{orientation:'h',y:-0.25,font:{{color:'white'}}}}}},cfg);
 
-  const fN=Object.keys(FS),fV=Object.values(FS);
-  if(fN.length){{
-    Plotly.newPlot('g-fas',[{{x:fV,y:fN,type:'bar',orientation:'h',
-      marker:{{color:ORAN}},text:fV,textposition:'outside',textfont:{{color:LIME}}
-    }}],{{...base,margin:{{l:140,r:50,t:30,b:40}},
-         xaxis:{{color:'white',gridcolor:'rgba(255,255,255,0.1)'}},yaxis:{{color:'white'}}}},cfg);
-  }} else {{
-    document.getElementById('g-fas').innerHTML='<div class="vz" style="color:rgba(255,255,255,0.4);padding-top:80px">Sem notícias relevantes recentes.</div>';
-  }}
-
-  const cv=[CF.alta,CF.media,CF.baixa];
-  if(cv.some(v=>v>0)){{
-    Plotly.newPlot('g-cf',[{{
-      values:cv,
-      labels:['Alta ≥80% ('+CF.alta+'%)','Média ('+CF.media+'%)','Baixa ('+CF.baixa+'%)'],
-      type:'pie',hole:0.42,
-      marker:{{colors:[CIANO,LIME,ORAN],line:{{color:DARK,width:3}}}},
-      textinfo:'percent',textfont:{{color:'white',size:12}}
-    }}],{{...base,margin:{{l:10,r:10,t:40,b:10}},
-         title:{{text:'Média '+CF.mg+'%',font:{{color:LIME,size:13}}}},
-         showlegend:true,legend:{{orientation:'h',y:-0.2,font:{{color:'white'}}}}}},cfg);
-  }} else {{
-    document.getElementById('g-cf').innerHTML='<div class="vz" style="color:rgba(255,255,255,0.4);padding-top:80px">Sem dados de confiança ainda.</div>';
-  }}
 }}
 
 document.addEventListener('DOMContentLoaded',()=>{{
