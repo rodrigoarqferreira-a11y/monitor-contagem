@@ -543,14 +543,29 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
 
 <!-- GRÁFICOS -->
 <div id="p-graficos" class="pan">
-  <div class="g2">
-    <div class="sec"><div class="stit">🏆 Top empresas por valor (histórico)</div><div class="graf" id="g-rk"></div></div>
-    <div class="sec"><div class="stit">📅 Investimentos por ano</div><div class="graf" id="g-ano"></div></div>
-  </div>
-  <div class="g2">
-    <div class="sec"><div class="stit">🔔 Notícias recentes por fase</div><div class="graf" id="g-fas"></div></div>
-    <div class="sec"><div class="stit">✅ Confiança dos dados</div><div class="graf" id="g-cf"></div></div>
-  </div>
+
+    <!-- Top Empresas -->
+    <div class="sec">
+
+        <div class="stit">
+            🏆 Top empresas por valor (histórico)
+        </div>
+
+        <div class="graf" id="g-rk"></div>
+
+    </div>
+
+    <!-- Investimentos por Ano -->
+    <div class="sec">
+
+        <div class="stit">
+            📅 Investimentos por Ano
+        </div>
+
+        <div class="graf" id="g-ano"></div>
+
+    </div>
+
 </div>
 
 <!-- TODAS -->
