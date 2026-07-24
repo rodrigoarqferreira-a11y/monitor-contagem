@@ -677,7 +677,7 @@ function renderGraf(){{
   const base={{font:{{family:'Inter,Segoe UI,sans-serif',size:11,color:'#ffffff'}},
                paper_bgcolor:DARK,plot_bgcolor:DARK}};
 
-Plotly.newPlot('g-rk',[{
+Plotly.newPlot('g-rk',[{{
 
     x:RK.map(e=>e.valor_total/1e6).reverse(),
 
@@ -687,47 +687,47 @@ Plotly.newPlot('g-rk',[{
 
     orientation:'h',
 
-    marker:{color:CIANO},
+    marker:{{color:CIANO}},
 
     text:RK.map(e=>'R$ '+(e.valor_total/1e6).toFixed(1)+' M').reverse(),
 
     textposition:'outside',
 
-    textfont:{
+    textfont:{{
         color:LIME,
         size:16
-    }
+    }}
 
 }],{
 
     ...base,
 
-    margin:{
+    margin:{{
         l:220,
         r:120,
         t:40,
         b:45
-    },
+    }},
 
-    title:{
+    title:{{
         text:'Top Empresas por Valor',
-        font:{
+        font:{{
             size:18
-        }
-    },
+        }}
+    }},
 
-    xaxis:{
+    xaxis:{{
         title:'Milhões de Reais',
         color:'white',
-        tickfont:{size:13},
-        titlefont:{size:14},
+        tickfont:{{size:13}},
+        titlefont:{{size:14}},
         gridcolor:'rgba(255,255,255,0.10)'
-    },
+    }},
 
-    yaxis:{
+    yaxis:{{
         color:'white',
-        tickfont:{size:15}
-    }
+        tickfont:{{size:15}}
+    }}
 
 },cfg);
 
