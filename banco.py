@@ -97,6 +97,7 @@ class Banco:
             "fase":             fase or "Anunciado",
             "fonte":            fonte,
             "url":              url,
+            "origem":           "historico",
         }
         self.investimentos.append(novo)
         return novo
