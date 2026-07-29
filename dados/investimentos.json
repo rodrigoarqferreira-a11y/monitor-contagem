@@ -121,7 +121,7 @@
     },
     {
         "id": 9,
-        "empresa": "Obra MAX",
+        "empresa": "Obramax",
         "ano": 2021,
         "valor": 72000000.0,
         "empregos": "",
@@ -475,8 +475,8 @@
         "ultima_atualizacao": "2026-07-15",
         "eventos": [],
         "fase": "Anunciado",
-        "fonte": "https://valor.globo.com/empresas/noticia/2022/04/12/via-vai-construir-novo-centro-logistico-diz-governo-de-mg.ghtml?utm_source=pocket_saves",
-        "url": "https://valor.globo.com/empresas/noticia/2022/04/12/via-vai-construir-novo-centro-logistico-diz-governo-de-mg.ghtml?utm_source=pocket_saves",
+        "fonte": "https://valor.globo.com/empresas/noticia/2022/04/12/via-vai-construir-novo-centro-logistico-diz-governo-de-mg.ghtml",
+        "url": "https://valor.globo.com/empresas/noticia/2022/04/12/via-vai-construir-novo-centro-logistico-diz-governo-de-mg.ghtml",
         "origem": "historico"
     },
     {
@@ -820,8 +820,8 @@
         "ultima_atualizacao": "2026-07-15",
         "eventos": [],
         "fase": "Anunciado",
-        "fonte": "https://diariodocomercio.com.br/economia/big-shopping-fara-sua-primeira-expansao-com-investimento-de-r-39-milhoes/?utm_source=Instachannel&utm_campaign=distribution#",
-        "url": "https://diariodocomercio.com.br/economia/big-shopping-fara-sua-primeira-expansao-com-investimento-de-r-39-milhoes/?utm_source=Instachannel&utm_campaign=distribution#",
+        "fonte": "https://diariodocomercio.com.br/economia/big-shopping-fara-sua-primeira-expansao-com-investimento-de-r-39-milhoes/",
+        "url": "https://diariodocomercio.com.br/economia/big-shopping-fara-sua-primeira-expansao-com-investimento-de-r-39-milhoes/",
         "origem": "historico"
     },
     {
@@ -886,62 +886,18 @@
     },
     {
         "id": 60,
-        "empresa": "Patrus Transportes",
-        "ano": 2026,
-        "valor": 0.0,
-        "empregos": "",
-        "bairro": "",
-        "status": "Anunciado",
-        "ultima_atualizacao": "2026-07-19",
-        "eventos": [],
-        "fase": "Anunciado",
-        "fonte": "",
-        "url": "",
-        "origem": "historico"
-    },
-    {
-        "id": 61,
-        "empresa": "Vale S.A.",
-        "ano": 2026,
-        "valor": 63000000.0,
-        "empregos": "",
-        "bairro": "",
-        "status": "Anunciado",
-        "ultima_atualizacao": "2026-07-22",
-        "eventos": [],
-        "fase": "Anunciado",
-        "fonte": "",
-        "url": "",
-        "origem": "historico"
-    },
-    {
-        "id": 62,
         "empresa": "Obramax",
         "ano": 2026,
         "valor": 140000000.0,
         "empregos": "170 diretos + 30 terceirizados",
-        "bairro": "Av. Presidente Juscelino Kubitschek",
+        "bairro": "Av. Presidente Juscelino Kubitschek (Via Expressa)",
         "status": "Em construção",
         "ultima_atualizacao": "2026-05-20",
         "eventos": [],
         "fase": "Construção",
         "fonte": "O Tempo",
         "url": "https://www.otempo.com.br/economia/2026/5/20/obramax-investe-r-140-milhoes-em-nova-loja-em-contagem-e-tem-vagas-de-emprego-abertas",
-        "origem": "historico"
-    },
-    {
-        "id": 63,
-        "empresa": "Tambasa",
-        "ano": 2026,
-        "valor": 0.0,
-        "empregos": "15 vagas",
-        "bairro": "",
-        "status": "Anunciado",
-        "ultima_atualizacao": "2026-07-29",
-        "eventos": [],
-        "fase": "Anunciado",
-        "fonte": "",
-        "url": "",
-        "origem": "historico"
+        "origem": "historico",
+        "descricao": "Segunda unidade em MG. Loja de 17.922 m² próxima ao Itaú Power Shopping. Inauguração prevista 2º semestre 2026."
     }
 ]
