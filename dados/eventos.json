@@ -58,5 +58,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84331/obras-avancam-e-bacia-b4-na-cidade-industrial-deve-ser-entregue-este-ano",
         "data": "2026-07-23",
         "pontuacao": 110
+    },
+    {
+        "id": 7,
+        "investimento": 63,
+        "fase": "Construção",
+        "titulo": "Abertas as inscrições para concursos de...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84385/abertas-as-inscricoes-para-concursos-de-cosplay-e-k-pop-do-contagem-geek-2026",
+        "data": "2026-07-29",
+        "pontuacao": 35
     }
 ]
