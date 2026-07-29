@@ -897,6 +897,8 @@
         "fase": "Anunciado",
         "fonte": "",
         "url": ""
+        "origem": "historico"        
+        
     },
     {
         "id": 61,
@@ -911,6 +913,7 @@
         "fase": "Anunciado",
         "fonte": "",
         "url": ""
+        "origem": "historico"
     },
     {
         "id": 62,
@@ -941,5 +944,6 @@
         "fase": "Anunciado",
         "fonte": "",
         "url": ""
+        "origem": "historico"
     }
 ]
