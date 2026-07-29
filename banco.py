@@ -1,7 +1,7 @@
 """
 =========================================================
-BANCO.PY
-Monitor Inteligente de Investimentos — Contagem MG
+BANCO.PY — Monitor de Investimentos Privados
+SEDECON · Prefeitura de Contagem MG
 =========================================================
 """
 
@@ -10,13 +10,13 @@ from pathlib import Path
 from datetime import datetime
 from modelos import Noticia
 
-PASTA_DADOS    = Path("dados")
+PASTA_DADOS     = Path("dados")
 PASTA_DADOS.mkdir(exist_ok=True)
 
-ARQ_NOTICIAS     = PASTA_DADOS / "noticias.json"
-ARQ_EMPRESAS     = PASTA_DADOS / "empresas.json"
-ARQ_INVESTIMENTOS= PASTA_DADOS / "investimentos.json"
-ARQ_EVENTOS      = PASTA_DADOS / "eventos.json"
+ARQ_NOTICIAS      = PASTA_DADOS / "noticias.json"
+ARQ_EMPRESAS      = PASTA_DADOS / "empresas.json"
+ARQ_INVESTIMENTOS = PASTA_DADOS / "investimentos.json"
+ARQ_EVENTOS       = PASTA_DADOS / "eventos.json"
 
 
 class Banco:
@@ -31,8 +31,15 @@ class Banco:
 
     def carregar(self, arquivo):
         if arquivo.exists():
-            with open(arquivo, "r", encoding="utf-8") as f:
-                return json.load(f)
+            try:
+                with open(arquivo, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except json.JSONDecodeError as e:
+                print(f"  ⚠ JSON inválido em {arquivo}: {e}")
+                print(f"  Criando backup e iniciando vazio.")
+                backup = arquivo.with_suffix(".bak.json")
+                arquivo.rename(backup)
+                return []
         return []
 
     # ── salvar ───────────────────────────────────────
@@ -61,20 +68,42 @@ class Banco:
             empresa["ultima_atualizacao"] = datetime.now().strftime("%Y-%m-%d")
             return empresa
         nova = {
-            "id": len(self.empresas) + 1,
-            "nome": nome,
+            "id":                 len(self.empresas) + 1,
+            "nome":               nome,
             "primeira_aparicao":  datetime.now().strftime("%Y-%m-%d"),
             "ultima_atualizacao": datetime.now().strftime("%Y-%m-%d"),
-            "investimentos": []
+            "investimentos":      []
         }
         self.empresas.append(nova)
         return nova
 
     # ── investimento ─────────────────────────────────
 
+    def _normalizar_valor(self, valor):
+        """Converte valor para float independente do formato."""
+        if isinstance(valor, (int, float)):
+            return float(valor)
+        if not valor:
+            return 0.0
+        try:
+            limpo = str(valor).replace("R$","").replace(".","").replace(",",".").strip()
+            # pega só o primeiro número
+            import re
+            m = re.search(r"[\d.]+", limpo)
+            return float(m.group()) if m else 0.0
+        except:
+            return 0.0
+
+    def _proximo_id(self):
+        if not self.investimentos:
+            return 1
+        return max(i.get("id", 0) for i in self.investimentos) + 1
+
     def procurar_investimento(self, empresa, ano):
         for inv in self.investimentos:
-            if inv["empresa"].lower() == empresa.lower() and inv["ano"] == ano:
+            emp_igual = inv.get("empresa","").lower() == empresa.lower()
+            ano_igual = str(inv.get("ano","")) == str(ano)
+            if emp_igual and ano_igual:
                 return inv
         return None
 
@@ -84,20 +113,21 @@ class Banco:
         existente = self.procurar_investimento(empresa, ano)
         if existente:
             return existente
+
         novo = {
-            "id":               len(self.investimentos) + 1,
-            "empresa":          empresa,
-            "ano":              ano,
-            "valor":            valor,
-            "empregos":         empregos,
-            "bairro":           bairro,
-            "status":           "Anunciado",
+            "id":                 self._proximo_id(),
+            "empresa":            empresa,
+            "ano":                ano,
+            "valor":              self._normalizar_valor(valor),
+            "empregos":           empregos,
+            "bairro":             bairro,
+            "status":             "Anunciado",
             "ultima_atualizacao": datetime.now().strftime("%Y-%m-%d"),
-            "eventos":          [],
-            "fase":             fase or "Anunciado",
-            "fonte":            fonte,
-            "url":              url,
-            "origem":           "historico",
+            "eventos":            [],
+            "fase":               fase or "Anunciado",
+            "fonte":              fonte,
+            "url":                url,
+            "origem":             "historico",  # ← garante que apareça no relatório
         }
         self.investimentos.append(novo)
         return novo
@@ -106,21 +136,21 @@ class Banco:
 
     def adicionar_evento(self, investimento_id, fase, noticia):
         evento = {
-            "id":          len(self.eventos) + 1,
+            "id":           len(self.eventos) + 1,
             "investimento": investimento_id,
-            "fase":        fase,
-            "titulo":      noticia.titulo,
-            "fonte":       noticia.fonte,
-            "url":         noticia.url,
-            "data":        noticia.data,
-            "pontuacao":   noticia.pontuacao,
+            "fase":         fase,
+            "titulo":       noticia.titulo,
+            "fonte":        noticia.fonte,
+            "url":          noticia.url,
+            "data":         noticia.data,
+            "pontuacao":    noticia.pontuacao,
         }
         self.eventos.append(evento)
 
     # ── notícia ──────────────────────────────────────
 
     def noticia_existe(self, url):
-        return any(n["url"] == url for n in self.noticias)
+        return any(n.get("url") == url for n in self.noticias)
 
     def adicionar_noticia(self, noticia: Noticia):
         if self.noticia_existe(noticia.url):
@@ -136,8 +166,6 @@ class Banco:
             "empregos":           noticia.empregos,
             "pontuacao":          noticia.pontuacao,
             "relevante":          noticia.relevante,
-            # ← campo que faltava: necessário para
-            #   o relatório filtrar "quase relevantes"
             "mencionou_contagem": getattr(noticia, "mencionou_contagem", False),
             "fase":               noticia.fase,
             "status":             noticia.status,
