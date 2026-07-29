@@ -1,0 +1,48 @@
+{
+    "data_geracao": "2026-07-29T15:56:14.558369-03:00",
+    "resumo_recente": {
+        "noticias_relevantes": 3,
+        "novos_empregos": 40,
+        "valor_total": 30644.0,
+        "confianca_media": 90,
+        "periodo": "2026-07-19 a 2026-07-29"
+    },
+    "resumo_historico": {
+        "total_investimentos": 1,
+        "total_valor": 0.0,
+        "empresas_unicas": 1,
+        "periodo": "2026 – 2026"
+    },
+    "ranking_historico": [
+        {
+            "empresa": "tambasa",
+            "investimentos": 1,
+            "valor_total": 0.0
+        }
+    ],
+    "por_ano_historico": {
+        "2026": {
+            "investimentos": 1,
+            "valor": 0.0
+        }
+    },
+    "fases_recentes": {
+        "Licenciamento": 1,
+        "Construção": 2
+    },
+    "fontes_recentes": {
+        "Portal Contagem": {
+            "total": 3,
+            "relevantes": 3,
+            "taxa": 100.0,
+            "confianca": 90
+        }
+    },
+    "quase_relevantes": [],
+    "confianca_recente": {
+        "alta": 100.0,
+        "media": 0.0,
+        "baixa": 0.0,
+        "mg": 90
+    }
+}
