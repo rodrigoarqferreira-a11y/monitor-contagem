@@ -53,10 +53,7 @@ class GeradorRelatorio:
         return list(self.banco.noticias)
 
     def _historico(self):
-        # Aceita tanto registros com origem "historico"
-        # quanto os gerados automaticamente pelo crawler
-        # (que não têm o campo "origem")
-        return list(self.banco.investimentos)
+        return [i for i in self.banco.investimentos if i.get("origem") == "historico"]
 
     def _periodo(self):
         datas = [n.get("data","") for n in self.banco.noticias if n.get("data")]
