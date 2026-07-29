@@ -885,18 +885,33 @@
         "origem": "historico"
     },
     {
-        "id":60,"empresa":"Obramax",
-        "ano":2026,
-        "valor":140000000.0,
-        "empregos":"170 diretos + 30 terceirizados",
-        "bairro":"Av. Presidente Juscelino Kubitschek",
-        "status":"Em construção",
-        "ultima_atualizacao":"2026-05-20",
-        "eventos":[],
-        "fase":"Construção",
-        "fonte":"O Tempo",
-        "url":"https://www.otempo.com.br/economia/2026/5/20/obramax-investe-r-140-milhoes-em-nova-loja-em-contagem-e-tem-vagas-de-emprego-abertas",
-        "origem":"historico"
+        "id": 60,
+        "empresa": "Obramax",
+        "ano": 2026,
+        "valor": 140000000.0,
+        "empregos": "170 diretos + 30 terceirizados",
+        "bairro": "Av. Presidente Juscelino Kubitschek",
+        "status": "Em construção",
+        "ultima_atualizacao": "2026-05-20",
+        "eventos": [],
+        "fase": "Construção",
+        "fonte": "O Tempo",
+        "url": "https://www.otempo.com.br/economia/2026/5/20/obramax-investe-r-140-milhoes-em-nova-loja-em-contagem-e-tem-vagas-de-emprego-abertas",
+        "origem": "historico"
+    },
+    {
+        "id": 61,
+        "empresa": "tambasa",
+        "ano": "2026",
+        "valor": 0.0,
+        "empregos": "15 vagas",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-07-29",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": "",
+        "origem": "historico"
     }
-
 ]
