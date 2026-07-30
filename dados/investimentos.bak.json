@@ -900,6 +900,19 @@
         "origem": "historico",
         "descricao": "Segunda unidade em MG. Loja de 17.922 m² próxima ao Itaú Power Shopping. Inauguração prevista 2º semestre 2026."
     },
-
+    {
+        "id": 61,
+        "empresa": "tambasa",
+        "ano": "2026",
+        "valor": 0.0,
+        "empregos": "15 vagas",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-07-30",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": "",
+        "origem": "historico"
+    },
 ]
-
