@@ -1,0 +1,37 @@
+{
+    "data_geracao": "2026-07-30T08:54:25.157957-03:00",
+    "resumo_recente": {
+        "noticias_relevantes": 3,
+        "novos_empregos": 40,
+        "valor_total": 30644.0,
+        "confianca_media": 90,
+        "periodo": "2026-07-19 a 2026-07-29"
+    },
+    "resumo_historico": {
+        "total_investimentos": 0,
+        "total_valor": 0,
+        "empresas_unicas": 0,
+        "periodo": "—"
+    },
+    "ranking_historico": [],
+    "por_ano_historico": {},
+    "fases_recentes": {
+        "Licenciamento": 1,
+        "Construção": 2
+    },
+    "fontes_recentes": {
+        "Portal Contagem": {
+            "total": 3,
+            "relevantes": 3,
+            "taxa": 100.0,
+            "confianca": 90
+        }
+    },
+    "quase_relevantes": [],
+    "confianca_recente": {
+        "alta": 100.0,
+        "media": 0.0,
+        "baixa": 0.0,
+        "mg": 90
+    }
+}
