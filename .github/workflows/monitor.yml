@@ -35,12 +35,28 @@ jobs:
           from pathlib import Path
 
           arq = Path("dados/investimentos.json")
-          dados = json.loads(arq.read_text(encoding="utf-8"))
 
-          # IDs que devem sempre existir com dados corretos
-          fixos = {
-              9: {"empresa": "Obramax"},
-              60: {
+          # Se não existe ou está vazio, inicia com lista vazia
+          if not arq.exists() or arq.stat().st_size < 5:
+              dados = []
+              print("Arquivo não encontrado ou vazio — iniciando do zero")
+          else:
+              try:
+                  dados = json.loads(arq.read_text(encoding="utf-8"))
+              except json.JSONDecodeError as e:
+                  print(f"JSON corrompido: {e} — iniciando do zero")
+                  dados = []
+
+          ids_existentes = {d["id"]: i for i, d in enumerate(dados)}
+
+          # Corrigir nome id 9 se existir
+          if 9 in ids_existentes:
+              dados[ids_existentes[9]]["empresa"] = "Obramax"
+              print("id 9 corrigido para Obramax")
+
+          # Adicionar Obramax 2026 se não existir
+          if 60 not in ids_existentes:
+              dados.append({
                   "id": 60,
                   "empresa": "Obramax",
                   "ano": 2026,
@@ -54,22 +70,11 @@ jobs:
                   "fonte": "O Tempo",
                   "url": "https://www.otempo.com.br/economia/2026/5/20/obramax-investe-r-140-milhoes-em-nova-loja-em-contagem-e-tem-vagas-de-emprego-abertas",
                   "origem": "historico",
-                  "descricao": "Segunda unidade em MG. Loja de 17.922 m2 proxima ao Itau Power Shopping. Inauguracao prevista 2o semestre 2026."
-              }
-          }
-
-          ids_existentes = {d["id"]: i for i, d in enumerate(dados)}
-
-          # Corrigir id 9 (nome)
-          if 9 in ids_existentes:
-              dados[ids_existentes[9]]["empresa"] = "Obramax"
-
-          # Adicionar id 60 se não existir
-          if 60 not in ids_existentes:
-              dados.append(fixos[60])
+                  "descricao": "Segunda unidade em MG. Loja de 17.922m2. Inauguracao prevista 2o semestre 2026."
+              })
               print("Obramax 2026 adicionada (id 60)")
           else:
-              print("Obramax 2026 ja existe (id 60)")
+              print("Obramax 2026 já existe (id 60)")
 
           arq.write_text(json.dumps(dados, ensure_ascii=False, indent=4), encoding="utf-8")
           print(f"Total registros: {len(dados)}")
