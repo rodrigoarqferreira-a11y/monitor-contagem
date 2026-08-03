@@ -328,16 +328,16 @@ class GeradorRelatorio:
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:14px}}
 .hdr{{background:var(--az);overflow:hidden}}
-.hdr-inner{{display:flex;align-items:stretch;min-height:115px}}
-.hdr-logo{{background:var(--dk);padding:18px 22px;display:flex;align-items:center;justify-content:center;min-width:145px;flex-shrink:0}}
-.hdr-logo img{{max-height:70px;max-width:115px;object-fit:contain}}
-.hdr-logo .fb{{background:rgba(14,185,205,.15);border:1.5px solid rgba(14,185,205,.4);border-radius:8px;width:105px;height:65px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cy);text-align:center;font-weight:700;letter-spacing:.5px}}
+.hdr-inner{{display:flex;align-items:stretch;min-height:180px}}
+.hdr-logo{{background:#037482;padding:34px 38px;display:flex;align-items:center;justify-content:center;min-width:300px;flex-shrink:0}}
+.hdr-logo img{{max-height:300px;max-width:250px;object-fit:contain}}
+.hdr-logo .fb{{background:rgba(14,185,205,.15);border:1.5px solid rgba(14,185,205,.4);border-radius:8px;width:105px;height:200px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cy);text-align:center;font-weight:700;letter-spacing:.5px}}
 .hdr-body{{flex:1;padding:20px 26px;display:flex;flex-direction:column;justify-content:center}}
 .hdr-sup{{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--cy);margin-bottom:5px}}
-.hdr-tit{{font-size:19px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:4px}}
-.hdr-sub{{font-size:11px;color:rgba(255,255,255,.6)}}
-.hdr-right{{padding:18px 22px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:7px;flex-shrink:0}}
-.bdg-auto{{background:var(--lm);color:#1a3a00;font-size:9px;font-weight:800;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}}
+.hdr-tit{{font-size:40px;font-weight:800;color:var(--white);line-height:1.2;margin-bottom:5px}}
+.hdr-sub{{font-size:18px;color:rgba(255,255,255,.6);font-weight:400}}
+.hdr-right{{padding:20px 24px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;flex-shrink:0}}
+.bdg-auto{{background:var(--lime);color:#1a3a00;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}}
 .hdr-date{{font-size:10px;color:rgba(255,255,255,.5)}}
 .stripe{{height:3px;background:linear-gradient(90deg,var(--dk) 0%,var(--cy) 40%,var(--lm) 72%,var(--or) 100%)}}
 .metrics{{display:grid;grid-template-columns:repeat(6,1fr);background:var(--dk)}}
@@ -348,11 +348,11 @@ body{{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(-
 .mv{{font-size:21px;font-weight:800;color:#fff;line-height:1;margin-bottom:3px}}
 .mv.lm{{color:var(--lm)}}.mv.cy{{color:var(--cy)}}.mv.or{{color:var(--or)}}
 .ml2{{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.45);font-weight:600}}
-.tabs-w{{background:#024f5a;border-bottom:2px solid var(--dk)}}
-.tabs{{display:flex;padding:0 22px;flex-wrap:wrap}}
-.tab{{padding:10px 16px;font-size:11px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;letter-spacing:.3px}}
+.tabs-w{{background:#024f5a;border-bottom:2px solid var(--teal-dark)}}
+.tabs{{display:flex;padding:0 24px;flex-wrap:wrap}}
+.tab{{padding:16px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;letter-spacing:.3px}}
 .tab:hover{{color:rgba(255,255,255,.8)}}
-.tab.on{{color:var(--lm);border-bottom-color:var(--lm)}}
+.tab.on{{color:var(--lime);border-bottom-color:var(--lime)}}
 .pan{{display:none;padding:20px 26px}}.pan.on{{display:block}}
 .sec{{margin-bottom:24px}}
 .stit{{font-size:.88rem;font-weight:700;color:var(--az);padding-bottom:7px;border-bottom:2px solid var(--lm);margin-bottom:13px}}
@@ -482,12 +482,33 @@ footer{{background:var(--dk);color:rgba(255,255,255,.4);text-align:center;paddin
   </div>
 </div>
 
+<!-- GRÁFICOS -->
 <div id="p-graficos" class="pan">
-  <div class="g2">
-    <div class="sec"><div class="stit">🏆 Top empresas por valor investido</div><div class="graf" id="g-rk"></div></div>
-    <div class="sec"><div class="stit">📅 Investimentos por ano</div><div class="graf" id="g-ano"></div></div>
-  </div>
+
+    <!-- Top Empresas -->
+    <div class="sec">
+
+        <div class="stit">
+            🏆 Top empresas por valor (histórico)
+        </div>
+
+        <div class="graf" id="g-rk"></div>
+
+    </div>
+
+    <!-- Investimentos por Ano -->
+    <div class="sec">
+
+        <div class="stit">
+            📅 Investimentos por Ano
+        </div>
+
+        <div class="graf" id="g-ano"></div>
+
+    </div>
+
 </div>
+
 
 <div id="p-todas" class="pan">
   <div class="flt">
