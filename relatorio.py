@@ -9,7 +9,6 @@ import json
 import statistics
 from collections import Counter, defaultdict
 from datetime import datetime
-from zoneinfo import ZoneInfo
 from pathlib import Path
 
 from banco import Banco
@@ -39,12 +38,12 @@ except ImportError:
 class GeradorRelatorio:
 
     def __init__(self, banco: Banco = None):
-        self.banco = banco or Banco()
-        self.data_geracao = datetime.now(
-            ZoneInfo("America/Sao_Paulo")
-        )
-        self.pasta = Path("relatorios")
+        self.banco        = banco or Banco()
+        self.data_geracao = datetime.now()
+        self.pasta        = Path("relatorios")
         self.pasta.mkdir(exist_ok=True)
+
+    # ── helpers ──────────────────────────────────────
 
     def _relevantes(self):
         return [n for n in self.banco.noticias if n.get("relevante")]
@@ -53,7 +52,7 @@ class GeradorRelatorio:
         return list(self.banco.noticias)
 
     def _historico(self):
-        return [i for i in self.banco.investimentos if i.get("origem") == "historico"]
+        return list(self.banco.investimentos)
 
     def _periodo(self):
         datas = [n.get("data","") for n in self.banco.noticias if n.get("data")]
@@ -62,12 +61,15 @@ class GeradorRelatorio:
     def _vnum(self, v):
         if isinstance(v, (int, float)): return float(v)
         try:
-            return float(str(v).replace("R$","").replace(".","").replace(",",".").strip().split()[0])
+            return float(str(v).replace("R$","").replace(".","")
+                         .replace(",",".").strip().split()[0])
         except: return 0.0
 
     def _enum(self, s):
         try: return int("".join(c for c in str(s).split()[0] if c.isdigit()))
         except: return 0
+
+    # ── análises recentes ────────────────────────────
 
     def resumo_recente(self):
         ns   = self._relevantes()
@@ -100,8 +102,10 @@ class GeradorRelatorio:
             f: {
                 "total":      v["total"],
                 "relevantes": v["relevantes"],
-                "taxa":       round(v["relevantes"]/v["total"]*100 if v["total"] else 0,1),
-                "confianca":  round(statistics.mean(v["cfs"]) if v["cfs"] else 0,1),
+                "taxa":       round(v["relevantes"]/v["total"]*100
+                                    if v["total"] else 0, 1),
+                "confianca":  round(statistics.mean(v["cfs"])
+                                    if v["cfs"] else 0, 1),
             } for f,v in d.items()
         }
 
@@ -127,6 +131,8 @@ class GeradorRelatorio:
             "mg":    round(statistics.mean(cs),1),
         }
 
+    # ── análises histórico ────────────────────────────
+
     def resumo_historico(self):
         h    = self._historico()
         tv   = sum(float(i.get("valor",0) or 0) for i in h)
@@ -140,17 +146,21 @@ class GeradorRelatorio:
         }
 
     def ranking_historico(self, top=15):
+        """Ranking ordenado por VALOR total investido."""
         h    = self._historico()
-        cnt  = Counter(); vals = defaultdict(float)
+        vals = defaultdict(float)
+        cnt  = defaultdict(int)
         for i in h:
             e = i.get("empresa","")
             if not e: continue
-            cnt[e] += 1
+            cnt[e]  += 1
             vals[e] += float(i.get("valor",0) or 0)
+        # Ordena por valor decrescente
+        ranking = sorted(vals.items(), key=lambda x: x[1], reverse=True)
         return [
-            {"empresa":e,"investimentos":c,"valor_total":vals[e]}
-            for e,c in cnt.most_common(top)
-        ]
+            {"empresa":e, "investimentos":cnt[e], "valor_total":v}
+            for e,v in ranking[:top]
+             ]
 
     def por_ano_historico(self):
         h = self._historico()
@@ -164,15 +174,19 @@ class GeradorRelatorio:
     def lista_historico(self):
         return sorted(
             self._historico(),
-            key=lambda x: (x.get("ano",0), -(float(x.get("valor",0) or 0)))
+            key=lambda x: (x.get("ano",0),
+                           -(float(x.get("valor",0) or 0)))
         )
+
+    # ── texto ─────────────────────────────────────────
 
     def gerar_relatorio_texto(self):
         r  = self.resumo_recente()
         rh = self.resumo_historico()
         rk = self.ranking_historico()
         pa = self.por_ano_historico()
-        L  = ["="*70,"RELATÓRIO DE INVESTIMENTOS PRIVADOS — CONTAGEM MG",
+        L  = ["="*70,
+              "RELATÓRIO DE INVESTIMENTOS PRIVADOS — CONTAGEM MG",
               "SEDECON","="*70,
               f"Gerado em: {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",
               "\n=== MONITORAMENTO RECENTE ===",
@@ -185,17 +199,23 @@ class GeradorRelatorio:
               f"  Valor total         : R$ {rh['total_valor']/1e9:.2f} bi",
               f"  Empresas únicas     : {rh['empresas_unicas']}",
               f"  Período             : {rh['periodo']}",
-              "\n=== RANKING EMPRESAS ==="]
+              "\n=== RANKING EMPRESAS (por valor) ==="]
         for i,e in enumerate(rk,1):
-            L.append(f"  {i:>2}. {e['empresa'][:35]:<36} R$ {e['valor_total']/1e6:>8.1f}M  ({e['investimentos']} inv.)")
+            L.append(f"  {i:>2}. {e['empresa'][:35]:<36}"
+                     f" R$ {e['valor_total']/1e6:>8.1f}M"
+                     f"  ({e['investimentos']} inv.)")
         L.append("\n=== POR ANO ===")
         for a,d in pa.items():
-            L.append(f"  {a}: {d['investimentos']} invest. — R$ {d['valor']/1e9:.2f} bi")
+            L.append(f"  {a}: {d['investimentos']} invest."
+                     f" — R$ {d['valor']/1e9:.2f} bi")
         return "\n".join(L)
+
+    # ── gráficos ──────────────────────────────────────
 
     def gerar_graficos(self):
         if not HAS_MATPLOTLIB: return []
-        arqs=[]; AZUL="#037482"; OURO="#D2DD68"; CIANO="#0EB9CD"; LARANJA="#FF7A01"
+        arqs=[]
+        AZUL="#037482"; OURO="#D2DD68"; CIANO="#0EB9CD"; LARANJA="#FF7A01"
 
         def salvar(nome):
             p=self.pasta/nome
@@ -203,79 +223,61 @@ class GeradorRelatorio:
             plt.close(); arqs.append(p); print(f"  ✓ {p}")
 
         try:
-            rk=self.ranking_historico(10)
-            pa=self.por_ano_historico()
-            fs=self.fases_recentes()
-            cf=self.confianca_recente()
+            rk = self.ranking_historico(10)
+            pa = self.por_ano_historico()
 
+            # Ranking horizontal (por valor)
             if rk:
-                fig,ax=plt.subplots(figsize=(10,6))
+                fig,ax=plt.subplots(figsize=(11,6))
                 fig.patch.set_facecolor("#035863")
                 ax.set_facecolor("#035863")
                 nomes=[e["empresa"][:28] for e in rk]
                 vals=[e["valor_total"]/1e6 for e in rk]
                 bars=ax.barh(nomes,vals,color=CIANO,edgecolor="none")
                 for b,v in zip(bars,vals):
-                    ax.text(b.get_width()+2,b.get_y()+b.get_height()/2,
-                            f"R$ {v:.0f}M",va="center",fontsize=8,color=OURO,fontweight="bold")
-                ax.set_xlabel("R$ Milhões",color="white")
-                ax.set_title("Top Empresas por Valor Investido",fontsize=12,
-                             fontweight="bold",color=OURO,pad=14)
-                ax.tick_params(colors="white")
+                    ax.text(b.get_width()+2,
+                            b.get_y()+b.get_height()/2,
+                            f"R$ {v:.0f}M",
+                            va="center",fontsize=9,
+                            color=OURO,fontweight="bold")
+                ax.set_xlabel("R$ Milhões",color="white",fontsize=11)
+                ax.set_title("Top Empresas por Valor Investido",
+                             fontsize=13,fontweight="bold",
+                             color=OURO,pad=14)
+                ax.tick_params(colors="white",labelsize=9)
                 ax.spines[["top","right","left","bottom"]].set_visible(False)
-                ax.xaxis.label.set_color("white")
                 plt.tight_layout(); salvar("grafico_ranking.png")
 
+            # Por ano (barras)
             if pa:
                 fig,ax=plt.subplots(figsize=(10,5))
                 fig.patch.set_facecolor("#035863")
                 ax.set_facecolor("#035863")
-                anos=list(pa.keys()); vals=[pa[a]["valor"]/1e9 for a in anos]
+                anos=list(pa.keys())
+                vals=[pa[a]["valor"]/1e9 for a in anos]
                 bars=ax.bar(anos,vals,color=CIANO,edgecolor="none",width=0.5)
                 for b,v in zip(bars,vals):
-                    ax.text(b.get_x()+b.get_width()/2,b.get_height()+0.02,
-                            f"R$ {v:.1f}bi",ha="center",fontsize=8,
-                            fontweight="bold",color=OURO)
-                ax.set_ylabel("R$ Bilhões",color="white")
-                ax.set_title("Investimentos por Ano — Contagem MG",fontsize=12,
-                             fontweight="bold",color=OURO,pad=14)
-                ax.tick_params(colors="white")
+                    if v > 0:
+                        ax.text(b.get_x()+b.get_width()/2,
+                                b.get_height()+0.02,
+                                f"R$ {v:.1f}bi",
+                                ha="center",fontsize=8,
+                                fontweight="bold",color=OURO)
+                ax.set_ylabel("R$ Bilhões",color="white",fontsize=11)
+                ax.set_ylim(0, max(vals)*1.2 if vals else 1)
+                ax.set_title("Investimentos por Ano — Contagem MG",
+                             fontsize=13,fontweight="bold",
+                             color=OURO,pad=14)
+                ax.tick_params(colors="white",labelsize=9)
                 ax.spines[["top","right","left","bottom"]].set_visible(False)
                 plt.tight_layout(); salvar("grafico_por_ano.png")
-
-            if fs:
-                fig,ax=plt.subplots(figsize=(9,4))
-                fig.patch.set_facecolor("#035863")
-                ax.set_facecolor("#035863")
-                nomes=list(fs.keys()); vals=list(fs.values())
-                bars=ax.barh(nomes,vals,color=LARANJA,edgecolor="none")
-                for b,v in zip(bars,vals):
-                    ax.text(b.get_width()+.05,b.get_y()+b.get_height()/2,
-                            str(v),va="center",fontweight="bold",color=OURO)
-                ax.set_xlabel("Notícias",color="white")
-                ax.set_title("Notícias Recentes por Fase",fontsize=12,
-                             fontweight="bold",color=OURO,pad=14)
-                ax.tick_params(colors="white")
-                ax.spines[["top","right","left","bottom"]].set_visible(False)
-                plt.tight_layout(); salvar("grafico_fases.png")
-
-            cv=[cf["alta"],cf["media"],cf["baixa"]]
-            if any(v>0 for v in cv):
-                fig,ax=plt.subplots(figsize=(6,6))
-                fig.patch.set_facecolor("#035863")
-                ax.set_facecolor("#035863")
-                ax.pie(cv,
-                       labels=[f"Alta\n{cf['alta']}%",f"Média\n{cf['media']}%",f"Baixa\n{cf['baixa']}%"],
-                       colors=[CIANO,OURO,LARANJA],
-                       startangle=90,wedgeprops={"edgecolor":"#035863","linewidth":3},
-                       textprops={"color":"white","fontsize":10,"fontweight":"bold"})
-                ax.set_title(f"Confiança dos Dados — Média {cf['mg']}%",
-                             fontsize=12,fontweight="bold",color=OURO,pad=14)
-                plt.tight_layout(); salvar("grafico_confianca.png")
 
         except Exception as e:
             print(f"  Erro gráficos: {e}")
         return arqs
+
+
+    # ── HTML ──────────────────────────────────────────
 
     def gerar_html(self):
         r    = self.resumo_recente()
@@ -322,121 +324,82 @@ class GeradorRelatorio:
 <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-:root{{
-  --teal-dark:#035863;--teal:#037482;--teal-light:#0EB9CD;
-  --lime:#D2DD68;--orange:#FF7A01;--white:#ffffff;
-  --bg:#f0f4fa;--br:#ffffff;--bo:#dde3ec;--tx:#1f2937;--ci:#6b7280;
-}}
+:root{{--az:#037482;--dk:#035863;--cy:#0EB9CD;--lm:#D2DD68;--or:#FF7A01;--bg:#f0f4fa;--br:#fff;--bo:#dde3ec;--tx:#1f2937;--ci:#6b7280}}
 *{{box-sizing:border-box;margin:0;padding:0}}
 body{{font-family:'Inter','Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:14px}}
-
-/* ── HEADER ── */
-.hdr{{background:var(--teal);position:relative;overflow:hidden}}
-.hdr-inner{{display:flex;align-items:stretch;min-height:180px}}
-.hdr-logo{{background:#037482;padding:34px 38px;display:flex;align-items:center;
-            justify-content:center;min-width:300px;flex-shrink:0}}
-.hdr-logo img{{max-height:300px;max-width:250px;object-fit:contain}}
-.hdr-logo .logo-fb{{background:rgba(14,185,205,.15);border:0.5px solid rgba(14,185,205,.4);
-  border-radius:4px;width:100px;height:200px;display:flex;align-items:center;justify-content:center;
-  font-size:10px;color:var(--teal-light);text-align:center;font-weight:700;letter-spacing:.5px}}
-.hdr-body{{flex:1;padding:22px 28px;display:flex;flex-direction:column;justify-content:center}}
-.hdr-sup{{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;
-           color:var(--teal-light);margin-bottom:5px}}
-.hdr-title{{font-size:40px;font-weight:800;color:var(--white);line-height:1.2;margin-bottom:5px}}
-.hdr-sub{{font-size:18px;color:rgba(255,255,255,.6);font-weight:400}}
-.hdr-right{{padding:20px 24px;display:flex;flex-direction:column;align-items:flex-end;
-             justify-content:center;gap:8px;flex-shrink:0}}
-.bdg-auto{{background:var(--lime);color:#1a3a00;font-size:12px;font-weight:800;
-            padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}}
-.hdr-date{{font-size:12px;color:rgba(255,255,255,.5);font-weight:500}}
-.hdr-stripe{{height:3px;background:linear-gradient(90deg,var(--teal-dark) 0%,var(--teal-light) 40%,var(--lime) 72%,var(--orange) 100%)}}
-
-/* ── MÉTRICAS ── */
-.metrics{{display:grid;grid-template-columns:repeat(6,1fr);background:var(--teal-dark)}}
-.mcard{{padding:18px 16px;text-align:center;border-right:1px solid rgba(14,185,205,.2);position:relative}}
-.mcard:last-child{{border-right:none}}
-.mcard::before{{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:transparent}}
-.mcard.ml::before{{background:var(--lime)}}.mcard.mc::before{{background:var(--teal-light)}}.mcard.mo::before{{background:var(--orange)}}
-.mval{{font-size:26px;font-weight:800;color:var(--white);line-height:1;margin-bottom:3px}}
-.mval.lime{{color:var(--lime)}}.mval.ciano{{color:var(--teal-light)}}.mval.oran{{color:var(--orange)}}
-.mlbl{{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.45);font-weight:600}}
-
-/* ── ABAS ── */
-.tabs-w{{background:#024f5a;border-bottom:2px solid var(--teal-dark)}}
-.tabs{{display:flex;padding:0 24px;flex-wrap:wrap}}
-.tab{{padding:16px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;
-       border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;letter-spacing:.3px}}
+.hdr{{background:var(--az);overflow:hidden}}
+.hdr-inner{{display:flex;align-items:stretch;min-height:115px}}
+.hdr-logo{{background:var(--dk);padding:18px 22px;display:flex;align-items:center;justify-content:center;min-width:145px;flex-shrink:0}}
+.hdr-logo img{{max-height:70px;max-width:115px;object-fit:contain}}
+.hdr-logo .fb{{background:rgba(14,185,205,.15);border:1.5px solid rgba(14,185,205,.4);border-radius:8px;width:105px;height:65px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--cy);text-align:center;font-weight:700;letter-spacing:.5px}}
+.hdr-body{{flex:1;padding:20px 26px;display:flex;flex-direction:column;justify-content:center}}
+.hdr-sup{{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--cy);margin-bottom:5px}}
+.hdr-tit{{font-size:19px;font-weight:800;color:#fff;line-height:1.2;margin-bottom:4px}}
+.hdr-sub{{font-size:11px;color:rgba(255,255,255,.6)}}
+.hdr-right{{padding:18px 22px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:7px;flex-shrink:0}}
+.bdg-auto{{background:var(--lm);color:#1a3a00;font-size:9px;font-weight:800;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}}
+.hdr-date{{font-size:10px;color:rgba(255,255,255,.5)}}
+.stripe{{height:3px;background:linear-gradient(90deg,var(--dk) 0%,var(--cy) 40%,var(--lm) 72%,var(--or) 100%)}}
+.metrics{{display:grid;grid-template-columns:repeat(6,1fr);background:var(--dk)}}
+.mc{{padding:13px 14px;text-align:center;border-right:1px solid rgba(14,185,205,.2);position:relative}}
+.mc:last-child{{border-right:none}}
+.mc::before{{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:transparent}}
+.mc.ml::before{{background:var(--lm)}}.mc.mcy::before{{background:var(--cy)}}.mc.mo::before{{background:var(--or)}}
+.mv{{font-size:21px;font-weight:800;color:#fff;line-height:1;margin-bottom:3px}}
+.mv.lm{{color:var(--lm)}}.mv.cy{{color:var(--cy)}}.mv.or{{color:var(--or)}}
+.ml2{{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.45);font-weight:600}}
+.tabs-w{{background:#024f5a;border-bottom:2px solid var(--dk)}}
+.tabs{{display:flex;padding:0 22px;flex-wrap:wrap}}
+.tab{{padding:10px 16px;font-size:11px;font-weight:600;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;letter-spacing:.3px}}
 .tab:hover{{color:rgba(255,255,255,.8)}}
-.tab.on{{color:var(--lime);border-bottom-color:var(--lime)}}
-
-/* ── PAINÉIS ── */
-.pan{{display:none;padding:22px 28px}}.pan.on{{display:block}}
+.tab.on{{color:var(--lm);border-bottom-color:var(--lm)}}
+.pan{{display:none;padding:20px 26px}}.pan.on{{display:block}}
 .sec{{margin-bottom:24px}}
-.stit{{font-size:.88rem;font-weight:700;color:var(--teal);padding-bottom:8px;
-        border-bottom:2px solid var(--lime);margin-bottom:14px}}
-.g2{{display:grid;grid-template-columns:1fr 1fr;gap:16px}}
+.stit{{font-size:.88rem;font-weight:700;color:var(--az);padding-bottom:7px;border-bottom:2px solid var(--lm);margin-bottom:13px}}
+.g2{{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
 .g3{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}}
-.sbox{{background:var(--teal-dark);border-radius:10px;padding:18px;text-align:center}}
-.sval{{font-size:1.8rem;font-weight:800;color:var(--lime);line-height:1}}
+.sbox{{background:var(--dk);border-radius:10px;padding:16px;text-align:center}}
+.sval{{font-size:1.75rem;font-weight:800;color:var(--lm);line-height:1}}
 .slbl{{font-size:.65rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}}
-
-/* ── FILTROS ── */
-.flt{{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}}
-.flt label{{font-size:.75rem;font-weight:600;color:var(--teal)}}
-.flt select,.flt input{{padding:6px 10px;border:1.5px solid var(--teal-light);border-radius:6px;
-  font-size:.8rem;background:var(--br);color:var(--tx);min-width:140px;outline:none}}
-.flt select:focus,.flt input:focus{{border-color:var(--teal)}}
-.btnx{{padding:6px 14px;background:var(--teal);color:var(--white);border:none;border-radius:6px;
-        font-size:.78rem;font-weight:600;cursor:pointer;transition:background .15s}}
-.btnx:hover{{background:var(--teal-dark)}}
-
-/* ── TABELAS ── */
+.flt{{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px;align-items:center}}
+.flt label{{font-size:.76rem;font-weight:600;color:var(--az)}}
+.flt select,.flt input{{padding:6px 10px;border:1.5px solid var(--cy);border-radius:6px;font-size:.8rem;background:var(--br);color:var(--tx);min-width:135px;outline:none}}
+.flt select:focus,.flt input:focus{{border-color:var(--az)}}
+.btnx{{padding:6px 13px;background:var(--az);color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer}}
+.btnx:hover{{background:var(--dk)}}
 .twrap{{overflow-x:auto}}
 table{{width:100%;border-collapse:collapse;font-size:.82rem}}
-th{{background:var(--teal);color:var(--white);padding:9px 12px;text-align:left;
-     font-size:.73rem;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}}
-td{{padding:8px 12px;border-bottom:1px solid var(--bo);vertical-align:top}}
-tr:hover td{{background:#e8f4f6}}
-.tr-tot td{{background:#e0f0f2;font-weight:600;color:var(--teal-dark)}}
-
-/* ── CARDS NOTÍCIA ── */
-.nc{{background:var(--br);border:1px solid var(--bo);border-radius:8px;padding:13px;
-      margin-bottom:9px;border-left:4px solid var(--teal)}}
-.nc.q{{border-left-color:var(--orange)}}
-.nt{{font-weight:700;font-size:.88rem;color:var(--teal-dark);margin-bottom:5px;line-height:1.4}}
+th{{background:var(--az);color:#fff;padding:9px 11px;text-align:left;font-size:.73rem;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}}
+td{{padding:8px 11px;border-bottom:1px solid var(--bo);vertical-align:top}}
+tr:hover td{{background:#e6f3f5}}
+.tr-tot td{{background:#d0eaed;font-weight:600;color:var(--dk)}}
+.nc{{background:var(--br);border:1px solid var(--bo);border-radius:8px;padding:12px;margin-bottom:8px;border-left:4px solid var(--az)}}
+.nc.q{{border-left-color:var(--or)}}
+.nt{{font-weight:700;font-size:.88rem;color:var(--dk);margin-bottom:4px;line-height:1.4}}
 .nm{{font-size:.72rem;color:var(--ci);display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}}
-.nu{{font-size:.72rem;color:var(--teal);text-decoration:none;word-break:break-all}}
-.nu:hover{{text-decoration:underline;color:var(--teal-dark)}}
+.nu{{font-size:.72rem;color:var(--az);text-decoration:none;word-break:break-all}}
+.nu:hover{{text-decoration:underline;color:var(--dk)}}
 .bdg{{display:inline-block;padding:2px 7px;border-radius:11px;font-size:.66rem;font-weight:700;text-transform:uppercase}}
 .bv{{background:#dcfce7;color:#15803d}}.bo2{{background:#fef9c3;color:#a16207}}
 .bc{{background:#f1f5f9;color:#475569}}.ba{{background:#dbeafe;color:#1d4ed8}}
-.bor{{background:#fff3e0;color:#e65100}}
-
-/* ── GRÁFICOS ── */
-.graf{{height:300px;background:var(--teal-dark);border-radius:8px;margin-bottom:14px}}
-.vz{{text-align:center;padding:32px;color:var(--ci);font-style:italic}}
-
-footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center;
-         padding:14px;font-size:.72rem;margin-top:14px;border-top:3px solid var(--teal-light)}}
-@media(max-width:768px){{
-  .hdr-inner{{flex-wrap:wrap}}.hdr-logo{{min-width:100%;justify-content:flex-start}}
-  .metrics{{grid-template-columns:repeat(3,1fr)}}.g2,.g3{{grid-template-columns:1fr}}
-  .pan{{padding:16px}}.tabs{{overflow-x:auto}}
-}}
+.graf{{height:320px;background:var(--dk);border-radius:8px;margin-bottom:14px}}
+.vz{{text-align:center;padding:30px;color:var(--ci);font-style:italic}}
+footer{{background:var(--dk);color:rgba(255,255,255,.4);text-align:center;padding:13px;font-size:.72rem;margin-top:14px;border-top:3px solid var(--cy)}}
+@media(max-width:768px){{.hdr-inner{{flex-wrap:wrap}}.hdr-logo{{min-width:100%}}.metrics{{grid-template-columns:repeat(3,1fr)}}.g2,.g3{{grid-template-columns:1fr}}.pan{{padding:14px}}}}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="hdr">
   <div class="hdr-inner">
     <div class="hdr-logo">
-      <img src="../dados/logo_sedecon_2.png" alt="SEDECON"
+      <img src="../dados/logo secretaria sedecon.png" alt="SEDECON"
            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="logo-fb" style="display:none">LOGO<br>SEDECON</div>
+      <div class="fb" style="display:none">LOGO<br>SEDECON</div>
     </div>
     <div class="hdr-body">
-    <div class="hdr-title">Monitor de Investimentos Privados</div>
+      <div class="hdr-sup">Prefeitura de Contagem · MG</div>
+      <div class="hdr-tit">Monitor de Investimentos Privados</div>
       <div class="hdr-sub">SEDECON · Superintendência de Inovação e Informações Estratégicas</div>
     </div>
     <div class="hdr-right">
@@ -444,38 +407,18 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
       <span class="hdr-date">{self.data_geracao.strftime('%d/%m/%Y · %H:%M')}</span>
     </div>
   </div>
-  <div class="hdr-stripe"></div>
+  <div class="stripe"></div>
 </div>
 
-<!-- MÉTRICAS -->
 <div class="metrics">
-  <div class="mcard ml">
-    <div class="mval lime">{rh['total_investimentos']}</div>
-    <div class="mlbl">Investimentos</div>
-  </div>
-  <div class="mcard ml">
-    <div class="mval lime">{rh['empresas_unicas']}</div>
-    <div class="mlbl">Empresas</div>
-  </div>
-  <div class="mcard mc">
-    <div class="mval ciano">{r['novos_empregos']:,}</div>
-    <div class="mlbl">Empregos gerados</div>
-  </div>
-  <div class="mcard mc">
-    <div class="mval ciano">R$ {vhb:.1f}bi</div>
-    <div class="mlbl">Valor total</div>
-  </div>
-  <div class="mcard mo">
-    <div class="mval oran">{r['confianca_media']}%</div>
-    <div class="mlbl">Confiança média</div>
-  </div>
-  <div class="mcard">
-    <div class="mval">{r['noticias_relevantes']}</div>
-    <div class="mlbl">Notícias relevantes</div>
-  </div>
+  <div class="mc ml"><div class="mv lm">{rh['total_investimentos']}</div><div class="ml2">Investimentos</div></div>
+  <div class="mc ml"><div class="mv lm">{rh['empresas_unicas']}</div><div class="ml2">Empresas</div></div>
+  <div class="mc mcy"><div class="mv cy">{r['novos_empregos']:,}</div><div class="ml2">Empregos gerados</div></div>
+  <div class="mc mcy"><div class="mv cy">R$ {vhb:.1f}bi</div><div class="ml2">Valor total</div></div>
+  <div class="mc mo"><div class="mv or">{r['confianca_media']}%</div><div class="ml2">Confiança média</div></div>
+  <div class="mc"><div class="mv">{r['noticias_relevantes']}</div><div class="ml2">Notícias relevantes</div></div>
 </div>
 
-<!-- ABAS -->
 <div class="tabs-w">
   <div class="tabs">
     <div class="tab on"  onclick="aba('recente',this)">🔔 Monitoramento Recente</div>
@@ -487,9 +430,8 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
   </div>
 </div>
 
-<!-- RECENTE -->
 <div id="p-recente" class="pan on">
-  <div class="g3" style="margin-bottom:20px">
+  <div class="g3" style="margin-bottom:18px">
     <div class="sbox"><div class="sval">{r['noticias_relevantes']}</div><div class="slbl">Notícias relevantes</div></div>
     <div class="sbox"><div class="sval">{r['novos_empregos']:,}</div><div class="slbl">Empregos detectados</div></div>
     <div class="sbox"><div class="sval">R$ {vm:.0f}M</div><div class="slbl">Valor monitorado</div></div>
@@ -503,9 +445,8 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
   <div id="lst-rec"></div>
 </div>
 
-<!-- HISTÓRICO -->
 <div id="p-historico" class="pan">
-  <div class="g3" style="margin-bottom:20px">
+  <div class="g3" style="margin-bottom:18px">
     <div class="sbox"><div class="sval">{rh['total_investimentos']}</div><div class="slbl">Investimentos registrados</div></div>
     <div class="sbox"><div class="sval">R$ {vhb:.1f}bi</div><div class="slbl">Valor total 2021–2026</div></div>
     <div class="sbox"><div class="sval">{rh['empresas_unicas']}</div><div class="slbl">Empresas únicas</div></div>
@@ -541,34 +482,13 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
   </div>
 </div>
 
-<!-- GRÁFICOS -->
 <div id="p-graficos" class="pan">
-
-    <!-- Top Empresas -->
-    <div class="sec">
-
-        <div class="stit">
-            🏆 Top empresas por valor (histórico)
-        </div>
-
-        <div class="graf" id="g-rk"></div>
-
-    </div>
-
-    <!-- Investimentos por Ano -->
-    <div class="sec">
-
-        <div class="stit">
-            📅 Investimentos por Ano
-        </div>
-
-        <div class="graf" id="g-ano"></div>
-
-    </div>
-
+  <div class="g2">
+    <div class="sec"><div class="stit">🏆 Top empresas por valor investido</div><div class="graf" id="g-rk"></div></div>
+    <div class="sec"><div class="stit">📅 Investimentos por ano</div><div class="graf" id="g-ano"></div></div>
+  </div>
 </div>
 
-<!-- TODAS -->
 <div id="p-todas" class="pan">
   <div class="flt">
     <label>Empresa</label><select id="a-emp" onchange="renderTodas()"><option value="">Todas</option></select>
@@ -583,7 +503,6 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
   <div id="lst-todas"></div>
 </div>
 
-<!-- FONTES -->
 <div id="p-fontes" class="pan">
   <div class="sec">
     <div class="stit">📰 Desempenho por fonte</div>
@@ -594,11 +513,10 @@ footer{{background:var(--teal-dark);color:rgba(255,255,255,.4);text-align:center
   </div>
 </div>
 
-<!-- QUASE -->
 <div id="p-quase" class="pan">
   <div class="sec">
     <div class="stit">🔍 Boa pontuação, mas fora de Contagem</div>
-    <p style="color:var(--ci);font-size:.8rem;margin-bottom:14px">Pontuação ≥ 30, empresa identificada, sem menção explícita a Contagem. Possível impacto regional.</p>
+    <p style="color:var(--ci);font-size:.8rem;margin-bottom:13px">Pontuação ≥ 30, empresa identificada, sem menção explícita a Contagem.</p>
     <div id="lst-quase"></div>
   </div>
 </div>
@@ -621,11 +539,9 @@ function aba(id,btn){{
 }}
 
 function bdg(f){{
-  const m={{'Anunciado':'ba','Construção':'bo2','Operação':'bv','Expansão':'bv',
-             'Licenciamento':'bc','Contratação':'bc','Negociação':'bc','Em operação':'bv','Em construção':'bo2'}};
-  return '<span class="bdg '+(m[f]||'bc')+'">'+(f||'—')+'</span>';        
-
-  }}
+  const m={{'Anunciado':'ba','Construção':'bo2','Operação':'bv','Expansão':'bv','Licenciamento':'bc','Contratação':'bc','Negociação':'bc','Em operação':'bv','Em construção':'bo2'}};
+  return '<span class="bdg '+(m[f]||'bc')+'">'+(f||'—')+'</span>';
+}}
 
 function cardN(n,extra){{
   const e=(n.empresas||[]).join(', ')||'—';
@@ -648,7 +564,7 @@ function renderRec(){{
   const e=document.getElementById('r-emp').value.toLowerCase();
   const f=document.getElementById('r-fas').value.toLowerCase();
   const t=document.getElementById('r-txt').value.toLowerCase();
-  const l=NR.filter(n=>(!e||(n.empresas||[]).join(' ').toLowerCase().includes(e))&&(!f|(n.fase||'').toLowerCase()===f)&&(!t|(n.titulo||'').toLowerCase().includes(t)));
+  const l=NR.filter(n=>(!e||(n.empresas||[]).join(' ').toLowerCase().includes(e))&&(!f|(n.fase||'').toLowerCase()===f)&&(!t|(n.titulo||'').toLowerCase().includes(t)));  
   document.getElementById('lst-rec').innerHTML=l.length?l.map(n=>cardN(n,false)).join(''):'<div class="vz">Nenhuma notícia relevante encontrada.</div>';
 }}
 function limpRec(){{['r-emp','r-fas','r-txt'].forEach(id=>{{const el=document.getElementById(id);if(el)el.value=''}});renderRec();}}
@@ -679,7 +595,7 @@ function renderHist(){{
   const t=document.getElementById('h-txt').value.toLowerCase();
   const l=HIST.filter(i=>(!e|(i.empresa||'').toLowerCase().includes(e))&&(!a|String(i.ano)===a)&&(!t|(i.empresa||'').toLowerCase().includes(t)||(i.descricao||'').toLowerCase().includes(t)));
   const tb=document.getElementById('tb-hist');if(!tb)return;
-  tb.innerHTML=l.map(i=>'<tr><td>'+( i.ano||'—')+'</td><td><b>'+(i.empresa||'—')+'</b></td><td>'+(i.valor?('R$ '+(i.valor/1e6).toFixed(1)+'M'):'—')+'</td><td>'+(i.empregos||'—')+'</td><td>'+bdg(i.fase||i.status)+'</td><td><a class="nu" href="'+(i.url||'#')+'" target="_blank">'+(i.fonte||'—')+'</a></td></tr>').join('')||'<tr><td colspan="6" class="vz">Sem resultados.</td></tr>';
+  tb.innerHTML=l.map(i=>'<tr><td>'+( i.ano||'—')+'</td><td><b>'+(i.empresa||'—')+'</b></td><td>'+(i.valor&&i.valor>0?('R$ '+(i.valor/1e6).toFixed(1)+'M'):'—')+'</td><td>'+(i.empregos||'—')+'</td><td>'+bdg(i.fase||i.status)+'</td><td><a class="nu" href="'+(i.url&&i.url.startsWith('http')?i.url:'#')+'" target="_blank">'+(i.fonte&&i.fonte.length<60?i.fonte:(i.fonte||'—').substring(0,60)+'...')+'</a></td></tr>').join('')||'<tr><td colspan="6" class="vz">Sem resultados.</td></tr>';
 }}
 function limpHist(){{['h-emp','h-ano','h-txt'].forEach(id=>{{const el=document.getElementById(id);if(el)el.value=''}});renderHist();}}
 
@@ -689,75 +605,58 @@ function renderQuase(){{
 
 function renderGraf(){{
   const cfg={{responsive:true,displayModeBar:false}};
-  const base={{font:{{family:'Inter,Segoe UI,sans-serif',size:11,color:'#ffffff'}},
-               paper_bgcolor:DARK,plot_bgcolor:DARK}};
+  const base={{font:{{family:'Inter,Segoe UI,sans-serif',size:11,color:'#ffffff'}},paper_bgcolor:DARK,plot_bgcolor:DARK}};
 
-Plotly.newPlot('g-rk',[{{
-
-    x:RK.map(e=>e.valor_total/1e6).reverse(),
-
-    y:RK.map(e=>e.empresa).reverse(),
-
-    type:'bar',
-
-    orientation:'h',
-
+  // Ranking por valor (ordenado decrescente — maior no topo)
+  const rkR=[...RK].reverse();
+  Plotly.newPlot('g-rk',[{{
+    x:rkR.map(e=>e.valor_total/1e6),
+    y:rkR.map(e=>e.empresa),
+    type:'bar',orientation:'h',
     marker:{{color:CIANO}},
-
-    text:RK.map(e=>'R$ '+(e.valor_total/1e6).toFixed(1)+' M').reverse(),
-
+    text:rkR.map(e=>'R$ '+(e.valor_total/1e6).toFixed(0)+'M'),
     textposition:'outside',
-
-    textfont:{{
-        color:LIME,
-        size:16
-    }}
-
-}}],{{
-
+    textfont:{{color:LIME,size:10}}
+  }}],{{
     ...base,
+    margin:{{l:200,r:90,t:30,b:40}},
+    xaxis:{{title:'R$ Milhões',color:'white',gridcolor:'rgba(255,255,255,0.08)'}},
+    yaxis:{{color:'white',tickfont:{{size:11}}}}
+  }},cfg);
 
-    margin:{{
-        l:220,
-        r:120,
-        t:40,
-        b:45
-    }},
-
-    title:{{
-        text:'Top Empresas por Valor',
-        font:{{
-            size:18
-        }}
-    }},
-
-    xaxis:{{
-        title:'Milhões de Reais',
-        color:'white',
-        tickfont:{{size:13}},
-        titlefont:{{size:14}},
-        gridcolor:'rgba(255,255,255,0.10)'
-    }},
-
-    yaxis:{{
-        color:'white',
-        tickfont:{{size:15}}
-    }}
-
-}},cfg);
-
-  const anos=Object.keys(PA),aV=anos.map(a=>PA[a].valor/1e9),aQ=anos.map(a=>PA[a].investimentos);
+  // Por ano — barras com rótulos ajustados
+  const anos=Object.keys(PA);
+  const aV=anos.map(a=>PA[a].valor/1e9);
+  const aQ=anos.map(a=>PA[a].investimentos);
+  const maxV=Math.max(...aV);
   Plotly.newPlot('g-ano',[
-    {{x:anos,y:aV,type:'bar',name:'Valor (R$ bi)',marker:{{color:CIANO}},
-      text:aV.map(v=>'R$ '+v.toFixed(1)+'bi'),textposition:'outside',
-      textfont:{{color:LIME}},yaxis:'y'}},
-    {{x:anos,y:aQ,type:'scatter',mode:'lines+markers',name:'Qtd.',
-      line:{{color:LIME,width:2.5}},marker:{{size:7,color:LIME}},yaxis:'y2'}}
-  ],{{...base,margin:{{l:50,r:50,t:30,b:40}},
-     yaxis:{{title:'R$ Bilhões',color:'white',gridcolor:'rgba(255,255,255,0.1)'}},
-     yaxis2:{{title:'Quantidade',overlaying:'y',side:'right',color:'white'}},
-     legend:{{orientation:'h',y:-0.25,font:{{color:'white'}}}}}},cfg);
-
+    {{
+      x:anos,y:aV,type:'bar',name:'Valor (R$ bi)',
+      marker:{{color:CIANO}},
+      text:aV.map(v=>v>0?'R$ '+v.toFixed(1)+'bi':''),
+      textposition:'outside',
+      textfont:{{color:LIME,size:9}},
+      yaxis:'y'
+    }},
+    {{
+      x:anos,y:aQ,type:'scatter',mode:'lines+markers',name:'Qtd.',
+      line:{{color:LIME,width:2.5}},
+      marker:{{size:7,color:LIME}},
+      yaxis:'y2'
+    }}
+  ],{{
+    ...base,
+    
+    margin:{{l:55,r:55,t:30,b:50}},
+    yaxis:{{
+      title:'R$ Bilhões',color:'white',
+      gridcolor:'rgba(255,255,255,0.08)',
+      range:[0, maxV*1.35]
+    }},
+    yaxis2:{{title:'Quantidade',overlaying:'y',side:'right',color:'white'}},
+    legend:{{orientation:'h',y:-0.22,font:{{color:'white'}}}},
+    xaxis:{{color:'white',tickangle:-30}}
+  }},cfg);
 }}
 
 document.addEventListener('DOMContentLoaded',()=>{{
@@ -773,6 +672,8 @@ document.addEventListener('DOMContentLoaded',()=>{{
 </body>
 </html>"""
 
+    # ── PDF ───────────────────────────────────────────
+
     def gerar_pdf(self):
         if not HAS_REPORTLAB:
             print("  PDF: ReportLab não instalado."); return None
@@ -781,28 +682,27 @@ document.addEventListener('DOMContentLoaded',()=>{{
             rh = self.resumo_historico()
             rk = self.ranking_historico()
             fn = self.fontes_recentes()
-            cf = self.confianca_recente()
             pa = self.por_ano_historico()
 
-            nome = self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.pdf"
-            doc  = SimpleDocTemplate(str(nome),pagesize=A4,
-                                     rightMargin=2*cm,leftMargin=2*cm,
-                                     topMargin=2*cm,bottomMargin=2*cm)
+            nome=self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.pdf"
+            doc=SimpleDocTemplate(str(nome),pagesize=A4,
+                                  rightMargin=2*cm,leftMargin=2*cm,
+                                  topMargin=2*cm,bottomMargin=2*cm)
             styles=getSampleStyleSheet()
-            TEAL_=colors.HexColor("#037482"); LIME_=colors.HexColor("#D2DD68")
-            DARK_=colors.HexColor("#035863"); CI_=colors.HexColor("#6b7280")
-            CL_  =colors.HexColor("#e0f0f2")
+            AZ_=colors.HexColor("#037482"); LM_=colors.HexColor("#D2DD68")
+            DK_=colors.HexColor("#035863"); CI_=colors.HexColor("#6b7280")
+            CL_=colors.HexColor("#d0eaed")
 
-            t_tit=ParagraphStyle("tt",parent=styles["Heading1"],fontSize=18,textColor=TEAL_,alignment=1,spaceAfter=4,fontName="Helvetica-Bold")
+            t_tit=ParagraphStyle("tt",parent=styles["Heading1"],fontSize=18,textColor=AZ_,alignment=1,spaceAfter=4,fontName="Helvetica-Bold")
             t_sub=ParagraphStyle("ts",parent=styles["Normal"],fontSize=9,textColor=CI_,alignment=1,spaceAfter=2)
-            t_sec=ParagraphStyle("tc",parent=styles["Heading2"],fontSize=11,textColor=TEAL_,spaceBefore=14,spaceAfter=8,fontName="Helvetica-Bold")
+            t_sec=ParagraphStyle("tc",parent=styles["Heading2"],fontSize=11,textColor=AZ_,spaceBefore=14,spaceAfter=8,fontName="Helvetica-Bold")
             t_bdy=ParagraphStyle("tb",parent=styles["Normal"],fontSize=8,textColor=colors.HexColor("#374151"),leading=13)
 
-            def hr(): return HRFlowable(width="100%",thickness=2,color=LIME_,spaceAfter=8)
+            def hr(): return HRFlowable(width="100%",thickness=2,color=LM_,spaceAfter=8)
             def tbl(data,ws=None):
                 t=Table(data,colWidths=ws,repeatRows=1)
                 t.setStyle(TableStyle([
-                    ("BACKGROUND",(0,0),(-1,0),TEAL_),("TEXTCOLOR",(0,0),(-1,0),colors.white),
+                    ("BACKGROUND",(0,0),(-1,0),AZ_),("TEXTCOLOR",(0,0),(-1,0),colors.white),
                     ("FONTNAME",(0,0),(-1,0),"Helvetica-Bold"),("FONTSIZE",(0,0),(-1,-1),8),
                     ("ALIGN",(0,0),(-1,-1),"LEFT"),("VALIGN",(0,0),(-1,-1),"MIDDLE"),
                     ("ROWBACKGROUNDS",(0,1),(-1,-1),[colors.white,CL_]),
@@ -812,13 +712,14 @@ document.addEventListener('DOMContentLoaded',()=>{{
                 ]))
                 return t
 
-            story=[]
-            story+=[Spacer(1,1*cm),
-                    Paragraph("Monitor de Investimentos Privados",t_tit),
-                    Paragraph("SEDECON · Prefeitura de Contagem MG",t_sub),
-                    Paragraph(f"Gerado em {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",t_sub),
-                    Spacer(1,.4*cm),hr(),Paragraph("Sumário Executivo",t_sec)]
-            story.append(tbl([["Indicador","Valor"],
+            story=[Spacer(1,1*cm),
+                   Paragraph("Monitor de Investimentos Privados",t_tit),
+                   Paragraph("SEDECON · Prefeitura de Contagem MG",t_sub),
+                   Paragraph(f"Gerado em {self.data_geracao.strftime('%d/%m/%Y %H:%M')}",t_sub),
+                   Spacer(1,.4*cm),hr(),Paragraph("Sumário Executivo",t_sec)]
+
+            story.append(tbl([
+                ["Indicador","Valor"],
                 ["Notícias relevantes (recente)", str(r["noticias_relevantes"])],
                 ["Empregos detectados",           f"{r['novos_empregos']:,}"],
                 ["Valor monitorado",              f"R$ {r['valor_total']/1e6:.1f} M"],
@@ -827,33 +728,34 @@ document.addEventListener('DOMContentLoaded',()=>{{
                 ["Valor total histórico",          f"R$ {rh['total_valor']/1e9:.2f} bi"],
                 ["Empresas únicas",                str(rh["empresas_unicas"])],
                 ["Período histórico",              rh["periodo"]],
-            ],ws=[11*cm,5*cm]))
+                ],ws=[11*cm,5*cm]))
 
-            story+=[Spacer(1,.4*cm),Paragraph("Ranking de Empresas — Histórico",t_sec)]
+            story+=[Spacer(1,.4*cm),Paragraph("Ranking de Empresas por Valor Investido",t_sec)]
             rk_rows=[["#","Empresa","Invest.","Valor R$M"]]
             for i,e in enumerate(rk,1):
-                rk_rows.append([str(i),e["empresa"][:30],str(e["investimentos"]),f"{e['valor_total']/1e6:.1f}"])
-            story.append(tbl(rk_rows,ws=[1*cm,9*cm,2.5*cm,3*cm]) if len(rk_rows)>1 else Paragraph("Sem dados.",t_bdy))
+                rk_rows.append([str(i),e["empresa"][:30],
+                                 str(e["investimentos"]),
+                                 f"{e['valor_total']/1e6:.1f}"])
+            story.append(tbl(rk_rows,ws=[1*cm,9*cm,2.5*cm,3*cm]) if len(rk_rows)>1
+                         else Paragraph("Sem dados.",t_bdy))
 
             story+=[Spacer(1,.4*cm),Paragraph("Investimentos por Ano",t_sec)]
             pa_rows=[["Ano","Qtd.","Valor total"]]
             for a,d in pa.items():
-                pa_rows.append([a,str(d["investimentos"]),f"R$ {d['valor']/1e9:.2f} bi"])
-            story.append(tbl(pa_rows,ws=[3*cm,4*cm,8.5*cm]) if len(pa_rows)>1 else Paragraph("Sem dados.",t_bdy))
-
-            story+=[Spacer(1,.4*cm),Paragraph("Fontes",t_sec)]
-            tg=rg=0; fn_rows=[["Fonte","Total","Relev.","Precisão","Confiança"]]
-            for f in sorted(fn):
-                d=fn[f]; tg+=d["total"]; rg+=d["relevantes"]
-                fn_rows.append([f[:20],str(d["total"]),str(d["relevantes"]),f"{d['taxa']}%",f"{d['confianca']}%"])
-            fn_rows.append(["TOTAL",str(tg),str(rg),f"{round(rg/tg*100 if tg else 0,1)}%","—"])
-            story.append(tbl(fn_rows,ws=[5*cm,2*cm,2*cm,2.5*cm,4*cm]))
+                pa_rows.append([a,str(d["investimentos"]),
+                                 f"R$ {d['valor']/1e9:.2f} bi"])
+            story.append(tbl(pa_rows,ws=[3*cm,4*cm,8.5*cm]) if len(pa_rows)>1
+                         else Paragraph("Sem dados.",t_bdy))
 
             story+=[hr(),Paragraph("Critérios de relevância",t_sec),
                     Paragraph("Pontuação mínima de 30 pontos · menção explícita a Contagem · empresa identificada na lista monitorada.",t_bdy)]
+
             doc.build(story); return nome
         except Exception as e:
-            import traceback; traceback.print_exc(); print(f"  PDF erro: {e}"); return None
+            import traceback; traceback.print_exc()
+            print(f"  PDF erro: {e}"); return None
+
+    # ── salvar ────────────────────────────────────────
 
     def salvar_txt(self):
         p=self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.txt"
@@ -872,12 +774,12 @@ document.addEventListener('DOMContentLoaded',()=>{{
             "confianca_recente": self.confianca_recente(),
         }
         p=self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.json"
-        p.write_text(json.dumps(dados,indent=4,ensure_ascii=False),encoding="utf-8"); return p
+        p.write_text(json.dumps(dados,indent=4,ensure_ascii=False),encoding="utf-8")
+        return p
 
     def salvar_html(self):
-        html=self.gerar_html()
         p=self.pasta/f"relatorio_{self.data_geracao.strftime('%Y%m%d_%H%M%S')}.html"
-        p.write_text(html,encoding="utf-8"); return p
+        p.write_text(self.gerar_html(),encoding="utf-8"); return p
 
     def gerar_todos(self):
         print("\n"+"="*60+"\n  GERANDO RELATÓRIOS\n"+"="*60)
@@ -898,6 +800,4 @@ document.addEventListener('DOMContentLoaded',()=>{{
 
 
 if __name__ == "__main__":
-    GeradorRelatorio().gerar_todos()     
-              
-
+    GeradorRelatorio().gerar_todos()
