@@ -1,0 +1,138 @@
+{
+    "data_geracao": "2026-08-09T10:37:41.710728",
+    "resumo_recente": {
+        "noticias_relevantes": 3,
+        "novos_empregos": 40,
+        "valor_total": 30644.0,
+        "confianca_media": 90,
+        "periodo": "2026-07-19 a 2026-07-29"
+    },
+    "resumo_historico": {
+        "total_investimentos": 60,
+        "total_valor": 10407220020.0,
+        "empresas_unicas": 58,
+        "periodo": "2021 – 2026"
+    },
+    "ranking_historico": [
+        {
+            "empresa": "Tambasa",
+            "investimentos": 1,
+            "valor_total": 1600000000.0
+        },
+        {
+            "empresa": "Complexo logístico Empresarial Contendas",
+            "investimentos": 1,
+            "valor_total": 1500000000.0
+        },
+        {
+            "empresa": "Inova Parque",
+            "investimentos": 1,
+            "valor_total": 1300000000.0
+        },
+        {
+            "empresa": "Bresco",
+            "investimentos": 1,
+            "valor_total": 700000000.0
+        },
+        {
+            "empresa": "TSEA Energia – Projeto de expansão",
+            "investimentos": 1,
+            "valor_total": 700000000.0
+        },
+        {
+            "empresa": "RHI Magnesita",
+            "investimentos": 1,
+            "valor_total": 420000000.0
+        },
+        {
+            "empresa": "UNIMED",
+            "investimentos": 1,
+            "valor_total": 350000000.0
+        },
+        {
+            "empresa": "Shopee – Centro de Distribuição em Contagem",
+            "investimentos": 1,
+            "valor_total": 350000000.0
+        },
+        {
+            "empresa": "Laboratório Osório de Moraes",
+            "investimentos": 1,
+            "valor_total": 300000000.0
+        },
+        {
+            "empresa": "Emccamp",
+            "investimentos": 1,
+            "valor_total": 250000000.0
+        },
+        {
+            "empresa": "ELL Morais empreendimentos",
+            "investimentos": 1,
+            "valor_total": 250000000.0
+        },
+        {
+            "empresa": "Obramax",
+            "investimentos": 2,
+            "valor_total": 212000000.0
+        },
+        {
+            "empresa": "Sensia Solarium",
+            "investimentos": 1,
+            "valor_total": 200000000.0
+        },
+        {
+            "empresa": "Direcional Engenharia /Viva Residence",
+            "investimentos": 1,
+            "valor_total": 190000000.0
+        },
+        {
+            "empresa": "Business Park",
+            "investimentos": 1,
+            "valor_total": 173000000.0
+        }
+    ],
+    "por_ano_historico": {
+        "2021": {
+            "investimentos": 19,
+            "valor": 5125000000.0
+        },
+        "2022": {
+            "investimentos": 1,
+            "valor": 60000000.0
+        },
+        "2023": {
+            "investimentos": 12,
+            "valor": 2848000000.0
+        },
+        "2024": {
+            "investimentos": 15,
+            "valor": 754820000.0
+        },
+        "2025": {
+            "investimentos": 8,
+            "valor": 415900000.0
+        },
+        "2026": {
+            "investimentos": 5,
+            "valor": 1203500020.0
+        }
+    },
+    "fases_recentes": {
+        "Licenciamento": 1,
+        "Construção": 2
+    },
+    "fontes_recentes": {
+        "Portal Contagem": {
+            "total": 3,
+            "relevantes": 3,
+            "taxa": 100.0,
+            "confianca": 90
+        }
+    },
+    "quase_relevantes": [],
+    "confianca_recente": {
+        "alta": 100.0,
+        "media": 0.0,
+        "baixa": 0.0,
+        "mg": 90
+    }
+}
