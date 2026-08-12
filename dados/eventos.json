@@ -178,5 +178,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84385/abertas-as-inscricoes-para-concursos-de-cosplay-e-k-pop-do-contagem-geek-2026",
         "data": "2026-07-30",
         "pontuacao": 35
+    },
+    {
+        "id": 19,
+        "investimento": 61,
+        "fase": "Anunciado",
+        "titulo": "Prefeitura entrega nova iluminação em...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84475/prefeitura-entrega-nova-iluminacao-em-trecho-duplicado-da-via-vm5",
+        "data": "2026-08-12",
+        "pontuacao": 110
     }
 ]

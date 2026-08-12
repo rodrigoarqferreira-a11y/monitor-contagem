@@ -899,5 +899,20 @@
         "url": "https://www.otempo.com.br/economia/2026/5/20/obramax-investe-r-140-milhoes-em-nova-loja-em-contagem-e-tem-vagas-de-emprego-abertas",
         "origem": "historico",
         "descricao": "Segunda unidade em MG. Loja de 17.922 m² próxima ao Itaú Power Shopping. Inauguração prevista 2º semestre 2026."
+    },
+    {
+        "id": 61,
+        "empresa": "tambasa",
+        "ano": "2026",
+        "valor": 130.0,
+        "empregos": "",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-08-12",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": "",
+        "origem": "historico"
     }
 ]
