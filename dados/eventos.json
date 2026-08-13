@@ -188,5 +188,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84475/prefeitura-entrega-nova-iluminacao-em-trecho-duplicado-da-via-vm5",
         "data": "2026-08-12",
         "pontuacao": 110
+    },
+    {
+        "id": 20,
+        "investimento": 61,
+        "fase": "Anunciado",
+        "titulo": "Prefeitura entrega nova iluminação em...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84475/prefeitura-entrega-nova-iluminacao-em-trecho-duplicado-da-via-vm5",
+        "data": "2026-08-13",
+        "pontuacao": 110
     }
 ]
