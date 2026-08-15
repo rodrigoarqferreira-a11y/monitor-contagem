@@ -425,5 +425,12 @@
         "primeira_aparicao": "2026-07-22",
         "ultima_atualizacao": "2026-07-23",
         "investimentos": []
+    },
+    {
+        "id": 62,
+        "nome": "shopee",
+        "primeira_aparicao": "2026-08-15",
+        "ultima_atualizacao": "2026-08-15",
+        "investimentos": []
     }
 ]
