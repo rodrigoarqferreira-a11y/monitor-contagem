@@ -929,5 +929,20 @@
         "fonte": "",
         "url": "",
         "origem": "historico"
+    },
+    {
+        "id": 63,
+        "empresa": "arcelormittal",
+        "ano": "19/0",
+        "valor": 0.0,
+        "empregos": "",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-08-20",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": "",
+        "origem": "historico"
     }
 ]

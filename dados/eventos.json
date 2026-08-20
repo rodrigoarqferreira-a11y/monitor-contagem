@@ -218,5 +218,15 @@
         "url": "https://otempo.com.br/cidades/2026/8/14/fiscalizacao-flagra-quase-8-mil-trabalhadores-irregulares-da-shopee-em-mg",
         "data": "2026-08-16",
         "pontuacao": 60
+    },
+    {
+        "id": 23,
+        "investimento": 63,
+        "fase": "Anunciado",
+        "titulo": "Belgo Arames Challenge FIEMG Lab é lançado no P7 Criativo - FIEMG",
+        "fonte": "FIEMG",
+        "url": "https://www.fiemg.com.br/noticias/belgo-arames-challenge-fiemg-lab-e-lancado-no-p7-criativo/",
+        "data": "19/08/2026",
+        "pontuacao": 95
     }
 ]
