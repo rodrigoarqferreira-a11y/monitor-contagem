@@ -10,7 +10,8 @@ from analisador import processar
 from intel import analisar_inteligencia
 from relatorio import GeradorRelatorio
 from banco import Banco
-from datetime import datetime from zoneinfo import ZoneInfo FUSO_BR = ZoneInfo("America/Sao_Paulo")
+from datetime import datetime 
+from zoneinfo import ZoneInfo FUSO_BR = ZoneInfo("America/Sao_Paulo")
 
 import relatorio
 
