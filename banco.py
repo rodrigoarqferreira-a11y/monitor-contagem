@@ -8,6 +8,7 @@ SEDECON · Prefeitura de Contagem MG
 import json
 from pathlib import Path
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from modelos import Noticia
 
 PASTA_DADOS     = Path("dados")
@@ -65,13 +66,13 @@ class Banco:
     def adicionar_empresa(self, nome):
         empresa = self.obter_empresa(nome)
         if empresa:
-            empresa["ultima_atualizacao"] = datetime.now().strftime("%Y-%m-%d")
+            empresa["ultima_atualizacao"] = datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%Y-%m-%d")
             return empresa
         nova = {
             "id":                 len(self.empresas) + 1,
             "nome":               nome,
-            "primeira_aparicao":  datetime.now().strftime("%Y-%m-%d"),
-            "ultima_atualizacao": datetime.now().strftime("%Y-%m-%d"),
+            "primeira_aparicao":  datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%Y-%m-%d"),
+            "ultima_atualizacao": datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%Y-%m-%d"),
             "investimentos":      []
         }
         self.empresas.append(nova)
@@ -122,7 +123,7 @@ class Banco:
             "empregos":           empregos,
             "bairro":             bairro,
             "status":             "Anunciado",
-            "ultima_atualizacao": datetime.now().strftime("%Y-%m-%d"),
+            "ultima_atualizacao": datetime.now(ZoneInfo("America/Sao_Paulo")).strftime("%Y-%m-%d"),
             "eventos":            [],
             "fase":               fase or "Anunciado",
             "fonte":              fonte,
