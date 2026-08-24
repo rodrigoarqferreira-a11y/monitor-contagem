@@ -10,7 +10,7 @@ from analisador import processar
 from intel import analisar_inteligencia
 from relatorio import GeradorRelatorio
 from banco import Banco
-from datetime import datetime
+from datetime import datetime from zoneinfo import ZoneInfo FUSO_BR = ZoneInfo("America/Sao_Paulo")
 
 import relatorio
 
@@ -22,7 +22,7 @@ def main():
     print()
     print("=" * 70)
     print("MONITOR DE INVESTIMENTOS PRIVADOS")
-    print(f"Execução: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    print(f"Execução: {datetime.now(FUSO_BR).strftime('%d/%m/%Y %H:%M')}")
     print("=" * 70)
 
     # ── coleta ───────────────────────────────────────
