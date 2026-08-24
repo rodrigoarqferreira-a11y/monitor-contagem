@@ -8,7 +8,7 @@ SEDECON · Prefeitura de Contagem MG
 import json
 import statistics
 from collections import Counter, defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta from zoneinfo import ZoneInfo FUSO_BR = ZoneInfo("America/Sao_Paulo")
 from pathlib import Path
 
 from banco import Banco
@@ -39,7 +39,7 @@ class GeradorRelatorio:
 
     def __init__(self, banco: Banco = None):
         self.banco        = banco or Banco()
-        self.data_geracao = datetime.now()
+        self.data_geracao = datetime.now(FUSO_BR)
         self.pasta        = Path("relatorios")
         self.pasta.mkdir(exist_ok=True)
 
