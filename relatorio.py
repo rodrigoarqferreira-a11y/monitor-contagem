@@ -8,7 +8,8 @@ SEDECON · Prefeitura de Contagem MG
 import json
 import statistics
 from collections import Counter, defaultdict
-from datetime import datetime, timedelta from zoneinfo import ZoneInfo FUSO_BR = ZoneInfo("America/Sao_Paulo")
+from datetime import datetime 
+from zoneinfo import ZoneInfo FUSO_BR = ZoneInfo("America/Sao_Paulo")
 from pathlib import Path
 
 from banco import Banco
