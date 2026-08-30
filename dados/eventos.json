@@ -228,5 +228,15 @@
         "url": "https://www.fiemg.com.br/noticias/belgo-arames-challenge-fiemg-lab-e-lancado-no-p7-criativo/",
         "data": "19/08/2026",
         "pontuacao": 95
+    },
+    {
+        "id": 24,
+        "investimento": 64,
+        "fase": "Anunciado",
+        "titulo": "Com DNA industrial Contagem acelera de...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84603/com-dna-industrial-contagem-acelera-de-forma-competitiva-e-inovadora-rumo-ao-futuro",
+        "data": "2026-08-30",
+        "pontuacao": 130
     }
 ]
