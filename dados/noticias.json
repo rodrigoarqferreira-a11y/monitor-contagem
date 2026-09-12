@@ -137,5 +137,27 @@
         "fase": "Anunciado",
         "status": "Em operação",
         "confianca": 80
+    },
+    {
+        "titulo": "Mercado Livre oferece 50 vagas de...",
+        "texto": "O Mercado Livre está com 50 vagas abertas para o cargo de auxiliar de logística em Contagem. As oportunidades são destinadas a candidatos de ambos os sexos e contemplam, também, pessoas com deficiência (PCD).\n\n\"Por isso, ficamos muito felizes em trazer para Contagem uma oportunidade como essa, do Mercado Livre, que abre portas inclusive para quem ainda não tem experiência profissional. São 50 vagas, com salário, benefícios e possibilidade para pessoas com deficiência. É uma oportunidade para quem está procurando o primeiro emprego, para quem precisa voltar ao mercado ou para quem quer mudar de área. A gente sabe que, para muitas pessoas, conseguir uma oportunidade pode significar muito mais do que ter um salário no fim do mês. Significa dignidade, independência, poder ajudar dentro de casa e voltar a fazer planos. É por isso que o Sine está aqui: para aproximar o trabalhador das oportunidades e ajudar a transformar uma vaga em um novo começo. Secretária de Trabalho e Renda de Contagem, Daisy Silva\n\nA ação conta com divulgação do Sine Contagem e da Prefeitura de Contagem. Os candidatos interessados devem comparecer ao local no período indicado e buscar orientações sobre o processo seletivo e os procedimentos necessários para se candidatar às vagas. É solicitado ao candidato que leve documento com foto e currículo atualizado.",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84678/mercado-livre-oferece-50-vagas-de-auxiliar-de-logistica-em-contagem",
+        "fonte": "Portal Contagem",
+        "data": "2026-09-12",
+        "empresas": [
+            "mercado livre"
+        ],
+        "valores": [],
+        "empregos": [
+            "50 vagas",
+            "50 vagas",
+            "50 vagas"
+        ],
+        "pontuacao": 60,
+        "relevante": true,
+        "mencionou_contagem": true,
+        "fase": "Contratação",
+        "status": "Não identificado",
+        "confianca": 90
     }
 ]

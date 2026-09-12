@@ -959,5 +959,20 @@
         "fonte": "",
         "url": "",
         "origem": "historico"
+    },
+    {
+        "id": 65,
+        "empresa": "mercado livre",
+        "ano": "2026",
+        "valor": 0.0,
+        "empregos": "50 vagas",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-09-12",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": "",
+        "origem": "historico"
     }
 ]

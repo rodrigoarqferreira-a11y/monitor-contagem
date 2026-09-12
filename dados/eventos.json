@@ -238,5 +238,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84603/com-dna-industrial-contagem-acelera-de-forma-competitiva-e-inovadora-rumo-ao-futuro",
         "data": "2026-08-30",
         "pontuacao": 130
+    },
+    {
+        "id": 25,
+        "investimento": 65,
+        "fase": "Contratação",
+        "titulo": "Mercado Livre oferece 50 vagas de...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84678/mercado-livre-oferece-50-vagas-de-auxiliar-de-logistica-em-contagem",
+        "data": "2026-09-12",
+        "pontuacao": 60
     }
 ]
