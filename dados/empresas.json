@@ -453,5 +453,12 @@
         "primeira_aparicao": "2026-09-12",
         "ultima_atualizacao": "2026-09-14",
         "investimentos": []
+    },
+    {
+        "id": 66,
+        "nome": "rumo logística",
+        "primeira_aparicao": "2026-09-25",
+        "ultima_atualizacao": "2026-09-25",
+        "investimentos": []
     }
 ]
