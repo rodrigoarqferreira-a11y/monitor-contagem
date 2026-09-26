@@ -278,5 +278,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84772/contagem-celebra-ouro-de-vinicius-celestino-nos-jogos-sul-americanos-2026",
         "data": "2026-09-25",
         "pontuacao": 50
+    },
+    {
+        "id": 29,
+        "investimento": 66,
+        "fase": "Não identificada",
+        "titulo": "Contagem celebra ouro de Vinicius...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84772/contagem-celebra-ouro-de-vinicius-celestino-nos-jogos-sul-americanos-2026",
+        "data": "2026-09-26",
+        "pontuacao": 50
     }
 ]
