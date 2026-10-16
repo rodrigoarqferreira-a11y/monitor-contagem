@@ -298,5 +298,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84772/contagem-celebra-ouro-de-vinicius-celestino-nos-jogos-sul-americanos-2026",
         "data": "2026-09-27",
         "pontuacao": 50
+    },
+    {
+        "id": 31,
+        "investimento": 66,
+        "fase": "Anunciado",
+        "titulo": "Entre fardos de papelão e recomeços,...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84880/entre-fardos-de-papelao-e-recomecos-coleta-seletiva-transforma-vidas",
+        "data": "2026-10-16",
+        "pontuacao": 115
     }
 ]
