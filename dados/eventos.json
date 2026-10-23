@@ -308,5 +308,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84880/entre-fardos-de-papelao-e-recomecos-coleta-seletiva-transforma-vidas",
         "data": "2026-10-16",
         "pontuacao": 115
+    },
+    {
+        "id": 32,
+        "investimento": 67,
+        "fase": "Construção",
+        "titulo": "“Concilia Contagem” zera multas e juros...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes",
+        "data": "2026-10-23",
+        "pontuacao": 60
     }
 ]

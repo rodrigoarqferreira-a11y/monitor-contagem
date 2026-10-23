@@ -989,5 +989,20 @@
         "fonte": "",
         "url": "",
         "origem": "historico"
+    },
+    {
+        "id": 67,
+        "empresa": "correios",
+        "ano": "2026",
+        "valor": 0.0,
+        "empregos": "",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-10-23",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": "",
+        "origem": "historico"
     }
 ]
