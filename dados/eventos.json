@@ -318,5 +318,25 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes",
         "data": "2026-10-23",
         "pontuacao": 60
+    },
+    {
+        "id": 33,
+        "investimento": 67,
+        "fase": "Construção",
+        "titulo": "“Concilia Contagem” zera multas e juros...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes",
+        "data": "2026-10-24",
+        "pontuacao": 60
+    },
+    {
+        "id": 34,
+        "investimento": 68,
+        "fase": "Anunciado",
+        "titulo": "Contagem investe na renovação da frota...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84937/contagem-investe-na-renovacao-da-frota-e-estrutura-de-trabalho-da-transcon",
+        "data": "2026-10-24",
+        "pontuacao": 40
     }
 ]
