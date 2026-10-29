@@ -418,5 +418,25 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes",
         "data": "2026-10-28",
         "pontuacao": 60
+    },
+    {
+        "id": 43,
+        "investimento": 67,
+        "fase": "Construção",
+        "titulo": "“Concilia Contagem” zera multas e juros...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes",
+        "data": "2026-10-29",
+        "pontuacao": 60
+    },
+    {
+        "id": 44,
+        "investimento": 69,
+        "fase": "Licenciamento",
+        "titulo": "Reunião na Prefeitura de BH discute...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84958/reuniao-na-prefeitura-de-bh-discute-alagamentosna-vila-sao-paulo",
+        "data": "2026-10-29",
+        "pontuacao": 90
     }
 ]
