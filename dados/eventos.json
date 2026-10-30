@@ -438,5 +438,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84958/reuniao-na-prefeitura-de-bh-discute-alagamentosna-vila-sao-paulo",
         "data": "2026-10-29",
         "pontuacao": 90
+    },
+    {
+        "id": 45,
+        "investimento": 61,
+        "fase": "Anunciado",
+        "titulo": "Região Nacional ganhará novo Cemei com...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84962/regiao-nacional-ganhara-novo-cemei-com-capacidade-para-atender-376-criancas",
+        "data": "2026-10-30",
+        "pontuacao": 50
     }
 ]

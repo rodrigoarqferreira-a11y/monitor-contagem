@@ -253,5 +253,27 @@
         "fase": "Licenciamento",
         "status": "Em construção",
         "confianca": 80
+    },
+    {
+        "titulo": "Região Nacional ganhará novo Cemei com...",
+        "texto": "Em Contagem, a região do Nacional registra um dos maiores crescimentos, tanto econômico quanto populacional e, por isso, a Prefeitura tem feito importantes investimentos e parcerias que levam melhorias à região. Uma destas ações é a parceria com a empresa Tambasa que, como contrapartida a investimentos feitos no município, executa a construção do Centro Municipal de Educação Infantil (Cemei) Carajás, que abrirá até 376 vagas para crianças de até 5 anos de idade, com início das aulas previsto para 2027.\n\nNesta quinta-feira (29/10), durante visita às obras do Cemei, o prefeito Ricardo Faria destacou a demanda da região pela abertura de novas vagas na educação infantil. “O Nacional é uma região que está crescendo muito e tem muita demanda. Essa é uma escola que já vai nascer cheia”. Ricardo também ressaltou a importância da parceria com a Tambasa para a construção do Cemei.\n\nO secretário de Educação, Lindomar Diamantino, também celebrou o avanço das obras. “Esse Cemei terá toda a estrutura para que nossas crianças, educadores e familiares sintam-se acolhidos. O sonho está se concretizando e, em fevereiro, na volta às aulas, faremos uma grande festa para entregar essa importante obra para a educação infantil”.\n\nAcompanharam a visita às obras do Cemei Carajás a secretária da Mulher e da Juventude, Camilla Marques; os vereadores Silvinha Dudu, Glória da Aposentadoria e Rodrigo do Posto; o administrador da regional nacional, Jorge Ibrahim; e o diretor comercial da Tambasa, Alberto Portugal.\n\nA construção do Cemei Carajás está sendo construído como uma contrapartida da empresa Tambasa, no valor de R$ 7,5 milhões, que vai ampliar as vagas da educação infantil. A unidade terá 10 salas de aula, além de parquinho, refeitório e toda a estrutura necessária para atender até 376 crianças entre 1 e 5 anos de idade.\n\nA Ordem de Serviço para a construção do Cemei foi assinada em março deste ano, com prazo legal de entrega para abril de 2027, conforme o Termo de Compromisso. Entretanto, num esforço conjunto da Prefeitura com a empresa Tambasa, as obras estão adiantadas, atualmente 65% concluídas, e a previsão de entrega é para janeiro de 2027, com início das aulas para depois do carnaval.\n\nUma das estratégias para antecipar a entrega foi o adiantamento da construção da área externa, protegendo a obra para o período chuvoso e evitando possíveis interrupções causadas pelo excesso de água das chuvas.\n\nParceria entre Prefeitura e Tambasa viabiliza novo Cemei na região do Nacional. Foto: Luci Sallum/PMC\n\nCLIQUE AQUI e acesse a galeria de fotos",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84962/regiao-nacional-ganhara-novo-cemei-com-capacidade-para-atender-376-criancas",
+        "fonte": "Portal Contagem",
+        "data": "2026-10-30",
+        "empresas": [
+            "tambasa"
+        ],
+        "valores": [
+            "R$ 7,5 milhões"
+        ],
+        "empregos": [
+            "376 vagas"
+        ],
+        "pontuacao": 50,
+        "relevante": true,
+        "mencionou_contagem": true,
+        "fase": "Anunciado",
+        "status": "Em construção",
+        "confianca": 100
     }
 ]
