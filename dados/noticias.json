@@ -293,5 +293,23 @@
         "fase": "Construção",
         "status": "Em construção",
         "confianca": 80
+    },
+    {
+        "titulo": "Atenção: Av Cardeal Eugênio Pacelli...",
+        "texto": "Neste sábado (7/11), das 7h30 às 15h, ocorrerá a interdição da faixa lindeira à calçada da av. Cardeal Eugênio Pacelli, no sentido Belo Horizonte – Contagem. A interdição, que começará nas proximidades da praça Louis Ensch e seguirá até a altura da praça da CEMIG, tem por objetivo a realização da desobstrução dos dispositivos de drenagem e a limpeza das sarjetas da via, a fim de facilitar o escoamento das águas pluviais durante o período chuvoso, evitando alagamentos e entupimento de bueiros.\n\nO serviço terá continuidade no sábado (14/11) do final de semana seguinte, quando haverá nova interdição para a desobstrução dos dispositivos de drenagem e limpeza das sarjetas no lado oposto da avenida, sentido Contagem - Belo Horizonte. Já no domingo (22/11) do outro final de semana, será feita a capina e a supressão de leucenas da av. Cardeal Eugênio Pacelli, com a interdição das faixas de cada pista que margeiam o canteiro central, nos dois sentidos.\n\nMarginal da avenida Cardeal Eugênio Pacelli será interditada no domingo Já no próximo domingo (8/11), das 8h às 17h, devido a obra da Copasa, será necessário a interdição total da marginal da av. Cardeal Eugenio Pacelli, entre a praça da Cemig e rua Antônio Gonçalves Neto, no sentido da BR 040, impactando o itinerário regular das linhas de ônibus 301C, 305A, 306C e 307A. Segue o desvio que será realizado pelas linhas de ônibus:\n\nDESVIO...Itinerário regular, av. Babita Camargos, praça da Cemig, rua Antônio Gonçalves Neto, marginal da av. Cardeal Eugenio Pacelli...Itinerário regular. Durante o período das obras, o ponto de ônibus da av. Cardeal Eugênio Pacelli em frente aos correios, na altura do número 1819, será desativado. Um novo ponto será provisoriamente criado na rua Antônio Gonçalves Neto, número 150, quase esquina com a av. Cardeal Eugênio Pacelli. As pistas principais da av. Cardeal Eugênio Pacelli, assim como a marginal no sentido Betim, continuarão com o tráfego normal. A TransCon estará presente durante toda a execução dos serviços prestando apoio operacional e dando o suporte necessário para garantir a segurança viária e a fluidez do tráfego.",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84999/atencao-av-cardeal-eugenio-pacelli-tera-interdicoes-no-transito-neste-final-de-semana",
+        "fonte": "Portal Contagem",
+        "data": "2026-11-07",
+        "empresas": [
+            "correios"
+        ],
+        "valores": [],
+        "empregos": [],
+        "pontuacao": 65,
+        "relevante": true,
+        "mencionou_contagem": true,
+        "fase": "Construção",
+        "status": "Em operação",
+        "confianca": 80
     }
 ]
