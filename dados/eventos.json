@@ -538,5 +538,25 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84999/atencao-av-cardeal-eugenio-pacelli-tera-interdicoes-no-transito-neste-final-de-semana",
         "data": "2026-11-07",
         "pontuacao": 65
+    },
+    {
+        "id": 55,
+        "investimento": 67,
+        "fase": "Construção",
+        "titulo": "“Concilia Contagem” zera multas e juros...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes/",
+        "data": "2026-11-08",
+        "pontuacao": 60
+    },
+    {
+        "id": 56,
+        "investimento": 67,
+        "fase": "Construção",
+        "titulo": "Atenção: Av Cardeal Eugênio Pacelli...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84999/atencao-av-cardeal-eugenio-pacelli-tera-interdicoes-no-transito-neste-final-de-semana",
+        "data": "2026-11-08",
+        "pontuacao": 65
     }
 ]
