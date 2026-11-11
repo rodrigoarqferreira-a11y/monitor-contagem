@@ -311,5 +311,23 @@
         "fase": "Construção",
         "status": "Em operação",
         "confianca": 80
+    },
+    {
+        "titulo": "Gigante do e-commerce inaugura mais um...",
+        "texto": "“Contagem tem força econômica, localização estratégica e capacidade para atrair grandes investimentos. A inauguração de mais um centro de distribuição do Mercado Livre na nossa cidade é uma conquista importante para a economia local. Essa iniciativa representa mais oportunidades de emprego, fortalecimento do comércio e dos serviços e desenvolvimento para toda a região. Tenho trabalhado para criar um ambiente favorável à chegada de novas empresas, com diálogo, articulação e compromisso com quem quer investir e gerar oportunidades. Contagem é uma cidade que atrai investimentos, gera oportunidades e cresce com trabalho”. Prefeito Ricardo Faria",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/85015/gigante-do-e-commerce-inaugura-mais-um-centro-de-distribuicao",
+        "fonte": "Portal Contagem",
+        "data": "2026-11-11",
+        "empresas": [
+            "mercado livre"
+        ],
+        "valores": [],
+        "empregos": [],
+        "pontuacao": 100,
+        "relevante": true,
+        "mencionou_contagem": true,
+        "fase": "Anunciado",
+        "status": "Anunciado",
+        "confianca": 80
     }
 ]
