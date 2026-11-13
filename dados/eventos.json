@@ -648,5 +648,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/85021/economia-em-alta-contagem-e-campea-na-geracao-de-novos-empregos-em-mg",
         "data": "2026-11-12",
         "pontuacao": 215
+    },
+    {
+        "id": 66,
+        "investimento": 67,
+        "fase": "Construção",
+        "titulo": "“Concilia Contagem” zera multas e juros...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes/",
+        "data": "2026-11-13",
+        "pontuacao": 60
     }
 ]
