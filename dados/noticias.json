@@ -359,5 +359,27 @@
         "fase": "Anunciado",
         "status": "Em construção",
         "confianca": 100
+    },
+    {
+        "titulo": "",
+        "texto": "Contagem deu mais um passo para a implantação do Sistema Integrado de Mobilidade (SIM). O Tribunal de Contas do Estado de Minas Gerais (TCE-MG) aprovou, nessa quarta-feira (18/11), o acordo de mediação firmado entre a Prefeitura de Contagem e as concessionárias do transporte coletivo municipal. O entendimento estabelece condições para o reequilíbrio econômico-financeiro dos contratos e viabiliza investimentos de até R$ 174 milhões na renovação da frota de ônibus da cidade. Os recursos serão destinados à aquisição de 159 ônibus novos, zero-quilômetro e equipados com ar-condicionado, que irão compor a frota do novo sistema. A aprovação permite avançar nas etapas administrativas e legais necessárias à implantação do SIM, cuja previsão de início das operações é o primeiro semestre de 2027.\n\nO acordo é resultado de um processo de negociação iniciado em abril de 2026, com mediação do conselheiro e vice-presidente do TCE-MG, Agostinho Patrus, e participação do prefeito Ricardo Faria. O entendimento estabelece as condições para solucionar pendências contratuais e viabilizar investimentos na modernização do transporte público municipal.\n\nReequilíbrio financeiro convertido em renovação da frota\n\nOs contratos de concessão do transporte coletivo de Contagem foram firmados em 2019, antes dos impactos da pandemia de Covid-19 sobre o número de passageiros e a arrecadação do sistema. A redução da demanda provocou um desequilíbrio econômico-financeiro na operação, levando as concessionárias a reivindicar compensações superiores aos valores estabelecidos no acordo.\n\nApós as negociações conduzidas pela Prefeitura, com mediação do TCE-MG, as partes chegaram a um entendimento de R$ 174 milhões, valor inferior aos mais de R$ 250 milhões inicialmente solicitados pelas empresas. Pelo acordo aprovado, os recursos serão integralmente destinados à aquisição de, no mínimo, 159 ônibus novos para o transporte coletivo municipal.\n\nA solução permite encaminhar o encerramento das pendências de reequilíbrio econômico-financeiro referentes ao período de 2020 a 2026, sem pagamento direto de indenização às concessionárias. Em contrapartida, o montante será convertido em investimento na frota, com benefícios para a prestação do serviço e para os usuários do transporte público.\n\nPróximas etapas para aquisição dos ônibus\n\nCom a aprovação do acordo, o município seguirá com os procedimentos administrativos e legais necessários à aquisição dos veículos. Entre as etapas previstas estão a aprovação de uma lei pela Câmara Municipal, a formalização do financiamento junto ao Banco Nacional de Desenvolvimento Econômico e Social (BNDES) e, posteriormente, a realização de licitação para a compra dos ônibus.\n\nO processo está sendo conduzido por meio do programa “Refrota”, do governo federal, voltado à renovação de frotas do transporte público coletivo. A conclusão dessas etapas será necessária para viabilizar a chegada dos novos veículos e preparar a operação do SIM.\n\nNovo sistema prevê integração e ampliação do atendimento\n\nO Sistema Integrado de Mobilidade (SIM) foi planejado para melhorar a conexão entre as diferentes regiões de Contagem, que enfrentam desafios de deslocamento devido à presença de importantes barreiras viárias, como as BRs 040 e 381, a Via Expressa e a Ferrovia Centro-Atlântica.\n\nNo novo modelo, linhas alimentadoras farão a ligação dos bairros com os terminais e as estações, enquanto as linhas troncais serão responsáveis pela ligação entre diferentes regiões do município.\n\nO projeto também prevê o aumento da oferta de viagens, com maior frequência dos ônibus e redução do tempo de espera nos pontos de embarque. Outra melhoria prevista é a ampliação do atendimento a localidades que atualmente não contam com linhas municipais, como Liberdade 2 e San Remo, na região de Vargem das Flores.\n\nIntegração tarifária e mais facilidade nos deslocamentos\n\nUm dos principais benefícios será a integração tarifária. Os passageiros poderão utilizar diferentes linhas para se deslocar pela cidade pagando apenas uma tarifa, desde que que permaneçam dentro do sistema integrado, sem sair da área de integração. A proposta busca reduzir a necessidade de pagamento de múltiplas passagens, facilitar os deslocamentos e ampliar o acesso da população a oportunidades de trabalho, educação, saúde e outros serviços. Com a renovação da frota e a reorganização das linhas, o município pretende oferecer um transporte coletivo mais integrado, confortável e eficiente.\n\nA aprovação do acordo pelo TCE-MG representa uma etapa importante para a implantação do novo sistema e reforça o compromisso do município com a modernização do transporte público, a integração territorial e a melhoria da qualidade de vida da população.",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/85080/acordo-aprovado-pelo-tce-mg-representa-avanco-para-implantacao-do-sim",
+        "fonte": "Portal Contagem",
+        "data": "2026-11-19",
+        "empresas": [
+            "patrus transportes"
+        ],
+        "valores": [
+            "R$ 174 milhões",
+            "R$ 174 milhões",
+            "R$ 250 milhões"
+        ],
+        "empregos": [],
+        "pontuacao": 55,
+        "relevante": true,
+        "mencionou_contagem": true,
+        "fase": "Anunciado",
+        "status": "Em operação",
+        "confianca": 90
     }
 ]

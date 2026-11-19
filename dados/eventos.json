@@ -708,5 +708,25 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes/",
         "data": "2026-11-18",
         "pontuacao": 60
+    },
+    {
+        "id": 72,
+        "investimento": 67,
+        "fase": "Construção",
+        "titulo": "“Concilia Contagem” zera multas e juros...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes/",
+        "data": "2026-11-19",
+        "pontuacao": 60
+    },
+    {
+        "id": 73,
+        "investimento": 70,
+        "fase": "Anunciado",
+        "titulo": "",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/85080/acordo-aprovado-pelo-tce-mg-representa-avanco-para-implantacao-do-sim",
+        "data": "2026-11-19",
+        "pontuacao": 55
     }
 ]

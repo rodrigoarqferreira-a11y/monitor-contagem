@@ -1034,5 +1034,20 @@
         "fonte": "",
         "url": "",
         "origem": "historico"
+    },
+    {
+        "id": 70,
+        "empresa": "patrus transportes",
+        "ano": "2026",
+        "valor": 174.0,
+        "empregos": "",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-11-19",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": "",
+        "origem": "historico"
     }
 ]
