@@ -1049,5 +1049,20 @@
         "fonte": "",
         "url": "",
         "origem": "historico"
+    },
+    {
+        "id": 71,
+        "empresa": "mrv",
+        "ano": "2026",
+        "valor": 390.0,
+        "empregos": "",
+        "bairro": "",
+        "status": "Anunciado",
+        "ultima_atualizacao": "2026-11-22",
+        "eventos": [],
+        "fase": "Anunciado",
+        "fonte": "",
+        "url": "",
+        "origem": "historico"
     }
 ]
