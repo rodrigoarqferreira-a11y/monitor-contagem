@@ -788,5 +788,15 @@
         "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/85088/bacia-de-contencao-vai-reduzir-riscos-de-alagamentos-no-bairro-funcionarios",
         "data": "2026-11-22",
         "pontuacao": 35
+    },
+    {
+        "id": 80,
+        "investimento": 67,
+        "fase": "Construção",
+        "titulo": "“Concilia Contagem” zera multas e juros...",
+        "fonte": "Portal Contagem",
+        "url": "https://portal.contagem.mg.gov.br/portal/noticias/0/3/84935/concilia-contagem-zera-multas-e-juros-para-regularizacao-de-dividas-dos-contribuintes/",
+        "data": "2026-11-23",
+        "pontuacao": 60
     }
 ]
